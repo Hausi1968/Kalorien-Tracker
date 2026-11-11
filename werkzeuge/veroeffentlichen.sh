@@ -8,14 +8,14 @@ cd "$(dirname "$0")/.."
 NOTIZEN="${1:?Bitte Text für die Update-Notizen angeben}"
 [ -f keystore.properties ] || { echo "keystore.properties fehlt: ohne eigenen Schlüssel keine Updates"; exit 1; }
 
-./gradlew assembleRelease -q || gradle assembleRelease -q
+{ [ -x ./gradlew ] && ./gradlew assembleRelease -q; } || gradle assembleRelease -q
 VERSION=$(grep -oP 'versionName = "\K[^"]+' app/build.gradle.kts)
 CODE=$(grep -oP 'versionCode = \K[0-9]+' app/build.gradle.kts)
 APK="Kalorien-Tracker-$VERSION.apk"
 
 ARBEIT=$(mktemp -d)
 if git ls-remote --exit-code --heads origin updates >/dev/null 2>&1; then
-  git fetch -q origin updates
+  git fetch -q origin +updates:refs/remotes/origin/updates
   git worktree add -q "$ARBEIT" origin/updates
   (cd "$ARBEIT" && git checkout -q -B updates)
 else
