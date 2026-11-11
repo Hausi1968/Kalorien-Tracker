@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Nur für Start-Bildschirm und Systemleisten; die eigentliche Gestaltung macht Compose (ui/theme). -->
+    <style name="Theme.Kalorien" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/start_hintergrund</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+    <color name="start_hintergrund">#FF0D1513</color>
+</resources>

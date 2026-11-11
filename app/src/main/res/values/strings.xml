@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Alle Texte der App. Hauptsprache Deutsch; eine englische Übersetzung kann später unter values-en/ dazukommen. -->
+<resources>
+    <string name="app_name">Kalorien-Tracker</string>
+
+    <!-- Navigation -->
+    <string name="tab_uebersicht">Übersicht</string>
+    <string name="tab_tagebuch">Tagebuch</string>
+    <string name="tab_rezepte">Rezepte</string>
+    <string name="tab_verlauf">Verlauf</string>
+    <string name="tab_profil">Profil</string>
+    <string name="zurueck">Zurück</string>
+    <string name="rueckgaengig">Rückgängig</string>
+
+    <!-- Allgemein -->
+    <string name="heute">Heute</string>
+    <string name="gestern">Gestern</string>
+    <string name="morgen">Morgen</string>
+    <string name="kcal">kcal</string>
+    <string name="einheit_kcal">%1$s kcal</string>
+    <string name="einheit_kj">%1$s kJ</string>
+    <string name="einheit_gramm">%1$s g</string>
+    <string name="makro_fett">Fett</string>
+    <string name="makro_kh">Kohlenhydrate</string>
+    <string name="makro_eiweiss">Eiweiß</string>
+    <string name="makro_von_ziel">%1$s / %2$d g</string>
+    <string name="makro_kurz">F %1$s · KH %2$s · E %3$s g</string>
+    <string name="grundnahrungsmittel">Grundnahrungsmittel</string>
+    <string name="eingabe_pruefen">Bitte Eingabe prüfen</string>
+
+    <!-- Bilanz -->
+    <string name="bilanz_ziel">Ziel</string>
+    <string name="bilanz_gegessen">gegessen</string>
+    <string name="bilanz_verbrannt">verbrannt</string>
+    <string name="bilanz_uebrig">übrig</string>
+    <string name="bilanz_zu_viel">zu viel</string>
+    <string name="bilanz_ansage">%1$s Kilokalorien %2$s. Ziel %3$s, gegessen %4$s, verbrannt %5$s.</string>
+
+    <!-- Tagebuch -->
+    <string-array name="wochentage_kurz">
+        <item>Mo</item>
+        <item>Di</item>
+        <item>Mi</item>
+        <item>Do</item>
+        <item>Fr</item>
+        <item>Sa</item>
+        <item>So</item>
+    </string-array>
+    <string name="wochentag_ansage">%1$s, %2$d Prozent vom Tagesziel</string>
+    <string name="tag_vorher">Vorheriger Tag</string>
+    <string name="tag_nachher">Nächster Tag</string>
+    <string name="eintrag_hinzufuegen">Eintrag hinzufügen</string>
+    <string name="zu_mahlzeit_hinzufuegen">Zu %1$s hinzufügen</string>
+    <string name="lebensmittel_hinzufuegen">+ Lebensmittel hinzufügen</string>
+    <string name="eintrag_loeschen">%1$s löschen</string>
+    <string name="tagebuch_geloescht">%1$s gelöscht</string>
+
+    <!-- Suche -->
+    <string name="suche_titel">Lebensmittel suchen</string>
+    <string name="suche_platzhalter">Was hast du gegessen?</string>
+    <string name="suche_leeren">Suche leeren</string>
+    <string name="barcode_scannen">Barcode scannen</string>
+    <string name="zuletzt_gegessen">Zuletzt gegessen</string>
+    <string name="suche_hinweis_start">Tippe mindestens zwei Buchstaben, zum Beispiel „Quark“ oder „Reis“.</string>
+    <string name="lebensmittel_unterzeile">%1$s · %2$s kcal / 100 %3$s</string>
+    <string name="schnell_eintragen">%1$s mit Standardportion eintragen</string>
+    <string name="eingetragen">Eingetragen: %1$s (%2$s kcal)</string>
+    <string name="nichts_gefunden">Zu „%1$s“ gibt es noch nichts</string>
+    <string name="nichts_gefunden_text">Such online in Open Food Facts oder leg das Produkt selbst an. Es ist danach sofort in deiner Liste.</string>
+    <string name="online_suchen">Online suchen</string>
+    <string name="produkt_anlegen">Produkt anlegen</string>
+
+    <!-- Lebensmittel / Eintragen -->
+    <string name="startdaten_hinweis">Startwert: gerundeter Durchschnitt. Genaue Produktdaten kommen mit dem Katalog.</string>
+    <string name="menge">Menge</string>
+    <string name="menge_fehlt">Bitte eine Menge eingeben</string>
+    <string name="portion_waehlen">Portion wählen</string>
+    <string name="mahlzeit_waehlen">Mahlzeit wählen</string>
+    <string name="zeitpunkt_chip">%1$s · %2$s · %3$s</string>
+    <string name="eintragen">Eintragen</string>
+    <string name="schnell_eintrag">Schnell eintragen</string>
+    <string name="portion_eintragen">%1$s eintragen</string>
+    <string name="naehrwerte_titel">Nährwerte für %1$s %2$s</string>
+    <string name="nw_portion">Portion</string>
+    <string name="nw_pro_100">pro 100 %1$s</string>
+    <string name="nw_brennwert">Brennwert</string>
+    <string name="nw_fett">Fett</string>
+    <string name="nw_ges_fett">davon gesättigt</string>
+    <string name="nw_kh">Kohlenhydrate</string>
+    <string name="nw_zucker">davon Zucker</string>
+    <string name="nw_ballaststoffe">Ballaststoffe</string>
+    <string name="nw_eiweiss">Eiweiß</string>
+    <string name="nw_salz">Salz</string>
+
+    <!-- Rechner / Onboarding -->
+    <string name="rechner_titel_start">Willkommen</string>
+    <string name="rechner_titel">Ziel neu berechnen</string>
+    <string name="rechner_willkommen">Schön, dass du da bist! Damit die App weiß, wie viel du am Tag essen kannst, brauchen wir ein paar Angaben über dich.</string>
+    <string name="rechner_datenschutz">Deine Daten bleiben nur auf diesem Handy. Es gibt kein Konto und keinen Server.</string>
+    <string name="rechner_ueber_dich">Über dich</string>
+    <string name="geschlecht">Geschlecht (für die Formel)</string>
+    <string name="frau">Frau</string>
+    <string name="mann">Mann</string>
+    <string name="geburtsdatum">Geburtsdatum</string>
+    <string name="geburtsdatum_hinweis">TT.MM.JJJJ, z. B. 01.05.1981</string>
+    <string name="groesse_cm">Größe in cm</string>
+    <string name="gewicht_kg">Gewicht in kg</string>
+    <string name="aktivitaet">Wie aktiv bist du im Alltag?</string>
+    <string name="pal_12">Kaum Bewegung: Sitzen, kein Sport</string>
+    <string name="pal_14">Leicht aktiv: Büro, ab und zu Spaziergänge</string>
+    <string name="pal_16">Mäßig aktiv: viel auf den Beinen oder 2–3× Sport pro Woche</string>
+    <string name="pal_18">Sehr aktiv: körperliche Arbeit oder fast täglich Sport</string>
+    <string name="pal_20">Extrem aktiv: harte körperliche Arbeit und Training</string>
+    <string name="dein_ziel">Dein Ziel</string>
+    <string name="ziel">Ziel</string>
+    <string name="ziel_abnehmen">Abnehmen</string>
+    <string name="ziel_halten">Gewicht halten</string>
+    <string name="ziel_zunehmen">Zunehmen</string>
+    <string name="zielgewicht_kg">Zielgewicht in kg</string>
+    <string name="zielgewicht_hinweis">Optional, dann rechnen wir dir ein Zieldatum aus</string>
+    <string name="tempo">Tempo</string>
+    <string name="tempo_stufe">%1$s kg / Woche</string>
+    <string name="rechner_unvollstaendig">Füll alles oben aus, dann siehst du hier dein Tagesziel.</string>
+    <string name="ergebnis">Dein Tagesziel</string>
+    <string name="tagesziel_label">pro Tag</string>
+    <string name="grundumsatz">Grundumsatz</string>
+    <string name="gesamtbedarf">Gesamtbedarf mit Aktivität</string>
+    <string name="defizit">Defizit</string>
+    <string name="ueberschuss">Überschuss</string>
+    <string name="zieldatum">Ziel erreicht etwa</string>
+    <string name="zieldatum_wert">%1$s (in %2$d Wochen)</string>
+    <string name="warnung_grundumsatz">Dein Wunschtempo läge unter deinem Grundumsatz. Wir haben das Ziel deshalb auf den Grundumsatz angehoben.</string>
+    <string name="warnung_minimum">Weniger als %1$s kcal am Tag sind ohne ärztliche Begleitung nicht ratsam. Das Ziel wurde angehoben.</string>
+    <string name="warnung_zielgewicht">Das Zielgewicht passt nicht zum gewählten Ziel. Bitte prüfen.</string>
+    <string name="ziel_uebernehmen">Ziel übernehmen</string>
+    <string name="rechner_formel_hinweis">Berechnet mit der Mifflin-St-Jeor-Formel. 7.000 kcal entsprechen grob einem Kilo Körperfett. Das ist eine Schätzung und ersetzt keine Beratung.</string>
+
+    <!-- Übersicht / Profil / Platzhalter -->
+    <string name="makros_heute">Makros heute</string>
+    <string name="zum_tagebuch">Zum Tagebuch</string>
+    <string name="makro_verteilung">Makro-Verteilung (F / KH / E)</string>
+    <string name="makro_prozent">%1$s / %2$s / %3$s %%</string>
+    <string name="alter">Alter</string>
+    <string name="alter_wert">%1$d Jahre (%2$s)</string>
+    <string name="startgewicht">Startgewicht</string>
+    <string name="startgewicht_wert">%1$s kg am %2$s</string>
+    <string name="ziel_neu_berechnen">Ziel neu berechnen</string>
+    <string name="platzhalter_uebersicht">Hier kommen als Nächstes der Kalorien-Ring, das Makro-Diagramm und deine Woche.</string>
+    <string name="platzhalter_rezepte">Rezepte und eigene Mahlzeiten kommen in einem späteren Bauschritt.</string>
+    <string name="platzhalter_verlauf">Gewichtsverlauf und Diät-Bericht kommen in einem späteren Bauschritt.</string>
+    <!-- Version 0.2: Open Food Facts, Barcode, Produkt anlegen, Bearbeiten -->
+    <string name="ok">OK</string>
+    <string name="abbrechen">Abbrechen</string>
+    <string name="speichern">Speichern</string>
+    <string name="kj">kJ</string>
+    <string name="keine_verbindung">Keine Internetverbindung. Die Online-Suche braucht Netz.</string>
+    <string name="keine_verbindung_barcode">Ohne Internet kann der Barcode nicht nachgeschlagen werden.</string>
+    <string name="scan_fehler">Der Scanner ließ sich nicht starten. Sind die Google-Play-Dienste aktuell?</string>
+    <string name="online_treffer">Aus Open Food Facts (jetzt auch offline gespeichert)</string>
+    <string name="nicht_dabei_online">Nicht dabei? Online suchen</string>
+    <string name="nicht_dabei_anlegen">Immer noch nicht dabei? Produkt anlegen</string>
+    <string name="nichts_gefunden_online">Auch online nichts zu „%1$s“</string>
+    <string name="nichts_gefunden_online_text">Leg das Produkt einfach selbst an, die Werte stehen auf der Packung.</string>
+    <string name="eigenes_produkt">Eigenes Produkt</string>
+    <string name="open_food_facts">Open Food Facts</string>
+    <string name="lebensmittel_fehlt">Dieses Lebensmittel gibt es nicht mehr.</string>
+    <string name="off_hinweis">Werte von Open Food Facts, einer freien Datenbank. Sie sind auf dem Handy gespeichert.</string>
+    <string name="unplausibel_hinweis">Die Kalorien passen nicht ganz zu Fett, Kohlenhydraten und Eiweiß. Am besten mit der Packung vergleichen.</string>
+    <string name="unplausibel_eingabe">Die Kalorien passen nicht zu den Makros. Steht da vielleicht der kJ-Wert?</string>
+    <string name="eintrag_bearbeiten">Eintrag bearbeiten</string>
+    <string name="uhrzeit_waehlen">Uhrzeit wählen</string>
+    <string name="portion_hinzufuegen">+ Eigene Portionsgröße</string>
+    <string name="portion_name">Bezeichnung</string>
+    <string name="portion_name_beispiel">z. B. Becher, Riegel, Scheibe</string>
+    <string name="portion_menge">Menge in %1$s</string>
+    <string name="portion_optional">Portion (optional)</string>
+    <string name="barcode_vergeben">Diesen Barcode gibt es schon: %1$s</string>
+    <string name="barcode_unbekannt_hinweis">Der Barcode %1$s ist noch unbekannt. Trag die Werte von der Packung ein, dann kennt die App das Produkt beim nächsten Scan.</string>
+    <string name="produkt_angaben">Produkt</string>
+    <string name="produkt_name">Name</string>
+    <string name="produkt_marke">Marke (optional)</string>
+    <string name="produkt_barcode">Barcode (optional)</string>
+    <string name="produkt_einheit">Angaben auf der Packung pro</string>
+    <string name="einheit_fest">100 g</string>
+    <string name="einheit_fluessig">100 ml</string>
+    <string name="naehrwerte_pro_100">Nährwerte pro 100 %1$s</string>
+    <string name="brennwert_kcal">Brennwert in kcal</string>
+    <string name="brennwert_kj">Brennwert in kJ</string>
+    <string name="nw_fett_g">Fett in g</string>
+    <string name="nw_ges_fett_g">davon gesättigte Fettsäuren in g</string>
+    <string name="nw_kh_g">Kohlenhydrate in g</string>
+    <string name="nw_zucker_g">davon Zucker in g</string>
+    <string name="nw_ballaststoffe_g">Ballaststoffe in g</string>
+    <string name="nw_eiweiss_g">Eiweiß in g</string>
+    <string name="nw_salz_g">Salz in g</string>
+    <string name="produkt_privat">Eigene Produkte bleiben nur auf deinem Handy.</string>
+    <string name="datenquellen">Datenquellen</string>
+    <string name="datenquellen_text">Produktdaten per Barcode und Online-Suche: Open Food Facts (openfoodfacts.org), Daten unter der Open Database License (ODbL). Startwerte für Grundnahrungsmittel: eigene gerundete Durchschnittswerte.</string>
+    <!-- Version 0.3: Gewicht, Übersicht, Kalorien direkt, Aktivitäten, Updates -->
+    <string name="gewicht_heute">Gewicht heute</string>
+    <string name="gewicht_weniger">0,1 kg weniger</string>
+    <string name="gewicht_mehr">0,1 kg mehr</string>
+    <string name="kg_wert">%1$s kg</string>
+    <string name="gewicht_speichern">Gewicht speichern</string>
+    <string name="gewicht_gespeichert">Gewicht gespeichert, Tagesziel angepasst</string>
+    <string name="gewicht_ziel_anpassung">Dein Tagesziel wird mit jedem neuen Gewicht automatisch neu berechnet.</string>
+    <string name="gewicht_loeschen">Gewicht löschen</string>
+    <string name="fortschritt">Fortschritt</string>
+    <string name="seit_start_weniger">%1$s kg weniger seit dem Start</string>
+    <string name="seit_start_mehr">%1$s kg mehr seit dem Start</string>
+    <string name="noch_kg">noch %1$s kg</string>
+    <string name="bmi_wert">BMI %1$s (%2$s)</string>
+    <string name="bmi_unter">Untergewicht</string>
+    <string name="bmi_normal">Normalgewicht</string>
+    <string name="bmi_ueber">Übergewicht</string>
+    <string name="bmi_adipositas">Adipositas</string>
+    <string name="gewichtsverlauf">Gewichtsverlauf</string>
+    <string name="zu_wenig_daten">Noch zu wenig Daten. Trag ein paar Tage dein Gewicht ein.</string>
+    <string name="kurve_ansage">Gewichtskurve mit %1$d Werten, von %2$s auf %3$s Kilogramm</string>
+    <string name="eintraege">Einträge</string>
+    <string name="health_connect_folgt">Später kommt dein Gewicht auch automatisch aus Samsung Health.</string>
+    <string name="diese_woche">Diese Woche</string>
+    <string name="ziel_wert">Ziel %1$s</string>
+    <string name="woche_schnitt">Durchschnitt %1$s kcal pro Tag, Ziel %2$s kcal</string>
+    <string name="kalorien_direkt">Kalorien direkt eintragen</string>
+    <string name="kalorien_direkt_standard">Kalorien</string>
+    <string name="bezeichnung_optional">Bezeichnung (optional)</string>
+    <string name="kurz_fett">Fett g</string>
+    <string name="kurz_kh">KH g</string>
+    <string name="kurz_eiweiss">Eiweiß g</string>
+    <string name="aktivitaeten">Aktivitäten</string>
+    <string name="aktivitaet_eintragen">Aktivität eintragen</string>
+    <string name="aktivitaet_name">Was hast du gemacht?</string>
+    <string name="aktivitaet_beispiel">z. B. Radfahren</string>
+    <string name="minuten_optional">Minuten (optional)</string>
+    <string name="minuten_wert">%1$s Minuten</string>
+    <string name="verbrannte_kcal">Verbrannte kcal</string>
+    <string name="app_version">App-Version %1$s</string>
+    <string name="update_suchen">Nach Updates suchen</string>
+    <string name="update_keins">Du hast die neueste Version.</string>
+    <string name="update_pruefen_fehler">Konnte nicht nach Updates suchen. Ist Internet an?</string>
+    <string name="update_titel">Neue Version %1$s</string>
+    <string name="update_text">Du hast Version %1$s. Deine Einträge bleiben beim Update erhalten.</string>
+    <string name="update_jetzt">Jetzt aktualisieren</string>
+    <string name="update_installieren">Installieren</string>
+    <string name="update_spaeter">Später</string>
+    <string name="update_erlaubnis">Bitte erlaube der App einmalig, Updates zu installieren, und tippe dann auf „Installieren“.</string>
+    <string name="update_fehler">Der Download hat nicht geklappt. Bitte später noch einmal versuchen.</string>
+</resources>

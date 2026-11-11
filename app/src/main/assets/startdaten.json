@@ -1,0 +1,1885 @@
+{
+ "hinweis": "Startdaten: gerundete Näherungswerte für Grundnahrungsmittel, werden durch den Katalog (USDA/Open Food Facts) ersetzt.",
+ "version": 1,
+ "lebensmittel": [
+  {
+   "id": "start:apfel",
+   "name": "Apfel",
+   "nameNorm": "apfel",
+   "einheit": "g",
+   "kcal": 52,
+   "fett": 0.2,
+   "gesFett": 0.0,
+   "kh": 11.4,
+   "zucker": 10.4,
+   "ballaststoffe": 2.4,
+   "eiweiss": 0.3,
+   "salz": 0.0,
+   "beliebtheit": 67,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück (mittel)",
+     "gramm": 150.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:banane",
+   "name": "Banane",
+   "nameNorm": "banane",
+   "einheit": "g",
+   "kcal": 93,
+   "fett": 0.2,
+   "gesFett": 0.1,
+   "kh": 20.0,
+   "zucker": 17.0,
+   "ballaststoffe": 2.0,
+   "eiweiss": 1.2,
+   "salz": 0.0,
+   "beliebtheit": 66,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück (ohne Schale)",
+     "gramm": 120.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:birne",
+   "name": "Birne",
+   "nameNorm": "birne",
+   "einheit": "g",
+   "kcal": 57,
+   "fett": 0.1,
+   "gesFett": 0.0,
+   "kh": 12.4,
+   "zucker": 9.8,
+   "ballaststoffe": 3.1,
+   "eiweiss": 0.4,
+   "salz": 0.0,
+   "beliebtheit": 65,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück (mittel)",
+     "gramm": 170.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:orange",
+   "name": "Orange",
+   "nameNorm": "orange",
+   "einheit": "g",
+   "kcal": 47,
+   "fett": 0.2,
+   "gesFett": 0.0,
+   "kh": 9.2,
+   "zucker": 9.0,
+   "ballaststoffe": 2.2,
+   "eiweiss": 0.9,
+   "salz": 0.0,
+   "beliebtheit": 64,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück (ohne Schale)",
+     "gramm": 150.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:erdbeeren",
+   "name": "Erdbeeren",
+   "nameNorm": "erdbeeren",
+   "einheit": "g",
+   "kcal": 32,
+   "fett": 0.3,
+   "gesFett": 0.0,
+   "kh": 5.5,
+   "zucker": 5.3,
+   "ballaststoffe": 2.0,
+   "eiweiss": 0.7,
+   "salz": 0.0,
+   "beliebtheit": 63,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Schale",
+     "gramm": 250.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:weintrauben",
+   "name": "Weintrauben",
+   "nameNorm": "weintrauben",
+   "einheit": "g",
+   "kcal": 70,
+   "fett": 0.2,
+   "gesFett": 0.1,
+   "kh": 15.6,
+   "zucker": 15.5,
+   "ballaststoffe": 1.0,
+   "eiweiss": 0.7,
+   "salz": 0.0,
+   "beliebtheit": 62,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Handvoll",
+     "gramm": 80.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:heidelbeeren",
+   "name": "Heidelbeeren",
+   "nameNorm": "heidelbeeren",
+   "einheit": "g",
+   "kcal": 44,
+   "fett": 0.6,
+   "gesFett": 0.0,
+   "kh": 7.4,
+   "zucker": 7.4,
+   "ballaststoffe": 4.9,
+   "eiweiss": 0.6,
+   "salz": 0.0,
+   "beliebtheit": 61,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Handvoll",
+     "gramm": 60.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:kiwi",
+   "name": "Kiwi",
+   "nameNorm": "kiwi",
+   "einheit": "g",
+   "kcal": 55,
+   "fett": 0.6,
+   "gesFett": 0.1,
+   "kh": 10.3,
+   "zucker": 9.0,
+   "ballaststoffe": 2.1,
+   "eiweiss": 1.0,
+   "salz": 0.0,
+   "beliebtheit": 60,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück",
+     "gramm": 75.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:tomate",
+   "name": "Tomate",
+   "nameNorm": "tomate",
+   "einheit": "g",
+   "kcal": 18,
+   "fett": 0.2,
+   "gesFett": 0.0,
+   "kh": 2.6,
+   "zucker": 2.6,
+   "ballaststoffe": 1.2,
+   "eiweiss": 0.9,
+   "salz": 0.0,
+   "beliebtheit": 59,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück (mittel)",
+     "gramm": 80.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:gurke",
+   "name": "Gurke",
+   "nameNorm": "gurke",
+   "einheit": "g",
+   "kcal": 13,
+   "fett": 0.1,
+   "gesFett": 0.0,
+   "kh": 1.8,
+   "zucker": 1.7,
+   "ballaststoffe": 0.5,
+   "eiweiss": 0.6,
+   "salz": 0.0,
+   "beliebtheit": 58,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück",
+     "gramm": 400.0,
+     "standard": true
+    },
+    {
+     "label": "Scheibe",
+     "gramm": 10.0,
+     "standard": false
+    }
+   ]
+  },
+  {
+   "id": "start:paprika-rot",
+   "name": "Paprika rot",
+   "nameNorm": "paprika rot",
+   "einheit": "g",
+   "kcal": 37,
+   "fett": 0.4,
+   "gesFett": 0.1,
+   "kh": 6.4,
+   "zucker": 6.0,
+   "ballaststoffe": 1.9,
+   "eiweiss": 1.0,
+   "salz": 0.0,
+   "beliebtheit": 57,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück",
+     "gramm": 160.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:karotte",
+   "name": "Karotte",
+   "nameNorm": "karotte",
+   "einheit": "g",
+   "kcal": 36,
+   "fett": 0.2,
+   "gesFett": 0.0,
+   "kh": 6.0,
+   "zucker": 4.7,
+   "ballaststoffe": 3.6,
+   "eiweiss": 0.8,
+   "salz": 0.1,
+   "beliebtheit": 56,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück (mittel)",
+     "gramm": 80.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:brokkoli-gekocht",
+   "name": "Brokkoli (gekocht)",
+   "nameNorm": "brokkoli gekocht",
+   "einheit": "g",
+   "kcal": 35,
+   "fett": 0.4,
+   "gesFett": 0.1,
+   "kh": 2.7,
+   "zucker": 1.7,
+   "ballaststoffe": 3.0,
+   "eiweiss": 3.1,
+   "salz": 0.0,
+   "beliebtheit": 55,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Portion",
+     "gramm": 150.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:kopfsalat",
+   "name": "Kopfsalat",
+   "nameNorm": "kopfsalat",
+   "einheit": "g",
+   "kcal": 14,
+   "fett": 0.2,
+   "gesFett": 0.0,
+   "kh": 1.4,
+   "zucker": 1.2,
+   "ballaststoffe": 1.4,
+   "eiweiss": 1.2,
+   "salz": 0.0,
+   "beliebtheit": 54,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Portion",
+     "gramm": 50.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:kartoffeln-gekocht",
+   "name": "Kartoffeln (gekocht)",
+   "nameNorm": "kartoffeln gekocht",
+   "einheit": "g",
+   "kcal": 72,
+   "fett": 0.1,
+   "gesFett": 0.0,
+   "kh": 15.6,
+   "zucker": 0.8,
+   "ballaststoffe": 1.6,
+   "eiweiss": 2.0,
+   "salz": 0.0,
+   "beliebtheit": 53,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück (mittel)",
+     "gramm": 80.0,
+     "standard": true
+    },
+    {
+     "label": "Portion",
+     "gramm": 200.0,
+     "standard": false
+    }
+   ]
+  },
+  {
+   "id": "start:pommes-frites",
+   "name": "Pommes frites",
+   "nameNorm": "pommes frites",
+   "einheit": "g",
+   "kcal": 290,
+   "fett": 14.0,
+   "gesFett": 1.3,
+   "kh": 36.0,
+   "zucker": 0.5,
+   "ballaststoffe": 3.5,
+   "eiweiss": 3.5,
+   "salz": 0.6,
+   "beliebtheit": 52,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Portion klein",
+     "gramm": 100.0,
+     "standard": true
+    },
+    {
+     "label": "Portion groß",
+     "gramm": 160.0,
+     "standard": false
+    }
+   ]
+  },
+  {
+   "id": "start:reis-gekocht",
+   "name": "Reis (gekocht)",
+   "nameNorm": "reis gekocht",
+   "einheit": "g",
+   "kcal": 130,
+   "fett": 0.3,
+   "gesFett": 0.1,
+   "kh": 28.2,
+   "zucker": 0.1,
+   "ballaststoffe": 0.4,
+   "eiweiss": 2.7,
+   "salz": 0.0,
+   "beliebtheit": 51,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Portion",
+     "gramm": 180.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:nudeln-gekocht",
+   "name": "Nudeln (gekocht)",
+   "nameNorm": "nudeln gekocht",
+   "einheit": "g",
+   "kcal": 150,
+   "fett": 0.9,
+   "gesFett": 0.2,
+   "kh": 29.5,
+   "zucker": 0.6,
+   "ballaststoffe": 1.8,
+   "eiweiss": 5.3,
+   "salz": 0.0,
+   "beliebtheit": 50,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Portion",
+     "gramm": 220.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:nudeln-roh",
+   "name": "Nudeln (roh)",
+   "nameNorm": "nudeln roh",
+   "einheit": "g",
+   "kcal": 355,
+   "fett": 1.5,
+   "gesFett": 0.3,
+   "kh": 70.5,
+   "zucker": 3.0,
+   "ballaststoffe": 3.0,
+   "eiweiss": 12.5,
+   "salz": 0.0,
+   "beliebtheit": 49,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Portion",
+     "gramm": 125.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:haferflocken",
+   "name": "Haferflocken",
+   "nameNorm": "haferflocken",
+   "einheit": "g",
+   "kcal": 370,
+   "fett": 7.0,
+   "gesFett": 1.3,
+   "kh": 58.7,
+   "zucker": 0.7,
+   "ballaststoffe": 10.0,
+   "eiweiss": 13.5,
+   "salz": 0.0,
+   "beliebtheit": 48,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Esslöffel",
+     "gramm": 10.0,
+     "standard": true
+    },
+    {
+     "label": "Portion",
+     "gramm": 50.0,
+     "standard": false
+    }
+   ]
+  },
+  {
+   "id": "start:muesli-mit-fruechten",
+   "name": "Müsli mit Früchten",
+   "nameNorm": "muesli mit fruechten",
+   "einheit": "g",
+   "kcal": 360,
+   "fett": 6.0,
+   "gesFett": 1.5,
+   "kh": 62.0,
+   "zucker": 20.0,
+   "ballaststoffe": 8.0,
+   "eiweiss": 9.0,
+   "salz": 0.1,
+   "beliebtheit": 47,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Portion",
+     "gramm": 60.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:vollkornbrot",
+   "name": "Vollkornbrot",
+   "nameNorm": "vollkornbrot",
+   "einheit": "g",
+   "kcal": 215,
+   "fett": 1.5,
+   "gesFett": 0.3,
+   "kh": 38.0,
+   "zucker": 2.5,
+   "ballaststoffe": 7.5,
+   "eiweiss": 7.5,
+   "salz": 1.1,
+   "beliebtheit": 46,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Scheibe",
+     "gramm": 50.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:mischbrot",
+   "name": "Mischbrot",
+   "nameNorm": "mischbrot",
+   "einheit": "g",
+   "kcal": 230,
+   "fett": 1.2,
+   "gesFett": 0.2,
+   "kh": 45.0,
+   "zucker": 2.0,
+   "ballaststoffe": 4.5,
+   "eiweiss": 7.0,
+   "salz": 1.2,
+   "beliebtheit": 45,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Scheibe",
+     "gramm": 45.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:broetchen-weizen",
+   "name": "Brötchen (Weizen)",
+   "nameNorm": "broetchen weizen",
+   "einheit": "g",
+   "kcal": 270,
+   "fett": 1.8,
+   "gesFett": 0.4,
+   "kh": 53.0,
+   "zucker": 3.0,
+   "ballaststoffe": 3.0,
+   "eiweiss": 9.0,
+   "salz": 1.3,
+   "beliebtheit": 44,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück",
+     "gramm": 55.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:toastbrot",
+   "name": "Toastbrot",
+   "nameNorm": "toastbrot",
+   "einheit": "g",
+   "kcal": 265,
+   "fett": 3.5,
+   "gesFett": 0.6,
+   "kh": 48.0,
+   "zucker": 5.0,
+   "ballaststoffe": 3.0,
+   "eiweiss": 8.0,
+   "salz": 1.1,
+   "beliebtheit": 43,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Scheibe",
+     "gramm": 25.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:knaeckebrot",
+   "name": "Knäckebrot",
+   "nameNorm": "knaeckebrot",
+   "einheit": "g",
+   "kcal": 360,
+   "fett": 1.7,
+   "gesFett": 0.3,
+   "kh": 70.0,
+   "zucker": 2.0,
+   "ballaststoffe": 15.0,
+   "eiweiss": 10.0,
+   "salz": 1.0,
+   "beliebtheit": 42,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Scheibe",
+     "gramm": 10.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:butter",
+   "name": "Butter",
+   "nameNorm": "butter",
+   "einheit": "g",
+   "kcal": 741,
+   "fett": 82.0,
+   "gesFett": 52.0,
+   "kh": 0.6,
+   "zucker": 0.6,
+   "ballaststoffe": 0.0,
+   "eiweiss": 0.7,
+   "salz": 0.0,
+   "beliebtheit": 41,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Teelöffel",
+     "gramm": 5.0,
+     "standard": true
+    },
+    {
+     "label": "Portion fürs Brot",
+     "gramm": 10.0,
+     "standard": false
+    }
+   ]
+  },
+  {
+   "id": "start:margarine",
+   "name": "Margarine",
+   "nameNorm": "margarine",
+   "einheit": "g",
+   "kcal": 720,
+   "fett": 80.0,
+   "gesFett": 25.0,
+   "kh": 0.4,
+   "zucker": 0.4,
+   "ballaststoffe": 0.0,
+   "eiweiss": 0.2,
+   "salz": 0.3,
+   "beliebtheit": 40,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Teelöffel",
+     "gramm": 5.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:olivenoel",
+   "name": "Olivenöl",
+   "nameNorm": "olivenoel",
+   "einheit": "ml",
+   "kcal": 884,
+   "fett": 100.0,
+   "gesFett": 14.0,
+   "kh": 0.0,
+   "zucker": 0.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 0.0,
+   "salz": 0.0,
+   "beliebtheit": 39,
+   "portionen": [
+    {
+     "label": "100 ml",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Esslöffel",
+     "gramm": 10.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:honig",
+   "name": "Honig",
+   "nameNorm": "honig",
+   "einheit": "g",
+   "kcal": 304,
+   "fett": 0.0,
+   "gesFett": 0.0,
+   "kh": 82.0,
+   "zucker": 82.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 0.3,
+   "salz": 0.0,
+   "beliebtheit": 38,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Teelöffel",
+     "gramm": 8.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:konfituere-erdbeere",
+   "name": "Konfitüre Erdbeere",
+   "nameNorm": "konfituere erdbeere",
+   "einheit": "g",
+   "kcal": 250,
+   "fett": 0.1,
+   "gesFett": 0.0,
+   "kh": 60.0,
+   "zucker": 58.0,
+   "ballaststoffe": 1.0,
+   "eiweiss": 0.4,
+   "salz": 0.0,
+   "beliebtheit": 37,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Teelöffel",
+     "gramm": 10.0,
+     "standard": true
+    },
+    {
+     "label": "Portion fürs Brot",
+     "gramm": 20.0,
+     "standard": false
+    }
+   ]
+  },
+  {
+   "id": "start:nuss-nougat-creme",
+   "name": "Nuss-Nougat-Creme",
+   "nameNorm": "nuss nougat creme",
+   "einheit": "g",
+   "kcal": 540,
+   "fett": 31.0,
+   "gesFett": 10.0,
+   "kh": 57.0,
+   "zucker": 56.0,
+   "ballaststoffe": 3.0,
+   "eiweiss": 6.0,
+   "salz": 0.1,
+   "beliebtheit": 36,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Portion fürs Brot",
+     "gramm": 15.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:milch-1-5",
+   "name": "Milch 1,5 %",
+   "nameNorm": "milch 1 5",
+   "einheit": "ml",
+   "kcal": 47,
+   "fett": 1.5,
+   "gesFett": 1.0,
+   "kh": 4.8,
+   "zucker": 4.8,
+   "ballaststoffe": 0.0,
+   "eiweiss": 3.4,
+   "salz": 0.1,
+   "beliebtheit": 35,
+   "portionen": [
+    {
+     "label": "100 ml",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Glas",
+     "gramm": 200.0,
+     "standard": true
+    },
+    {
+     "label": "Schuss",
+     "gramm": 20.0,
+     "standard": false
+    }
+   ]
+  },
+  {
+   "id": "start:milch-3-5",
+   "name": "Milch 3,5 %",
+   "nameNorm": "milch 3 5",
+   "einheit": "ml",
+   "kcal": 64,
+   "fett": 3.5,
+   "gesFett": 2.3,
+   "kh": 4.7,
+   "zucker": 4.7,
+   "ballaststoffe": 0.0,
+   "eiweiss": 3.3,
+   "salz": 0.1,
+   "beliebtheit": 34,
+   "portionen": [
+    {
+     "label": "100 ml",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Glas",
+     "gramm": 200.0,
+     "standard": true
+    },
+    {
+     "label": "Schuss",
+     "gramm": 20.0,
+     "standard": false
+    }
+   ]
+  },
+  {
+   "id": "start:joghurt-natur-3-5",
+   "name": "Joghurt natur 3,5 %",
+   "nameNorm": "joghurt natur 3 5",
+   "einheit": "g",
+   "kcal": 61,
+   "fett": 3.5,
+   "gesFett": 2.3,
+   "kh": 4.0,
+   "zucker": 4.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 3.5,
+   "salz": 0.1,
+   "beliebtheit": 33,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Becher",
+     "gramm": 150.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:magerquark",
+   "name": "Magerquark",
+   "nameNorm": "magerquark",
+   "einheit": "g",
+   "kcal": 67,
+   "fett": 0.3,
+   "gesFett": 0.2,
+   "kh": 4.0,
+   "zucker": 4.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 12.0,
+   "salz": 0.1,
+   "beliebtheit": 32,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Becher",
+     "gramm": 250.0,
+     "standard": true
+    },
+    {
+     "label": "Esslöffel",
+     "gramm": 30.0,
+     "standard": false
+    }
+   ]
+  },
+  {
+   "id": "start:skyr-natur",
+   "name": "Skyr natur",
+   "nameNorm": "skyr natur",
+   "einheit": "g",
+   "kcal": 63,
+   "fett": 0.2,
+   "gesFett": 0.1,
+   "kh": 4.0,
+   "zucker": 4.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 11.0,
+   "salz": 0.1,
+   "beliebtheit": 31,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Becher",
+     "gramm": 150.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:huettenkaese",
+   "name": "Hüttenkäse",
+   "nameNorm": "huettenkaese",
+   "einheit": "g",
+   "kcal": 98,
+   "fett": 4.3,
+   "gesFett": 2.7,
+   "kh": 3.0,
+   "zucker": 3.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 12.0,
+   "salz": 0.8,
+   "beliebtheit": 30,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Becher",
+     "gramm": 200.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:gouda-45-f-i-tr",
+   "name": "Gouda (45 % F. i. Tr.)",
+   "nameNorm": "gouda 45 f i tr",
+   "einheit": "g",
+   "kcal": 356,
+   "fett": 27.0,
+   "gesFett": 17.5,
+   "kh": 0.0,
+   "zucker": 0.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 25.0,
+   "salz": 1.8,
+   "beliebtheit": 29,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Scheibe",
+     "gramm": 25.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:mozzarella",
+   "name": "Mozzarella",
+   "nameNorm": "mozzarella",
+   "einheit": "g",
+   "kcal": 254,
+   "fett": 19.0,
+   "gesFett": 12.5,
+   "kh": 1.0,
+   "zucker": 1.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 19.0,
+   "salz": 0.5,
+   "beliebtheit": 28,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Kugel",
+     "gramm": 125.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:frischkaese-doppelrahm",
+   "name": "Frischkäse Doppelrahm",
+   "nameNorm": "frischkaese doppelrahm",
+   "einheit": "g",
+   "kcal": 290,
+   "fett": 27.0,
+   "gesFett": 18.0,
+   "kh": 3.5,
+   "zucker": 3.5,
+   "ballaststoffe": 0.0,
+   "eiweiss": 7.5,
+   "salz": 0.8,
+   "beliebtheit": 27,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Portion fürs Brot",
+     "gramm": 20.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:ei-gekocht",
+   "name": "Ei (gekocht)",
+   "nameNorm": "ei gekocht",
+   "einheit": "g",
+   "kcal": 155,
+   "fett": 11.0,
+   "gesFett": 3.3,
+   "kh": 1.1,
+   "zucker": 1.1,
+   "ballaststoffe": 0.0,
+   "eiweiss": 13.0,
+   "salz": 0.3,
+   "beliebtheit": 26,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück (M)",
+     "gramm": 55.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:ruehrei",
+   "name": "Rührei",
+   "nameNorm": "ruehrei",
+   "einheit": "g",
+   "kcal": 170,
+   "fett": 13.0,
+   "gesFett": 4.5,
+   "kh": 1.5,
+   "zucker": 1.5,
+   "ballaststoffe": 0.0,
+   "eiweiss": 11.5,
+   "salz": 0.8,
+   "beliebtheit": 25,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Portion (2 Eier)",
+     "gramm": 120.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:haehnchenbrust-gebraten",
+   "name": "Hähnchenbrust (gebraten)",
+   "nameNorm": "haehnchenbrust gebraten",
+   "einheit": "g",
+   "kcal": 165,
+   "fett": 3.6,
+   "gesFett": 1.0,
+   "kh": 0.0,
+   "zucker": 0.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 31.0,
+   "salz": 0.2,
+   "beliebtheit": 24,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück",
+     "gramm": 150.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:rinderhack-gebraten",
+   "name": "Rinderhack (gebraten)",
+   "nameNorm": "rinderhack gebraten",
+   "einheit": "g",
+   "kcal": 250,
+   "fett": 17.0,
+   "gesFett": 7.0,
+   "kh": 0.0,
+   "zucker": 0.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 24.0,
+   "salz": 0.2,
+   "beliebtheit": 23,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Portion",
+     "gramm": 125.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:schweineschnitzel-paniert",
+   "name": "Schweineschnitzel (paniert)",
+   "nameNorm": "schweineschnitzel paniert",
+   "einheit": "g",
+   "kcal": 240,
+   "fett": 12.0,
+   "gesFett": 3.5,
+   "kh": 12.0,
+   "zucker": 0.7,
+   "ballaststoffe": 0.6,
+   "eiweiss": 21.0,
+   "salz": 0.9,
+   "beliebtheit": 22,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück",
+     "gramm": 160.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:bratwurst",
+   "name": "Bratwurst",
+   "nameNorm": "bratwurst",
+   "einheit": "g",
+   "kcal": 300,
+   "fett": 26.0,
+   "gesFett": 10.0,
+   "kh": 1.0,
+   "zucker": 0.5,
+   "ballaststoffe": 0.0,
+   "eiweiss": 15.0,
+   "salz": 1.8,
+   "beliebtheit": 21,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück",
+     "gramm": 100.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:kochschinken",
+   "name": "Kochschinken",
+   "nameNorm": "kochschinken",
+   "einheit": "g",
+   "kcal": 110,
+   "fett": 3.5,
+   "gesFett": 1.2,
+   "kh": 1.0,
+   "zucker": 1.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 19.0,
+   "salz": 2.3,
+   "beliebtheit": 20,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Scheibe",
+     "gramm": 20.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:salami",
+   "name": "Salami",
+   "nameNorm": "salami",
+   "einheit": "g",
+   "kcal": 380,
+   "fett": 32.0,
+   "gesFett": 12.0,
+   "kh": 1.0,
+   "zucker": 1.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 22.0,
+   "salz": 4.0,
+   "beliebtheit": 19,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Scheibe",
+     "gramm": 8.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:lachs-gebraten",
+   "name": "Lachs (gebraten)",
+   "nameNorm": "lachs gebraten",
+   "einheit": "g",
+   "kcal": 206,
+   "fett": 12.5,
+   "gesFett": 2.5,
+   "kh": 0.0,
+   "zucker": 0.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 22.0,
+   "salz": 0.2,
+   "beliebtheit": 18,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Filet",
+     "gramm": 125.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:thunfisch-im-eigenen-saft",
+   "name": "Thunfisch im eigenen Saft",
+   "nameNorm": "thunfisch im eigenen saft",
+   "einheit": "g",
+   "kcal": 110,
+   "fett": 1.0,
+   "gesFett": 0.3,
+   "kh": 0.0,
+   "zucker": 0.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 25.0,
+   "salz": 1.0,
+   "beliebtheit": 17,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Dose (abgetropft)",
+     "gramm": 140.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:linsen-gekocht",
+   "name": "Linsen (gekocht)",
+   "nameNorm": "linsen gekocht",
+   "einheit": "g",
+   "kcal": 116,
+   "fett": 0.4,
+   "gesFett": 0.1,
+   "kh": 16.5,
+   "zucker": 1.8,
+   "ballaststoffe": 7.9,
+   "eiweiss": 9.0,
+   "salz": 0.0,
+   "beliebtheit": 16,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Portion",
+     "gramm": 200.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:tofu-natur",
+   "name": "Tofu natur",
+   "nameNorm": "tofu natur",
+   "einheit": "g",
+   "kcal": 125,
+   "fett": 7.5,
+   "gesFett": 1.1,
+   "kh": 1.5,
+   "zucker": 0.6,
+   "ballaststoffe": 0.5,
+   "eiweiss": 13.0,
+   "salz": 0.0,
+   "beliebtheit": 15,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Portion",
+     "gramm": 100.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:walnuesse",
+   "name": "Walnüsse",
+   "nameNorm": "walnuesse",
+   "einheit": "g",
+   "kcal": 654,
+   "fett": 65.0,
+   "gesFett": 6.1,
+   "kh": 7.0,
+   "zucker": 2.6,
+   "ballaststoffe": 6.7,
+   "eiweiss": 15.0,
+   "salz": 0.0,
+   "beliebtheit": 14,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Handvoll",
+     "gramm": 30.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:mandeln",
+   "name": "Mandeln",
+   "nameNorm": "mandeln",
+   "einheit": "g",
+   "kcal": 610,
+   "fett": 52.0,
+   "gesFett": 4.0,
+   "kh": 7.0,
+   "zucker": 4.4,
+   "ballaststoffe": 12.5,
+   "eiweiss": 21.0,
+   "salz": 0.0,
+   "beliebtheit": 13,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Handvoll",
+     "gramm": 30.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:erdnussbutter",
+   "name": "Erdnussbutter",
+   "nameNorm": "erdnussbutter",
+   "einheit": "g",
+   "kcal": 600,
+   "fett": 50.0,
+   "gesFett": 10.0,
+   "kh": 14.0,
+   "zucker": 6.0,
+   "ballaststoffe": 6.0,
+   "eiweiss": 25.0,
+   "salz": 0.8,
+   "beliebtheit": 12,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Esslöffel",
+     "gramm": 15.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:vollmilchschokolade",
+   "name": "Vollmilchschokolade",
+   "nameNorm": "vollmilchschokolade",
+   "einheit": "g",
+   "kcal": 535,
+   "fett": 30.0,
+   "gesFett": 18.5,
+   "kh": 57.0,
+   "zucker": 55.0,
+   "ballaststoffe": 2.0,
+   "eiweiss": 7.0,
+   "salz": 0.2,
+   "beliebtheit": 11,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Riegel",
+     "gramm": 10.0,
+     "standard": true
+    },
+    {
+     "label": "Tafel",
+     "gramm": 100.0,
+     "standard": false
+    }
+   ]
+  },
+  {
+   "id": "start:gummibaerchen",
+   "name": "Gummibärchen",
+   "nameNorm": "gummibaerchen",
+   "einheit": "g",
+   "kcal": 340,
+   "fett": 0.1,
+   "gesFett": 0.1,
+   "kh": 77.0,
+   "zucker": 46.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 6.9,
+   "salz": 0.1,
+   "beliebtheit": 10,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Handvoll",
+     "gramm": 25.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:kartoffelchips",
+   "name": "Kartoffelchips",
+   "nameNorm": "kartoffelchips",
+   "einheit": "g",
+   "kcal": 536,
+   "fett": 34.0,
+   "gesFett": 3.0,
+   "kh": 50.0,
+   "zucker": 0.5,
+   "ballaststoffe": 4.5,
+   "eiweiss": 6.0,
+   "salz": 1.3,
+   "beliebtheit": 9,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Handvoll",
+     "gramm": 25.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:pizza-margherita",
+   "name": "Pizza Margherita",
+   "nameNorm": "pizza margherita",
+   "einheit": "g",
+   "kcal": 240,
+   "fett": 9.0,
+   "gesFett": 4.0,
+   "kh": 30.0,
+   "zucker": 3.0,
+   "ballaststoffe": 2.0,
+   "eiweiss": 10.0,
+   "salz": 1.2,
+   "beliebtheit": 8,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Pizza (ganz)",
+     "gramm": 350.0,
+     "standard": true
+    },
+    {
+     "label": "Stück (Achtel)",
+     "gramm": 45.0,
+     "standard": false
+    }
+   ]
+  },
+  {
+   "id": "start:doener-kebab",
+   "name": "Döner Kebab",
+   "nameNorm": "doener kebab",
+   "einheit": "g",
+   "kcal": 215,
+   "fett": 10.0,
+   "gesFett": 3.5,
+   "kh": 19.0,
+   "zucker": 2.5,
+   "ballaststoffe": 1.5,
+   "eiweiss": 12.0,
+   "salz": 1.3,
+   "beliebtheit": 7,
+   "portionen": [
+    {
+     "label": "100 g",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Stück",
+     "gramm": 400.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:kaffee-schwarz",
+   "name": "Kaffee schwarz",
+   "nameNorm": "kaffee schwarz",
+   "einheit": "ml",
+   "kcal": 2,
+   "fett": 0.0,
+   "gesFett": 0.0,
+   "kh": 0.3,
+   "zucker": 0.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 0.1,
+   "salz": 0.0,
+   "beliebtheit": 6,
+   "portionen": [
+    {
+     "label": "100 ml",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Tasse",
+     "gramm": 150.0,
+     "standard": true
+    },
+    {
+     "label": "Becher",
+     "gramm": 250.0,
+     "standard": false
+    }
+   ]
+  },
+  {
+   "id": "start:cappuccino",
+   "name": "Cappuccino",
+   "nameNorm": "cappuccino",
+   "einheit": "ml",
+   "kcal": 40,
+   "fett": 2.0,
+   "gesFett": 1.3,
+   "kh": 3.0,
+   "zucker": 3.0,
+   "ballaststoffe": 0.0,
+   "eiweiss": 2.2,
+   "salz": 0.1,
+   "beliebtheit": 5,
+   "portionen": [
+    {
+     "label": "100 ml",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Tasse",
+     "gramm": 200.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:orangensaft",
+   "name": "Orangensaft",
+   "nameNorm": "orangensaft",
+   "einheit": "ml",
+   "kcal": 43,
+   "fett": 0.2,
+   "gesFett": 0.0,
+   "kh": 8.8,
+   "zucker": 8.8,
+   "ballaststoffe": 0.2,
+   "eiweiss": 0.7,
+   "salz": 0.0,
+   "beliebtheit": 4,
+   "portionen": [
+    {
+     "label": "100 ml",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Glas",
+     "gramm": 200.0,
+     "standard": true
+    }
+   ]
+  },
+  {
+   "id": "start:cola",
+   "name": "Cola",
+   "nameNorm": "cola",
+   "einheit": "ml",
+   "kcal": 42,
+   "fett": 0.0,
+   "gesFett": 0.0,
+   "kh": 10.6,
+   "zucker": 10.6,
+   "ballaststoffe": 0.0,
+   "eiweiss": 0.0,
+   "salz": 0.0,
+   "beliebtheit": 3,
+   "portionen": [
+    {
+     "label": "100 ml",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Glas",
+     "gramm": 200.0,
+     "standard": true
+    },
+    {
+     "label": "Flasche",
+     "gramm": 500.0,
+     "standard": false
+    }
+   ]
+  },
+  {
+   "id": "start:bier-pils",
+   "name": "Bier (Pils)",
+   "nameNorm": "bier pils",
+   "einheit": "ml",
+   "kcal": 42,
+   "fett": 0.0,
+   "gesFett": 0.0,
+   "kh": 3.0,
+   "zucker": 0.2,
+   "ballaststoffe": 0.0,
+   "eiweiss": 0.5,
+   "salz": 0.0,
+   "beliebtheit": 2,
+   "portionen": [
+    {
+     "label": "100 ml",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Flasche",
+     "gramm": 330.0,
+     "standard": true
+    },
+    {
+     "label": "Glas",
+     "gramm": 500.0,
+     "standard": false
+    }
+   ]
+  },
+  {
+   "id": "start:rotwein-trocken",
+   "name": "Rotwein trocken",
+   "nameNorm": "rotwein trocken",
+   "einheit": "ml",
+   "kcal": 83,
+   "fett": 0.0,
+   "gesFett": 0.0,
+   "kh": 2.6,
+   "zucker": 0.6,
+   "ballaststoffe": 0.0,
+   "eiweiss": 0.1,
+   "salz": 0.0,
+   "beliebtheit": 1,
+   "portionen": [
+    {
+     "label": "100 ml",
+     "gramm": 100.0,
+     "standard": false
+    },
+    {
+     "label": "Glas",
+     "gramm": 200.0,
+     "standard": true
+    }
+   ]
+  }
+ ]
+}
