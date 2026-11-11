@@ -1,6 +1,6 @@
 {
-  "version": "0.7.0",
-  "versionCode": 8,
-  "apk": "Kalorien-Tracker-0.7.0.apk",
-  "notizen": "Neu in 0.7.0: Rund 100.000 Produkte aus Deutschland, Österreich und der Schweiz sind jetzt direkt in der App. Die Suche findet sie sofort, auch ohne Internet. Beim ersten Start nach dem Update dauert das Einrichten ein paar Sekunden."
+  "version": "0.8.0",
+  "versionCode": 9,
+  "apk": "Kalorien-Tracker-0.8.0.apk",
+  "notizen": "Neu in 0.8.0: Samsung Health! Im Profil unter „Samsung Health“ legst du fest, ob Gewicht und verbrannte Kalorien aus der App, aus Samsung Health oder aus beidem zählen."
 }
