@@ -31,6 +31,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun favorite(): FavoriteDao
     abstract fun water(): WaterDao
     abstract fun rezept(): RezeptDao
+    abstract fun sicherung(): SicherungDao
 
     companion object {
         fun baue(context: Context): AppDatabase =

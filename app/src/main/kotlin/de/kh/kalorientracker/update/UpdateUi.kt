@@ -22,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.kh.kalorientracker.R
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -33,6 +35,7 @@ fun UpdateDialog(aktualisierung: Aktualisierung, neu: NeueVersion, onSchliessen:
     var fehler by remember { mutableStateOf(false) }
     var datei by remember { mutableStateOf<File?>(null) }
     var erlaubnisFehlt by remember { mutableStateOf(false) }
+    var ladeJob by remember { mutableStateOf<Job?>(null) }
 
     fun installieren(f: File) {
         if (aktualisierung.darfInstallieren()) {
@@ -42,6 +45,12 @@ fun UpdateDialog(aktualisierung: Aktualisierung, neu: NeueVersion, onSchliessen:
             erlaubnisFehlt = true
             aktualisierung.oeffneErlaubnis()
         }
+    }
+
+    fun abbrechen() {
+        ladeJob?.cancel()
+        ladeJob = null
+        onSchliessen()
     }
 
     AlertDialog(
@@ -76,17 +85,26 @@ fun UpdateDialog(aktualisierung: Aktualisierung, neu: NeueVersion, onSchliessen:
                     if (vorhanden != null) { installieren(vorhanden); return@TextButton }
                     fehler = false
                     fortschritt = 0f
-                    scope.launch {
-                        runCatching { aktualisierung.lade(neu) { p -> fortschritt = p } }
-                            .onSuccess { f -> datei = f; fortschritt = 1f; installieren(f) }
-                            .onFailure { fehler = true; fortschritt = null }
+                    ladeJob = scope.launch {
+                        try {
+                            val f = aktualisierung.lade(neu) { p -> fortschritt = p }
+                            datei = f
+                            fortschritt = 1f
+                            installieren(f)
+                        } catch (e: CancellationException) {
+                            throw e
+                        } catch (e: Exception) {
+                            fehler = true
+                            fortschritt = null
+                        }
                     }
                 },
             ) { Text(stringResource(if (datei != null) R.string.update_installieren else R.string.update_jetzt)) }
         },
         dismissButton = {
-            TextButton(onClick = onSchliessen, enabled = fortschritt == null || datei != null) {
-                Text(stringResource(R.string.update_spaeter))
+            // Während des Downloads heißt der Knopf "Abbrechen" und stoppt ihn sofort
+            TextButton(onClick = ::abbrechen) {
+                Text(stringResource(if (fortschritt != null && datei == null) R.string.abbrechen else R.string.update_spaeter))
             }
         },
     )

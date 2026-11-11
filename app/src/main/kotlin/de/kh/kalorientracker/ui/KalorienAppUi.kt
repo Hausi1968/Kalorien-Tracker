@@ -60,18 +60,14 @@ import java.time.LocalDate
  */
 @Composable
 fun KalorienAppUi(container: AppContainer) {
-    LaunchedEffect(Unit) {
-        container.startdaten.fallsLeer()
-        container.katalog.fallsNoetig()
-        runCatching { container.healthConnect.abgleichen() }
-    }
+    LaunchedEffect(Unit) { container.starte() }
     val profilDa by remember { container.repo.profil.map { it != null } }
         .collectAsStateWithLifecycle(initialValue = null)
 
     when (profilDa) {
         null -> Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background))
         false -> RechnerScreen(container.repo, erstesMal = true, onFertig = {}, onZurueck = null)
-        true -> HauptNavigation(container.repo, container.aktualisierung, container.healthConnect)
+        true -> HauptNavigation(container.repo, container.aktualisierung, container.healthConnect, container.sicherung)
     }
 
     // Automatische Update-Prüfung schon ab dem ersten Bildschirm (höchstens etwa einmal am Tag)
@@ -105,7 +101,12 @@ object Routen {
 }
 
 @Composable
-private fun HauptNavigation(repo: KalorienRepository, aktualisierung: Aktualisierung, healthConnect: de.kh.kalorientracker.gesundheit.HealthConnect) {
+private fun HauptNavigation(
+    repo: KalorienRepository,
+    aktualisierung: Aktualisierung,
+    healthConnect: de.kh.kalorientracker.gesundheit.HealthConnect,
+    sicherung: de.kh.kalorientracker.data.Sicherung,
+) {
     val nav = rememberNavController()
     var neueVersion by remember { mutableStateOf<NeueVersion?>(null) }
     neueVersion?.let { UpdateDialog(aktualisierung, it, onSchliessen = { neueVersion = null }) }
@@ -171,6 +172,7 @@ private fun HauptNavigation(repo: KalorienRepository, aktualisierung: Aktualisie
                     onZielAendern = { nav.navigate(Routen.RECHNER) },
                     onNeueVersion = { neueVersion = it },
                     healthConnect = healthConnect,
+                    sicherung = sicherung,
                 )
             }
             composable(Routen.RECHNER) {

@@ -16,7 +16,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -39,6 +45,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,11 +75,13 @@ import de.kh.kalorientracker.data.KalorienRepository
 import de.kh.kalorientracker.ui.AktivitaetDialog
 import de.kh.kalorientracker.ui.BilanzGleichung
 import de.kh.kalorientracker.ui.Initiale
+import de.kh.kalorientracker.ui.Meldungen
 import de.kh.kalorientracker.ui.Karte
 import de.kh.kalorientracker.ui.MakroDreier
 import de.kh.kalorientracker.ui.Seite
 import de.kh.kalorientracker.ui.theme.AppTheme
 import de.kh.kalorientracker.ui.theme.Spacing
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.Instant
@@ -103,8 +112,20 @@ fun TagebuchScreen(repo: KalorienRepository, onSuche: (LocalDate, Int) -> Unit, 
     val gestern by remember(tag) { repo.tag(tag.minusDays(1)) }.collectAsStateWithLifecycle(initialValue = null)
     val textKopiert = stringResource(R.string.mahlzeit_kopiert)
 
+    val liste = rememberLazyListState()
     val textGeloescht = stringResource(R.string.tagebuch_geloescht)
     val textRueckgaengig = stringResource(R.string.rueckgaengig)
+
+    // Meldungen anderer Seiten (z. B. "Eingetragen" oder "gelöscht" aus der Detailansicht) mit Rückgängig
+    LaunchedEffect(Unit) {
+        Meldungen.offen.filterNotNull().collect { m ->
+            Meldungen.offen.value = null
+            val r = snackbar.showSnackbar(
+                m.text, if (m.rueckgaengig != null) textRueckgaengig else null, duration = SnackbarDuration.Short,
+            )
+            if (r == SnackbarResult.ActionPerformed) m.rueckgaengig?.invoke()
+        }
+    }
 
     Seite(
         titel = tagTitel(tag, heute),
@@ -118,12 +139,19 @@ fun TagebuchScreen(repo: KalorienRepository, onSuche: (LocalDate, Int) -> Unit, 
             }
         },
         fab = {
+            // Beim Herunterscrollen ausblenden, damit der Knopf keine Einträge (und deren Löschen-X) verdeckt
+            AnimatedVisibility(
+                visible = !liste.lastScrolledForward || !liste.canScrollForward,
+                enter = scaleIn() + fadeIn(),
+                exit = scaleOut() + fadeOut(),
+            ) {
             FloatingActionButton(
                 onClick = { onSuche(tag, 0) },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 shape = MaterialTheme.shapes.extraLarge,
             ) { Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.eintrag_hinzufuegen)) }
+            }
         },
     ) { pad ->
         if (aktivitaetOffen) {
@@ -136,6 +164,7 @@ fun TagebuchScreen(repo: KalorienRepository, onSuche: (LocalDate, Int) -> Unit, 
             )
         }
         LazyColumn(
+            state = liste,
             modifier = Modifier.padding(pad),
             contentPadding = PaddingValues(start = Spacing.l, end = Spacing.l, top = Spacing.s, bottom = 96.dp), // Platz für den Plus-Knopf
             verticalArrangement = Arrangement.spacedBy(Spacing.m),
@@ -164,8 +193,11 @@ fun TagebuchScreen(repo: KalorienRepository, onSuche: (LocalDate, Int) -> Unit, 
                         onVonGestern = {
                             val quelle = gestern?.imSlot(slot.id).orEmpty()
                             scope.launch {
-                                val n = repo.kopiereMahlzeit(quelle, tag, slot.id)
-                                snackbar.showSnackbar(textKopiert.format(n, slot.name))
+                                val kopien = repo.kopiereMahlzeit(quelle, tag, slot.id)
+                                val r = snackbar.showSnackbar(
+                                    textKopiert.format(kopien.size, slot.name), textRueckgaengig, duration = SnackbarDuration.Short,
+                                )
+                                if (r == SnackbarResult.ActionPerformed) kopien.forEach { repo.loesche(it) }
                             }
                         },
                         onLoeschen = { e ->

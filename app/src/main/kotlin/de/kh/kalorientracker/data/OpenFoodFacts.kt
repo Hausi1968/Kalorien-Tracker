@@ -24,11 +24,11 @@ data class OffTreffer(val food: FoodEntity, val portionen: List<ServingEntity>)
  * Barcode-Abfrage ist großzügig erlaubt, die Suche nur etwa 10-mal pro Minute.
  * Alles, was hier ankommt, speichert das Repository lokal, damit es nicht noch einmal abgefragt wird.
  */
-class OpenFoodFacts {
+open class OpenFoodFacts {
     private val json = Json { ignoreUnknownKeys = true; isLenient = true }
 
     /** null = Produkt unbekannt. Wirft IOException ohne Verbindung. */
-    suspend fun produkt(ean: String): OffTreffer? {
+    open suspend fun produkt(ean: String): OffTreffer? {
         val text = hole("$BASIS/api/v2/product/$ean.json?fields=$FELDER")
         val wurzel = json.parseToJsonElement(text).jsonObject
         if ((wurzel["status"] as? JsonPrimitive)?.intOrNull != 1) return null
@@ -37,7 +37,7 @@ class OpenFoodFacts {
     }
 
     /** Volltextsuche über search.openfoodfacts.org; fällt auf die alte Suche zurück, wenn die nicht antwortet. */
-    suspend fun suche(eingabe: String): List<OffTreffer> {
+    open suspend fun suche(eingabe: String): List<OffTreffer> {
         val q = URLEncoder.encode(eingabe.trim(), "UTF-8")
         val (text, schluessel) = try {
             hole("$SUCHE/search?q=$q&page_size=24&langs=de&fields=$FELDER") to "hits"

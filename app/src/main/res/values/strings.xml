@@ -65,6 +65,7 @@
     <string name="lebensmittel_unterzeile">%1$s · %2$s kcal / 100 %3$s</string>
     <string name="schnell_eintragen">%1$s mit Standardportion eintragen</string>
     <string name="eingetragen">Eingetragen: %1$s (%2$s kcal)</string>
+    <string name="eintrag_geaendert">%1$s geändert</string>
     <string name="nichts_gefunden">Zu „%1$s“ gibt es noch nichts</string>
     <string name="nichts_gefunden_text">Such online in Open Food Facts oder leg das Produkt selbst an. Es ist danach sofort in deiner Liste.</string>
     <string name="online_suchen">Online suchen</string>
@@ -205,6 +206,7 @@
     <string name="gewicht_gespeichert">Gewicht gespeichert, Tagesziel angepasst</string>
     <string name="gewicht_ziel_anpassung">Dein Tagesziel wird mit jedem neuen Gewicht automatisch neu berechnet.</string>
     <string name="gewicht_loeschen">Gewicht löschen</string>
+    <string name="gewicht_geloescht">%1$s kg gelöscht</string>
     <string name="fortschritt">Fortschritt</string>
     <string name="seit_start_weniger">%1$s kg weniger seit dem Start</string>
     <string name="seit_start_mehr">%1$s kg mehr seit dem Start</string>
@@ -218,7 +220,7 @@
     <string name="zu_wenig_daten">Noch zu wenig Daten. Trag ein paar Tage dein Gewicht ein.</string>
     <string name="kurve_ansage">Gewichtskurve mit %1$d Werten, von %2$s auf %3$s Kilogramm</string>
     <string name="eintraege">Einträge</string>
-    <string name="health_connect_folgt">Später kommt dein Gewicht auch automatisch aus Samsung Health.</string>
+    <string name="health_connect_folgt">Dein Gewicht kann auch automatisch aus Samsung Health kommen: Profil → Samsung Health.</string>
     <string name="diese_woche">Diese Woche</string>
     <string name="ziel_wert">Ziel %1$s</string>
     <string name="woche_schnitt">Durchschnitt %1$s kcal pro Tag, Ziel %2$s kcal</string>
@@ -320,4 +322,11 @@
     <string name="hc_datenschutz_titel">Gesundheitsdaten</string>
     <string name="hc_datenschutz_text">Der Kalorien-Tracker liest aus Health Connect nur dein Gewicht und deine aktiven Kalorien, und nur wenn du das im Profil eingeschaltet hast. Die Werte bleiben auf deinem Handy, werden nicht hochgeladen und nicht an andere weitergegeben. Die App schreibt nichts in Health Connect zurück. Die Erlaubnis kannst du jederzeit in Health Connect wieder entziehen.</string>
     <string name="schliessen">Schließen</string>
+    <string name="sicherung_titel">Sicherung</string>
+    <string name="sicherung_text">Deine Einträge, dein Gewicht, eigene Produkte und Rezepte werden automatisch mit deinem Google-Konto gesichert. Zusätzlich kannst du sie hier als Datei speichern, z. B. in Google Drive, und auf einem neuen Handy wieder einlesen.</string>
+    <string name="sicherung_speichern">Als Datei speichern</string>
+    <string name="sicherung_einlesen">Datei einlesen</string>
+    <string name="sicherung_gespeichert">Sicherung gespeichert</string>
+    <string name="sicherung_eingelesen">Sicherung eingelesen (%1$d Einträge)</string>
+    <string name="sicherung_fehler">Das hat nicht geklappt. Ist es eine Sicherungsdatei dieser App?</string>
 </resources>

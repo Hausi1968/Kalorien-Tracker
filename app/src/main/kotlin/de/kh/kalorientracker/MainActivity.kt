@@ -18,4 +18,10 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onStop() {
+        super.onStop()
+        // Eigene Daten für Androids automatische Sicherung bereitlegen
+        (application as KalorienApp).container.sichere()
+    }
 }

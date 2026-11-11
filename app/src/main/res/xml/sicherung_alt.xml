@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 9 bis 11: gleiche Regeln wie sicherung_regeln.xml -->
+<full-backup-content>
+    <exclude domain="database" path="kalorien.db" />
+    <exclude domain="database" path="kalorien.db-wal" />
+    <exclude domain="database" path="kalorien.db-shm" />
+    <exclude domain="database" path="kalorien.db-journal" />
+    <exclude domain="sharedpref" path="katalog.xml" />
+    <exclude domain="sharedpref" path="aktualisierung.xml" />
+</full-backup-content>

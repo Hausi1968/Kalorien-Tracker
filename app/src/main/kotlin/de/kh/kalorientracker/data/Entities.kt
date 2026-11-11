@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import de.kh.kalorientracker.core.Naehrwerte
+import kotlinx.serialization.Serializable
 
 /**
  * Durchstich: eine Datenbank für Katalog und Nutzerdaten.
@@ -13,6 +14,7 @@ import de.kh.kalorientracker.core.Naehrwerte
  */
 
 @Entity(tableName = "profile")
+@Serializable
 data class ProfileEntity(
     @PrimaryKey val id: Int = 1,
     val geschlecht: String,          // "MANN" | "FRAU"
@@ -37,6 +39,7 @@ data class ProfileEntity(
     tableName = "food",
     indices = [Index("nameNorm"), Index(value = ["barcode"], unique = true)],
 )
+@Serializable
 data class FoodEntity(
     @PrimaryKey val id: String,      // "start:apfel", später "off:<ean>", "usda:<id>", "user:<uuid>"
     val source: String,              // "start" | "off" | "usda" | "user"
@@ -65,6 +68,7 @@ val FoodEntity.naehrwerte100: Naehrwerte
     foreignKeys = [ForeignKey(entity = FoodEntity::class, parentColumns = ["id"], childColumns = ["foodId"], onDelete = ForeignKey.CASCADE)],
     indices = [Index("foodId")],
 )
+@Serializable
 data class ServingEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val foodId: String,
@@ -77,6 +81,7 @@ data class ServingEntity(
     tableName = "diary_entry",
     indices = [Index(value = ["day", "slotId", "eatenAt"]), Index(value = ["foodRef", "eatenAt"])],
 )
+@Serializable
 data class DiaryEntryEntity(
     @PrimaryKey val id: String,
     val day: String,                 // lokales Datum YYYY-MM-DD
@@ -105,6 +110,7 @@ val DiaryEntryEntity.naehrwerte: Naehrwerte
     get() = Naehrwerte(kcal, fett, gesFett, kh, zucker, ballaststoffe, eiweiss, salz)
 
 @Entity(tableName = "body_entry", indices = [Index(value = ["metric", "day"])])
+@Serializable
 data class BodyEntryEntity(
     @PrimaryKey val id: String,
     val day: String,
@@ -115,6 +121,7 @@ data class BodyEntryEntity(
 )
 
 @Entity(tableName = "activity_entry", indices = [Index("day")])
+@Serializable
 data class ActivityEntryEntity(
     @PrimaryKey val id: String,
     val day: String,
@@ -127,6 +134,7 @@ data class ActivityEntryEntity(
 
 /** Favorit: verweist auf ein Lebensmittel (seit Datenbank-Version 2). */
 @Entity(tableName = "favorite")
+@Serializable
 data class FavoriteEntity(
     @PrimaryKey val foodId: String,
     val createdAt: Long,
@@ -134,6 +142,7 @@ data class FavoriteEntity(
 
 /** Getrunkene Menge Wasser in ml (seit Datenbank-Version 2). */
 @Entity(tableName = "water_entry", indices = [Index("day")])
+@Serializable
 data class WaterEntryEntity(
     @PrimaryKey val id: String,
     val day: String,
@@ -146,6 +155,7 @@ data class WaterEntryEntity(
  * damit es in Suche, Favoriten und Tagebuch ohne Sonderweg funktioniert.
  */
 @Entity(tableName = "recipe_ingredient", indices = [Index("rezeptId")])
+@Serializable
 data class RezeptZutatEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val rezeptId: String,

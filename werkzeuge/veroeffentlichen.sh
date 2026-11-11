@@ -23,10 +23,12 @@ else
   (cd "$ARBEIT" && git checkout -q --orphan updates && git rm -rqf . )
 fi
 cp app/build/outputs/apk/release/app-release.apk "$ARBEIT/$APK"
-python3 - "$ARBEIT/latest.json" "$VERSION" "$CODE" "$APK" "$NOTIZEN" <<'PY'
-import json, sys
-p, version, code, apk, notizen = sys.argv[1:]
-json.dump({"version": version, "versionCode": int(code), "apk": apk, "notizen": notizen},
+python3 - "$ARBEIT/latest.json" "$VERSION" "$CODE" "$APK" "$NOTIZEN" "$ARBEIT/$APK" <<'PY'
+import hashlib, json, os, sys
+p, version, code, apk, notizen, datei = sys.argv[1:]
+sha = hashlib.sha256(open(datei, "rb").read()).hexdigest()
+json.dump({"version": version, "versionCode": int(code), "apk": apk, "notizen": notizen,
+           "sha256": sha, "groesse": os.path.getsize(datei)},
           open(p, "w"), ensure_ascii=False, indent=2)
 PY
 # Nur die letzten 3 APKs behalten, damit das Repository klein bleibt

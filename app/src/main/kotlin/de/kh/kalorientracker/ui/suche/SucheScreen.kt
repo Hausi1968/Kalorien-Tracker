@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 
 package de.kh.kalorientracker.ui.suche
 
@@ -37,7 +37,12 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -93,6 +98,8 @@ fun SucheScreen(
     var online by remember { mutableStateOf<List<FoodEntity>?>(null) }
     var laedt by remember { mutableStateOf(false) }
     var direktOffen by remember { mutableStateOf(false) }
+    var inArbeit by remember { mutableStateOf(emptySet<String>()) }
+    val tastatur = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(Unit) {
         if (eingabe.isEmpty()) fokus.requestFocus()
@@ -107,6 +114,7 @@ fun SucheScreen(
     }
 
     val textEingetragen = stringResource(R.string.eingetragen)
+    val textRueckgaengig = stringResource(R.string.rueckgaengig)
     val textOffline = stringResource(R.string.keine_verbindung)
     val textOfflineBarcode = stringResource(R.string.keine_verbindung_barcode)
     val textAnlegen = stringResource(R.string.produkt_anlegen)
@@ -140,15 +148,26 @@ fun SucheScreen(
         onFehler = { scope.launch { snackbar.showSnackbar(textScanFehler) } },
     )
 
-    /** Schnelleintrag mit Standardportion (bzw. zuletzt genutzter Portion). */
-    fun schnell(f: FoodEntity) = scope.launch {
-        val portionen = repo.portionen(f.id)
-        val letzte = repo.letztePortion(f.id)
-        val p = portionen.firstOrNull { it.label == letzte } ?: portionen.firstOrNull { it.isDefault } ?: portionen.firstOrNull()
-        val zeit = LocalDateTime.of(tag, LocalTime.now().withSecond(0).withNano(0))
-        val slotId = if (slot > 0) slot else Mahlzeiten.slotFuer(zeit.toLocalTime()).id
-        val e = repo.eintragen(f, p?.label ?: "100 ${f.unitBase}", p?.gramm ?: 100.0, 1.0, zeit, slotId)
-        snackbar.showSnackbar(textEingetragen.format(e.label, Format.kcal(e.kcal)))
+    /** Schnelleintrag mit Standardportion (bzw. zuletzt genutzter Portion), mit Rückgängig. */
+    fun schnell(f: FoodEntity) {
+        if (f.id in inArbeit) return // Doppeltipp auf dasselbe ⊕ ignorieren
+        inArbeit = inArbeit + f.id
+        scope.launch {
+            val e = try {
+                val portionen = repo.portionen(f.id)
+                val letzte = repo.letztePortion(f.id)
+                val p = portionen.firstOrNull { it.label == letzte } ?: portionen.firstOrNull { it.isDefault } ?: portionen.firstOrNull()
+                val zeit = LocalDateTime.of(tag, LocalTime.now().withSecond(0).withNano(0))
+                val slotId = if (slot > 0) slot else Mahlzeiten.slotFuer(zeit.toLocalTime()).id
+                repo.eintragen(f, p?.label ?: "100 ${f.unitBase}", p?.gramm ?: 100.0, 1.0, zeit, slotId)
+            } finally {
+                inArbeit = inArbeit - f.id
+            }
+            val r = snackbar.showSnackbar(
+                textEingetragen.format(e.label, Format.kcal(e.kcal)), textRueckgaengig, duration = SnackbarDuration.Short,
+            )
+            if (r == SnackbarResult.ActionPerformed) repo.loesche(e)
+        }
     }
 
     Seite(
@@ -178,7 +197,7 @@ fun SucheScreen(
                 },
             )
         }
-        Column(Modifier.padding(pad)) {
+        Column(Modifier.padding(pad).consumeWindowInsets(pad).imePadding()) {
             OutlinedTextField(
                 value = eingabe,
                 onValueChange = { eingabe = it },
@@ -198,6 +217,11 @@ fun SucheScreen(
                 singleLine = true,
                 shape = CircleShape,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                // Enter: Tastatur zu; ohne Treffer gleich online weitersuchen
+                keyboardActions = KeyboardActions(onSearch = {
+                    tastatur?.hide()
+                    if (eingabe.trim().length >= 2 && treffer?.isEmpty() == true && online == null) sucheOnline()
+                }),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.surface,
                     unfocusedContainerColor = MaterialTheme.colorScheme.surface,

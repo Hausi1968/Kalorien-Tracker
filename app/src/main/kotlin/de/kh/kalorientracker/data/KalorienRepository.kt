@@ -24,6 +24,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.UUID
 import androidx.room.withTransaction
+import androidx.sqlite.db.SimpleSQLiteQuery
 import kotlin.math.roundToInt
 
 /** Alles, was ein Tag im Tagebuch braucht. */
@@ -166,8 +167,16 @@ class KalorienRepository(
     suspend fun suche(eingabe: String): List<FoodEntity> {
         val woerter = SuchText.normalisiere(eingabe).split(' ').filter { it.isNotBlank() }
         val erstes = woerter.firstOrNull()?.takeIf { it.length >= 2 } ?: return emptyList()
-        val roh = db.food().suche("$erstes%", "% $erstes%")
-            .filter { f -> woerter.all { w -> f.nameNorm.contains(w) } }
+        // Erstes Wort am Wortanfang, alle weiteren irgendwo im Namen: direkt in der Datenbank filtern,
+        // damit das Limit erst nach dem Filter greift ("milch hafer" findet Hafermilch).
+        val weitere = woerter.drop(1).distinct()
+        val sql = buildString {
+            append("SELECT * FROM food WHERE (nameNorm LIKE ? OR nameNorm LIKE ?)")
+            weitere.forEach { _ -> append(" AND nameNorm LIKE ?") }
+            append(" ORDER BY (source IN ('start', 'user', 'rezept')) DESC, beliebtheit DESC, LENGTH(name) LIMIT 120")
+        }
+        val argumente: Array<Any?> = (listOf("$erstes%", "% $erstes%") + weitere.map { "%$it%" }).toTypedArray()
+        val roh = db.food().sucheRoh(SimpleSQLiteQuery(sql, argumente))
         val zuletzt = db.diary().zuletztGegessen(200).associate { it.foodRef to it.zuletzt }
         val favoriten = db.favorite().ladeIds().toSet()
         val jetzt = Instant.now()
@@ -220,9 +229,15 @@ class KalorienRepository(
             vorhanden == null || vorhanden.id == t.food.id
         }
         db.withTransaction {
-            db.food().loescheServings(neu.map { it.food.id })
-            db.food().fuegeEin(neu.map { it.food })
-            db.food().fuegeServingsEin(neu.flatMap { it.portionen })
+            // Vorhandene Produkte behalten ihre Beliebtheit und alle Portionen (auch selbst angelegte);
+            // es kommen nur Portionen dazu, die es unter diesem Namen noch nicht gibt.
+            val alt = db.food().ladeAlle(neu.map { it.food.id }).associateBy { it.id }
+            db.food().fuegeEin(neu.map { t -> t.food.copy(beliebtheit = maxOf(t.food.beliebtheit, alt[t.food.id]?.beliebtheit ?: 0)) })
+            val dazu = neu.flatMap { t ->
+                val vorhanden = if (t.food.id in alt) db.food().portionen(t.food.id).map { it.label }.toSet() else emptySet()
+                t.portionen.filter { it.label !in vorhanden }
+            }
+            db.food().fuegeServingsEin(dazu)
         }
         val nachId = treffer.associate { it.food.id to it.food }
         return treffer.mapNotNull { t -> nachId[t.food.id] }
@@ -290,7 +305,10 @@ class KalorienRepository(
             beliebtheit = db.food().lade(rid)?.beliebtheit ?: 0,
         )
         db.withTransaction {
-            db.food().loescheServings(listOf(rid))
+            // Nur die drei automatisch erzeugten Portionen ersetzen, eigene Portionen bleiben
+            val automatisch = db.food().portionen(rid)
+                .filter { it.label == "Ganzes Rezept" || it.label == "100 g" || it.label.startsWith("Portion (1/") }
+            db.food().loescheServingIds(automatisch.map { it.id })
             db.food().fuegeEin(listOf(food))
             db.food().fuegeServingsEin(
                 listOf(
@@ -364,6 +382,7 @@ class KalorienRepository(
     }
 
     suspend fun loescheGewicht(e: BodyEntryEntity) = db.body().loesche(e.id)
+    suspend fun gewichtWiederherstellen(e: BodyEntryEntity) = db.body().speichere(e)
 
     // ---------- Kalorien direkt + Aktivitäten ----------
 
@@ -451,19 +470,16 @@ class KalorienRepository(
 
     // ---------- Mahlzeit kopieren ----------
 
-    /** Kopiert alle Einträge einer Mahlzeit auf einen anderen Tag (gleiche Uhrzeit). Liefert die Anzahl. */
-    suspend fun kopiereMahlzeit(eintraege: List<DiaryEntryEntity>, nach: LocalDate, slotId: Int): Int {
+    /** Kopiert alle Einträge einer Mahlzeit auf einen anderen Tag (gleiche Uhrzeit). Liefert die Kopien (für Rückgängig). */
+    suspend fun kopiereMahlzeit(eintraege: List<DiaryEntryEntity>, nach: LocalDate, slotId: Int): List<DiaryEntryEntity> {
         val jetzt = System.currentTimeMillis()
-        eintraege.forEach { e ->
+        return eintraege.map { e ->
             val uhrzeit = Instant.ofEpochMilli(e.eatenAt).atZone(zone).toLocalTime()
-            db.diary().speichere(
-                e.copy(
-                    id = UUID.randomUUID().toString(), day = nach.toString(),
-                    eatenAt = nach.atTime(uhrzeit).atZone(zone).toInstant().toEpochMilli(),
-                    slotId = slotId, createdAt = jetzt, updatedAt = jetzt,
-                ),
-            )
+            e.copy(
+                id = UUID.randomUUID().toString(), day = nach.toString(),
+                eatenAt = nach.atTime(uhrzeit).atZone(zone).toInstant().toEpochMilli(),
+                slotId = slotId, createdAt = jetzt, updatedAt = jetzt,
+            ).also { db.diary().speichere(it) }
         }
-        return eintraege.size
     }
 }

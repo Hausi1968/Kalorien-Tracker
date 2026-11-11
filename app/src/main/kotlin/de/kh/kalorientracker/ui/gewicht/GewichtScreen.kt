@@ -22,6 +22,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -68,6 +70,8 @@ fun GewichtScreen(repo: KalorienRepository) {
     val verlauf by repo.gewichtVerlauf.collectAsStateWithLifecycle(initialValue = emptyList())
     var wert by remember { mutableStateOf<Double?>(null) }
     val snackbar = remember { SnackbarHostState() }
+    val textGewichtGeloescht = stringResource(R.string.gewicht_geloescht)
+    val textRueckgaengig = stringResource(R.string.rueckgaengig)
     val scope = rememberCoroutineScope()
     val textGespeichert = stringResource(R.string.gewicht_gespeichert)
 
@@ -163,7 +167,16 @@ fun GewichtScreen(repo: KalorienRepository) {
                         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                             Text(LocalDate.parse(e.day).format(DATUM), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
                             Text(stringResource(R.string.kg_wert, Format.dezimal(e.value)), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-                            IconButton(onClick = { scope.launch { repo.loescheGewicht(e) } }) {
+                            IconButton(onClick = {
+                                scope.launch {
+                                    repo.loescheGewicht(e)
+                                    val r = snackbar.showSnackbar(
+                                        textGewichtGeloescht.format(Format.dezimal(e.value)), textRueckgaengig,
+                                        duration = SnackbarDuration.Short,
+                                    )
+                                    if (r == SnackbarResult.ActionPerformed) repo.gewichtWiederherstellen(e)
+                                }
+                            }) {
                                 Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.gewicht_loeschen), tint = AppTheme.colors.textMuted)
                             }
                         }

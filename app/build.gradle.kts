@@ -21,8 +21,8 @@ android {
         applicationId = "de.kh.kalorientracker"
         minSdk = 28
         targetSdk = 35
-        versionCode = 9
-        versionName = "0.8.0"
+        versionCode = 10
+        versionName = "0.9.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations += listOf("de")
     }
@@ -43,6 +43,7 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Ohne eigenen Schlüssel nur zum Ausprobieren (Debug-Schlüssel); veröffentlicht wird so nie (siehe unten).
             signingConfig = signingConfigs.findByName("eigen") ?: signingConfigs.getByName("debug")
         }
     }
@@ -55,6 +56,14 @@ android {
 
     buildFeatures { compose = true; buildConfig = true }
     testOptions { unitTests.isIncludeAndroidResources = true }
+}
+
+// Eine Release-App mit fremdem Schlüssel ließe sich nicht als Update installieren: Bau dann abbrechen.
+gradle.taskGraph.whenReady {
+    val baut = allTasks.any { it.project == project && it.name.startsWith("package") && it.name.endsWith("Release") }
+    if (baut && !signierDatei.exists()) {
+        throw GradleException("keystore.properties fehlt: Release-App wird nicht mit dem Debug-Schlüssel gebaut.")
+    }
 }
 
 ksp {

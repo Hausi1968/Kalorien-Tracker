@@ -17,6 +17,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import de.kh.kalorientracker.ui.Meldungen
+import de.kh.kalorientracker.ui.Meldung
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AddCircle
@@ -121,7 +129,26 @@ fun DetailScreen(
     var slotId by remember { mutableIntStateOf(if (slotVorgabe > 0) slotVorgabe else Mahlzeiten.slotFuer(LocalTime.now()).id) }
     var neuePortionOffen by remember { mutableStateOf(false) }
     var neuLaden by remember { mutableIntStateOf(0) }
+    // Sperre gegen Doppeltipp: solange gespeichert wird, nimmt kein Knopf einen zweiten Tipp an
+    var speichert by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val textEingetragen = stringResource(R.string.eingetragen)
+    val textGeloescht = stringResource(R.string.tagebuch_geloescht)
+    val textGeaendert = stringResource(R.string.eintrag_geaendert)
+
+    /** Speichert einmal (Doppeltipp-sicher), meldet mit Rückgängig und geht zurück. */
+    fun einmal(aktion: suspend () -> Meldung) {
+        if (speichert) return
+        speichert = true
+        scope.launch {
+            Meldungen.zeige(aktion())
+            aufHauptThread(onEingetragen)
+        }
+    }
+    fun neuerEintrag(f: FoodEntity, label: String, gramm: Double, menge: Double, zp: LocalDateTime, slot: Int) = einmal {
+        val e = repo.eintragen(f, label, gramm, menge, zp, slot)
+        Meldung(textEingetragen.format(e.label, Format.kcal(e.kcal))) { repo.loesche(e) }
+    }
 
     LaunchedEffect(foodId, eintragId, neuLaden) {
         val e = eintragId?.let { repo.eintrag(it) }
@@ -153,6 +180,7 @@ fun DetailScreen(
     }
 
     val f = food
+    val fokus = LocalFocusManager.current
     val bearbeiten = eintragId != null
     val favoriten by repo.favoritIds.collectAsStateWithLifecycle(initialValue = emptySet())
     Seite(
@@ -176,7 +204,7 @@ fun DetailScreen(
             }
             val e = eintrag
             if (bearbeiten && e != null) {
-                IconButton(onClick = { scope.launch { repo.loesche(e); aufHauptThread(onEingetragen) } }) {
+                IconButton(onClick = { einmal { repo.loesche(e); Meldung(textGeloescht.format(e.label)) { repo.wiederherstellen(e) } } }) {
                     Icon(Icons.Rounded.Delete, contentDescription = stringResource(R.string.eintrag_loeschen, e.label))
                 }
             }
@@ -198,6 +226,8 @@ fun DetailScreen(
         Column(
             Modifier
                 .padding(pad)
+                .consumeWindowInsets(pad)
+                .imePadding() // Tastatur schiebt den Inhalt hoch, "Eintragen" bleibt erreichbar
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = Spacing.l, vertical = Spacing.s),
             verticalArrangement = Arrangement.spacedBy(Spacing.m),
@@ -217,8 +247,9 @@ fun DetailScreen(
                     label = { Text(stringResource(R.string.menge)) },
                     singleLine = true,
                     isError = menge == null,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.width(110.dp),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { fokus.clearFocus() }),
+                    modifier = Modifier.widthIn(min = 96.dp, max = 140.dp),
                 )
                 PortionsAuswahl(optionen.map { it.anzeige(f.unitBase) }, gewaehlt, Modifier.weight(1f)) { i ->
                     val vorherFrei = optionen[gewaehlt].frei
@@ -262,15 +293,18 @@ fun DetailScreen(
 
             PrimaerButton(
                 text = stringResource(if (bearbeiten) R.string.speichern else R.string.eintragen),
-                aktiv = menge != null,
+                aktiv = menge != null && !speichert,
                 onClick = {
                     val m = menge ?: return@PrimaerButton
-                    scope.launch {
-                        val zp = LocalDateTime.of(datum, zeit)
-                        val alt = eintrag
-                        if (alt != null) repo.aktualisiere(alt, f, option.label, option.gramm, m, zp, slotId)
-                        else repo.eintragen(f, option.label, option.gramm, m, zp, slotId)
-                        aufHauptThread(onEingetragen)
+                    val zp = LocalDateTime.of(datum, zeit)
+                    val alt = eintrag
+                    if (alt != null) {
+                        einmal {
+                            repo.aktualisiere(alt, f, option.label, option.gramm, m, zp, slotId)
+                            Meldung(textGeaendert.format(alt.label)) { repo.wiederherstellen(alt) }
+                        }
+                    } else {
+                        neuerEintrag(f, option.label, option.gramm, m, zp, slotId)
                     }
                 },
             )
@@ -289,11 +323,8 @@ fun DetailScreen(
                                 style = MaterialTheme.typography.bodySmall, color = AppTheme.colors.textMuted,
                             )
                         }
-                        IconButton(onClick = {
-                            scope.launch {
-                                repo.eintragen(f, o.label, o.gramm, 1.0, LocalDateTime.of(datum, zeit), slotId)
-                                aufHauptThread(onEingetragen)
-                            }
+                        IconButton(enabled = !speichert, onClick = {
+                            neuerEintrag(f, o.label, o.gramm, 1.0, LocalDateTime.of(datum, zeit), slotId)
                         }) {
                             Icon(
                                 Icons.Rounded.AddCircle,

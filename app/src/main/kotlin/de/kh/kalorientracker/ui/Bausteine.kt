@@ -133,8 +133,10 @@ fun MakroBalken(name: String, gramm: Double?, zielGramm: Int?, farbe: Color, mod
             color = AppTheme.colors.textMuted,
             maxLines = 1,
         )
+        // Ohne Tagesziel (z. B. in der Detailansicht) kein leerer Balken
+        if (zielGramm == null || zielGramm <= 0) return@Column
         Spacer(Modifier.height(Spacing.xs))
-        val anteil = if (zielGramm == null || zielGramm <= 0) 0f else ((gramm ?: 0.0) / zielGramm).toFloat()
+        val anteil = ((gramm ?: 0.0) / zielGramm).toFloat()
         LinearProgressIndicator(
             progress = { anteil.coerceIn(0f, 1f) },
             modifier = Modifier.fillMaxWidth().height(6.dp),

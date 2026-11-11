@@ -4,6 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.sqlite.db.SupportSQLiteQuery
+import androidx.room.RawQuery
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
@@ -24,7 +26,8 @@ interface FoodDao {
     @Query("SELECT COUNT(*) FROM food")
     suspend fun anzahl(): Int
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    /** Upsert statt REPLACE: REPLACE löscht die Zeile erst und nimmt dabei alle Portionen mit. */
+    @Upsert
     suspend fun fuegeEin(foods: List<FoodEntity>)
 
     @Insert
@@ -36,6 +39,13 @@ interface FoodDao {
 
     @Query("DELETE FROM food_serving WHERE foodId IN (:ids)")
     suspend fun loescheServings(ids: List<String>)
+
+    @Query("DELETE FROM food_serving WHERE id IN (:ids)")
+    suspend fun loescheServingIds(ids: List<Long>)
+
+    /** Suche mit beliebig vielen Wörtern: alle müssen im Namen vorkommen (siehe KalorienRepository.suche). */
+    @RawQuery
+    suspend fun sucheRoh(abfrage: SupportSQLiteQuery): List<FoodEntity>
 
     /** Suche über den normalisierten Namen; eigene Sachen und Grundnahrungsmittel zuerst, dann nach Beliebtheit. */
     @Query(
