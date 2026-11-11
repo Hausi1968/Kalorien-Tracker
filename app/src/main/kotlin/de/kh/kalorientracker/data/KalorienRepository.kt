@@ -299,6 +299,19 @@ class KalorienRepository(
         db.food().fuegeEin(listOf(f.copy(nameNorm = (f.nameNorm + " " + neu.joinToString(" ")).take(400))))
     }
 
+    /** Zusätzliche Suchbegriffe eines Produkts (alles, was nicht schon im Namen steht). */
+    fun suchbegriffe(f: FoodEntity): List<String> {
+        val imNamen = SuchText.normalisiere(f.name).split(' ').toSet()
+        return f.nameNorm.split(' ').filter { it.isNotBlank() && it !in imNamen }.distinct()
+    }
+
+    suspend fun entferneSuchbegriff(foodId: String, wort: String) {
+        val f = db.food().lade(foodId) ?: return
+        val woerter = f.nameNorm.split(' ').filter { it.isNotBlank() }
+        val imNamen = SuchText.normalisiere(f.name).split(' ').toSet()
+        db.food().fuegeEin(listOf(f.copy(nameNorm = woerter.filter { it != wort || it in imNamen }.joinToString(" "))))
+    }
+
     /** Produkt umbenennen. Es gilt dann als eigenes Produkt und wird von Open Food Facts nicht mehr überschrieben. */
     suspend fun benenneUm(foodId: String, name: String) {
         val f = db.food().lade(foodId) ?: return

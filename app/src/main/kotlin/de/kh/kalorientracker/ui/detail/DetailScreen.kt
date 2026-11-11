@@ -17,6 +17,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material3.InputChip
 import de.kh.kalorientracker.ui.Meldungen
 import de.kh.kalorientracker.ui.Meldung
 import androidx.compose.ui.platform.LocalFocusManager
@@ -130,6 +133,7 @@ fun DetailScreen(
     var slotId by remember { mutableIntStateOf(if (slotVorgabe > 0) slotVorgabe else Mahlzeiten.slotFuer(LocalTime.now()).id) }
     var neuePortionOffen by remember { mutableStateOf(false) }
     var umbenennenOffen by remember { mutableStateOf(false) }
+    var suchbegriffOffen by remember { mutableStateOf(false) }
     var neuLaden by remember { mutableIntStateOf(0) }
     // Sperre gegen Doppeltipp: solange gespeichert wird, nimmt kein Knopf einen zweiten Tipp an
     var speichert by remember { mutableStateOf(false) }
@@ -349,9 +353,37 @@ fun DetailScreen(
             // Nährwerte
             AbschnittTitel(stringResource(R.string.naehrwerte_titel, gramm?.let { Format.dezimal(it, 0) } ?: "–", f.unitBase))
             NaehrwertTabelle(werte, f.naehrwerte100, f.unitBase)
+
+            // Suchbegriffe: zusätzliche Wörter, unter denen die Suche dieses Produkt findet
+            AbschnittTitel(stringResource(R.string.suchbegriffe))
+            val begriffe = repo.suchbegriffe(f)
+            Text(
+                stringResource(if (begriffe.isEmpty()) R.string.suchbegriffe_leer else R.string.suchbegriffe_text),
+                style = MaterialTheme.typography.bodySmall, color = AppTheme.colors.textMuted,
+            )
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.s)) {
+                begriffe.forEach { w ->
+                    InputChip(
+                        selected = false,
+                        onClick = { scope.launch { repo.entferneSuchbegriff(f.id, w); neuLaden++ } },
+                        label = { Text(w) },
+                        trailingIcon = { Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.suchbegriff_entfernen, w), Modifier.size(18.dp)) },
+                    )
+                }
+            }
+            TextButton(onClick = { suchbegriffOffen = true }) { Text(stringResource(R.string.suchbegriff_hinzufuegen)) }
             Spacer(Modifier.height(Spacing.xl))
         }
 
+        if (suchbegriffOffen) {
+            SuchbegriffDialog(
+                onAbbrechen = { suchbegriffOffen = false },
+                onSpeichern = { wort ->
+                    suchbegriffOffen = false
+                    scope.launch { repo.lerneSuchbegriff(f.id, wort); neuLaden++ }
+                },
+            )
+        }
         if (umbenennenOffen) {
             UmbenennenDialog(
                 alt = f.name,
@@ -473,6 +505,26 @@ private fun Zeitpunkt(
             text = { TimePicker(state = state) },
         )
     }
+}
+
+@Composable
+private fun SuchbegriffDialog(onAbbrechen: () -> Unit, onSpeichern: (String) -> Unit) {
+    var text by remember { mutableStateOf("") }
+    AlertDialog(
+        onDismissRequest = onAbbrechen,
+        title = { Text(stringResource(R.string.suchbegriff_hinzufuegen)) },
+        text = {
+            OutlinedTextField(
+                value = text, onValueChange = { text = it.take(60) }, singleLine = true,
+                label = { Text(stringResource(R.string.suchbegriff)) },
+                placeholder = { Text(stringResource(R.string.suchbegriff_beispiel)) },
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = { onSpeichern(text.trim()) }, enabled = text.trim().length >= 2) { Text(stringResource(R.string.speichern)) }
+        },
+        dismissButton = { TextButton(onClick = onAbbrechen) { Text(stringResource(R.string.abbrechen)) } },
+    )
 }
 
 /** Name ändern, z. B. wenn Open Food Facts einen unpassenden Namen liefert. Der alte bleibt suchbar. */

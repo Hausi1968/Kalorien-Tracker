@@ -190,4 +190,17 @@ class DatenTest {
         repo.lerneSuchbegriff(online.first().id, "eiweissriegel")
         assertEquals(listOf("off:99"), repo.suche("eiweissriegel").map { it.id })
     }
+
+    @Test
+    fun suchbegriffeVonHandPflegen() = runBlocking {
+        val db = neueDb()
+        db.food().fuegeEin(listOf(food("off:55", "Skyr Vanille")))
+        val repo = KalorienRepository(db)
+        repo.lerneSuchbegriff("off:55", "Joghurt Frühstück")
+        assertEquals(listOf("joghurt", "fruehstueck"), repo.suchbegriffe(repo.lebensmittel("off:55")!!))
+        assertEquals(listOf("off:55"), repo.suche("joghurt").map { it.id })
+        repo.entferneSuchbegriff("off:55", "joghurt")
+        assertTrue(repo.suche("joghurt").isEmpty())
+        assertEquals(listOf("off:55"), repo.suche("skyr").map { it.id })
+    }
 }

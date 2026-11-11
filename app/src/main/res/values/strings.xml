@@ -361,4 +361,11 @@
     <string name="makro_kh_kurz">KH</string>
     <string name="umbenennen">Umbenennen</string>
     <string name="umbenennen_hinweis">Der neue Name gilt nur in deiner App. Unter dem alten Namen findest du das Produkt weiterhin.</string>
+    <string name="suchbegriffe">Suchbegriffe</string>
+    <string name="suchbegriffe_text">Unter diesen Wörtern findet die Suche das Produkt zusätzlich zum Namen. Antippen entfernt ein Wort.</string>
+    <string name="suchbegriffe_leer">Noch keine. Füge Wörter hinzu, unter denen du das Produkt suchst.</string>
+    <string name="suchbegriff">Suchbegriff</string>
+    <string name="suchbegriff_beispiel">z. B. Eiweißriegel</string>
+    <string name="suchbegriff_hinzufuegen">+ Suchbegriff hinzufügen</string>
+    <string name="suchbegriff_entfernen">%1$s entfernen</string>
 </resources>
