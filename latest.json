@@ -1,6 +1,6 @@
 {
-  "version": "0.4.0",
-  "versionCode": 4,
-  "apk": "Kalorien-Tracker-0.4.0.apk",
-  "notizen": "Neu in 0.4.0: Favoriten mit Stern (stehen in der Suche ganz oben), Wasser-Tracker im Tagebuch und Mahlzeit von gestern mit einem Tipp übernehmen."
+  "version": "0.5.0",
+  "versionCode": 5,
+  "apk": "Kalorien-Tracker-0.5.0.apk",
+  "notizen": "Neu in 0.5.0: Tagesziel selbst festlegen und Makro-Anteile einstellen (Profil → Ziel und Makros anpassen). Außerdem schönere Anzeige der Nährwerte auf schmalen Handys."
 }
