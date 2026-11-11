@@ -257,14 +257,33 @@ class KalorienRepository(private val db: AppDatabase, private val off: OpenFoodF
             ),
         )
         val p = db.profile().lade() ?: return
-        val neu = runCatching {
+        if (p.zielManuell) return
+        val neu = automatischesZiel(p, kg) ?: return
+        if (neu != p.tageszielKcal) db.profile().speichere(p.copy(tageszielKcal = neu, updatedAt = System.currentTimeMillis()))
+    }
+
+    private fun automatischesZiel(p: ProfileEntity, kg: Double): Int? = runCatching {
             Bedarfsrechner.berechne(
                 Koerperdaten(Geschlecht.valueOf(p.geschlecht), LocalDate.parse(p.geburtsdatum), p.groesseCm, kg, p.pal),
                 Zielvorgabe(Ziel.valueOf(p.ziel), p.zielgewichtKg, p.tempoKgProWoche),
                 LocalDate.now(zone),
             ).tagesziel
-        }.getOrNull() ?: return
-        if (neu != p.tageszielKcal) db.profile().speichere(p.copy(tageszielKcal = neu, updatedAt = System.currentTimeMillis()))
+        }.getOrNull()
+
+    /**
+     * Tagesziel und Makro-Anteile selbst festlegen. kcal = null heißt: wieder automatisch aus Profil und
+     * letztem Gewicht berechnen.
+     */
+    suspend fun setzeZielUndMakros(kcal: Int?, fett: Double, kh: Double, eiweiss: Double) {
+        val p = db.profile().lade() ?: return
+        val ziel = kcal ?: automatischesZiel(p, db.body().ladeLetztesGewicht()?.value ?: p.startGewichtKg) ?: p.tageszielKcal
+        db.profile().speichere(
+            p.copy(
+                tageszielKcal = ziel, zielManuell = kcal != null,
+                fettProzent = fett, khProzent = kh, eiweissProzent = eiweiss,
+                updatedAt = System.currentTimeMillis(),
+            ),
+        )
     }
 
     suspend fun loescheGewicht(e: BodyEntryEntity) = db.body().loesche(e.id)

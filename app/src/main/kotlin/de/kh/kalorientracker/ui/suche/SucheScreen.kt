@@ -95,9 +95,9 @@ fun SucheScreen(
     var direktOffen by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        if (eingabe.isEmpty()) fokus.requestFocus()
         zuletzt = repo.zuletztGegessen()
         favoriten = repo.favoriten()
-        if (eingabe.isEmpty()) fokus.requestFocus()
     }
     LaunchedEffect(eingabe) {
         online = null

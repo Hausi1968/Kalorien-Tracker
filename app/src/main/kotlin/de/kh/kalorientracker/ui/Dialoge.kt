@@ -104,3 +104,85 @@ fun AktivitaetDialog(onAbbrechen: () -> Unit, onSpeichern: (bezeichnung: String,
         dismissButton = { TextButton(onClick = onAbbrechen) { Text(stringResource(R.string.abbrechen)) } },
     )
 }
+
+/** Vorlagen für die Makro-Verteilung (Fett, Kohlenhydrate, Eiweiß in %). */
+private val MAKRO_VORLAGEN = listOf(
+    R.string.makro_vorlage_ausgewogen to Triple(30.0, 50.0, 20.0),
+    R.string.makro_vorlage_eiweiss to Triple(30.0, 40.0, 30.0),
+    R.string.makro_vorlage_wenig_kh to Triple(45.0, 25.0, 30.0),
+)
+
+/**
+ * Tagesziel selbst festlegen oder automatisch lassen, dazu die Makro-Anteile in Prozent.
+ * onSpeichern bekommt kcal = null, wenn das Ziel automatisch berechnet werden soll.
+ */
+@Composable
+fun ZielAnpassenDialog(
+    kcalBisher: Int,
+    manuellBisher: Boolean,
+    makroBisher: Triple<Double, Double, Double>,
+    onAbbrechen: () -> Unit,
+    onSpeichern: (kcal: Int?, fett: Double, kh: Double, eiweiss: Double) -> Unit,
+) {
+    var manuell by remember { mutableStateOf(manuellBisher) }
+    var kcal by remember { mutableStateOf(kcalBisher.toString()) }
+    var fett by remember { mutableStateOf(Format.dezimal(makroBisher.first)) }
+    var kh by remember { mutableStateOf(Format.dezimal(makroBisher.second)) }
+    var eiweiss by remember { mutableStateOf(Format.dezimal(makroBisher.third)) }
+    val k = zahl(kcal)?.takeIf { it in 800.0..6000.0 }
+    val f = zahl(fett); val c = zahl(kh); val e = zahl(eiweiss)
+    val summe = (f ?: 0.0) + (c ?: 0.0) + (e ?: 0.0)
+    val summeOk = f != null && c != null && e != null && kotlin.math.abs(summe - 100.0) < 0.5
+    AlertDialog(
+        onDismissRequest = onAbbrechen,
+        title = { Text(stringResource(R.string.ziel_anpassen)) },
+        text = {
+            Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(Spacing.s)) {
+                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                    Text(stringResource(R.string.ziel_selbst_festlegen), Modifier.weight(1f))
+                    androidx.compose.material3.Switch(checked = manuell, onCheckedChange = { manuell = it })
+                }
+                if (manuell) {
+                    ZahlFeld(kcal, { kcal = it }, stringResource(R.string.tagesziel_kcal), Modifier.fillMaxWidth())
+                    if (kcal.isNotBlank() && k == null) {
+                        Text(stringResource(R.string.tagesziel_grenzen), style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                            color = androidx.compose.material3.MaterialTheme.colorScheme.error)
+                    } else if (k != null && k < 1200) {
+                        Text(stringResource(R.string.tagesziel_niedrig), style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                            color = androidx.compose.material3.MaterialTheme.colorScheme.error)
+                    }
+                } else {
+                    Text(stringResource(R.string.ziel_automatisch_text), style = androidx.compose.material3.MaterialTheme.typography.bodySmall)
+                }
+                Text(stringResource(R.string.makro_verteilung), style = androidx.compose.material3.MaterialTheme.typography.titleSmall)
+                Row(horizontalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                    MAKRO_VORLAGEN.forEach { (name, werte) ->
+                        androidx.compose.material3.AssistChip(
+                            onClick = {
+                                fett = Format.dezimal(werte.first); kh = Format.dezimal(werte.second); eiweiss = Format.dezimal(werte.third)
+                            },
+                            label = { Text(stringResource(name), maxLines = 1) },
+                        )
+                    }
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(Spacing.s)) {
+                    ZahlFeld(fett, { fett = it }, stringResource(R.string.prozent_fett), Modifier.weight(1f))
+                    ZahlFeld(kh, { kh = it }, stringResource(R.string.prozent_kh), Modifier.weight(1f))
+                    ZahlFeld(eiweiss, { eiweiss = it }, stringResource(R.string.prozent_eiweiss), Modifier.weight(1f))
+                }
+                Text(
+                    stringResource(R.string.makro_summe, Format.dezimal(summe)),
+                    style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                    color = if (summeOk) androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
+                    else androidx.compose.material3.MaterialTheme.colorScheme.error,
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(enabled = summeOk && (!manuell || k != null), onClick = {
+                onSpeichern(if (manuell) k!!.toInt() else null, f!!, c!!, e!!)
+            }) { Text(stringResource(R.string.speichern)) }
+        },
+        dismissButton = { TextButton(onClick = onAbbrechen) { Text(stringResource(R.string.abbrechen)) } },
+    )
+}

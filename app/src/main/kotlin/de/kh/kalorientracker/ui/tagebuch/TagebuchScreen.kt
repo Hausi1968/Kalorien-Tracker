@@ -137,7 +137,7 @@ fun TagebuchScreen(repo: KalorienRepository, onSuche: (LocalDate, Int) -> Unit, 
         }
         LazyColumn(
             modifier = Modifier.padding(pad),
-            contentPadding = PaddingValues(horizontal = Spacing.l, vertical = Spacing.s),
+            contentPadding = PaddingValues(start = Spacing.l, end = Spacing.l, top = Spacing.s, bottom = 96.dp), // Platz für den Plus-Knopf
             verticalArrangement = Arrangement.spacedBy(Spacing.m),
         ) {
             item {
@@ -342,8 +342,10 @@ private fun EintragZeile(e: DiaryEntryEntity, onClick: () -> Unit, onLoeschen: (
                 ),
                 style = MaterialTheme.typography.bodySmall,
                 color = AppTheme.colors.textMuted,
+                maxLines = 2, overflow = TextOverflow.Ellipsis,
             )
         }
+        Spacer(Modifier.width(Spacing.s))
         Column(horizontalAlignment = Alignment.End) {
             Text(Format.kcal(e.kcal), style = MaterialTheme.typography.titleSmall)
             Text(zeit, style = MaterialTheme.typography.labelSmall, color = AppTheme.colors.textMuted)

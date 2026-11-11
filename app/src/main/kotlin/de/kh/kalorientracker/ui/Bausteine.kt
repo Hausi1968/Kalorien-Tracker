@@ -124,15 +124,15 @@ private fun Zeichen(z: String) {
 @Composable
 fun MakroBalken(name: String, gramm: Double?, zielGramm: Int?, farbe: Color, modifier: Modifier = Modifier) {
     Column(modifier) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(name, style = MaterialTheme.typography.labelMedium)
-            Text(
-                if (zielGramm != null) stringResource(R.string.makro_von_ziel, Format.gramm(gramm), zielGramm)
-                else stringResource(R.string.einheit_gramm, Format.gramm(gramm)),
-                style = MaterialTheme.typography.labelMedium,
-                color = AppTheme.colors.textMuted,
-            )
-        }
+        // Name und Wert untereinander, damit auch „Kohlenhydrate“ auf schmalen Handys nicht umbricht
+        Text(name, style = MaterialTheme.typography.labelMedium, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+        Text(
+            if (zielGramm != null) stringResource(R.string.makro_von_ziel, Format.gramm(gramm), zielGramm)
+            else stringResource(R.string.einheit_gramm, Format.gramm(gramm)),
+            style = MaterialTheme.typography.labelMedium,
+            color = AppTheme.colors.textMuted,
+            maxLines = 1,
+        )
         Spacer(Modifier.height(Spacing.xs))
         val anteil = if (zielGramm == null || zielGramm <= 0) 0f else ((gramm ?: 0.0) / zielGramm).toFloat()
         LinearProgressIndicator(
@@ -221,3 +221,7 @@ fun AbschnittTitel(text: String, modifier: Modifier = Modifier) {
         modifier = modifier.padding(vertical = Spacing.s).semantics { heading() },
     )
 }
+
+/** Navigation nach Datenbankarbeit sicher auf dem Haupt-Thread ausführen. */
+suspend fun aufHauptThread(aktion: () -> Unit) =
+    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main.immediate) { aktion() }

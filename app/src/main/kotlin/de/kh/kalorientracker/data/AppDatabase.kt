@@ -18,7 +18,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         FavoriteEntity::class,
         WaterEntryEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -33,10 +33,16 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         fun baue(context: Context): AppDatabase =
             Room.databaseBuilder(context, AppDatabase::class.java, "kalorien.db")
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .build()
 
         /** 0.3 → 0.4: Favoriten und Wasser. SQL wie in schemas/…/2.json, bestehende Daten bleiben. */
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `profile` ADD COLUMN `zielManuell` INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("CREATE TABLE IF NOT EXISTS `favorite` (`foodId` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, PRIMARY KEY(`foodId`))")

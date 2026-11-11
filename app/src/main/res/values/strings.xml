@@ -256,4 +256,21 @@
     <string name="wasser_zurueck">Letztes Glas zurücknehmen</string>
     <string name="von_gestern">Von gestern übernehmen (%1$d)</string>
     <string name="mahlzeit_kopiert">%1$d Einträge in %2$s übernommen</string>
+
+    <!-- 0.5: Ziel und Makros selbst festlegen -->
+    <string name="ziel_anpassen">Ziel und Makros anpassen</string>
+    <string name="ziel_selbst_festlegen">Tagesziel selbst festlegen</string>
+    <string name="tagesziel_kcal">Tagesziel in kcal</string>
+    <string name="tagesziel_grenzen">Bitte einen Wert zwischen 800 und 6000 kcal eingeben.</string>
+    <string name="tagesziel_niedrig">Unter 1200 kcal am Tag ist auf Dauer zu wenig. Sprich das am besten mit deiner Ärztin oder deinem Arzt ab.</string>
+    <string name="ziel_automatisch_text">Das Ziel wird aus deinen Angaben berechnet und passt sich an, wenn du ein neues Gewicht einträgst.</string>
+    <string name="ziel_manuell_hinweis">selbst festgelegt</string>
+    <string name="makro_vorlage_ausgewogen">Ausgewogen</string>
+    <string name="makro_vorlage_eiweiss">Eiweißreich</string>
+    <string name="makro_vorlage_wenig_kh">Wenig KH</string>
+    <string name="prozent_fett">Fett %</string>
+    <string name="prozent_kh">KH %</string>
+    <string name="prozent_eiweiss">Eiweiß %</string>
+    <string name="makro_summe">Zusammen %1$s %% (muss 100 %% ergeben)</string>
+    <string name="ziel_gespeichert">Ziel gespeichert</string>
 </resources>

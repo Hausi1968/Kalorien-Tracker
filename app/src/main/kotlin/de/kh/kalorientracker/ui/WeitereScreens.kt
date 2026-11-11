@@ -43,6 +43,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -182,6 +184,21 @@ fun ProfilScreen(
     val textAktuell = stringResource(R.string.update_keins)
     val textFehler = stringResource(R.string.update_pruefen_fehler)
     val gewicht by repo.letztesGewicht.collectAsStateWithLifecycle(initialValue = null)
+    var zielDialog by remember { mutableStateOf(false) }
+    val textGespeichert = stringResource(R.string.ziel_gespeichert)
+    p?.let { profil ->
+        if (zielDialog) {
+            ZielAnpassenDialog(
+                kcalBisher = profil.tageszielKcal, manuellBisher = profil.zielManuell,
+                makroBisher = Triple(profil.fettProzent, profil.khProzent, profil.eiweissProzent),
+                onAbbrechen = { zielDialog = false },
+                onSpeichern = { kcal, f, c, e ->
+                    zielDialog = false
+                    scope.launch { repo.setzeZielUndMakros(kcal, f, c, e); snackbar.showSnackbar(textGespeichert) }
+                },
+            )
+        }
+    }
     Seite(titel = stringResource(R.string.tab_profil), snackbar = snackbar) { pad ->
         Column(
             Modifier.padding(pad).verticalScroll(rememberScrollState()).padding(Spacing.l),
@@ -195,7 +212,10 @@ fun ProfilScreen(
                     style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.primary,
                 )
-                Text(stringResource(R.string.tagesziel_label), style = MaterialTheme.typography.labelMedium, color = AppTheme.colors.textMuted)
+                Text(
+                    stringResource(R.string.tagesziel_label) + if (profil.zielManuell) " · " + stringResource(R.string.ziel_manuell_hinweis) else "",
+                    style = MaterialTheme.typography.labelMedium, color = AppTheme.colors.textMuted,
+                )
                 ProfilZeile(stringResource(R.string.ziel), stringResource(
                     when (profil.ziel) {
                         "ABNEHMEN" -> R.string.ziel_abnehmen
@@ -227,6 +247,9 @@ fun ProfilScreen(
                 ProfilZeile(stringResource(R.string.aktivitaet), Format.dezimal(profil.pal))
             }
             PrimaerButton(stringResource(R.string.ziel_neu_berechnen), onZielAendern)
+            OutlinedButton(onClick = { zielDialog = true }, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.ziel_anpassen))
+            }
             HinweisBox(stringResource(R.string.rechner_datenschutz))
             Karte(titel = stringResource(R.string.app_version, aktualisierung.aktuelleVersion)) {
                 OutlinedButton(onClick = {

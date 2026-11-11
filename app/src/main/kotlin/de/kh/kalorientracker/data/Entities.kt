@@ -1,5 +1,6 @@
 package de.kh.kalorientracker.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -28,6 +29,8 @@ data class ProfileEntity(
     val khProzent: Double,
     val eiweissProzent: Double,
     val updatedAt: Long,
+    /** true = Tagesziel selbst festgelegt; wird dann bei neuem Gewicht nicht neu berechnet. */
+    @ColumnInfo(defaultValue = "0") val zielManuell: Boolean = false,
 )
 
 @Entity(

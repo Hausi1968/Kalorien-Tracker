@@ -2,6 +2,7 @@
 
 package de.kh.kalorientracker.ui.detail
 
+import de.kh.kalorientracker.ui.aufHauptThread
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -168,7 +169,7 @@ fun DetailScreen(
             }
             val e = eintrag
             if (bearbeiten && e != null) {
-                IconButton(onClick = { scope.launch { repo.loesche(e); onEingetragen() } }) {
+                IconButton(onClick = { scope.launch { repo.loesche(e); aufHauptThread(onEingetragen) } }) {
                     Icon(Icons.Rounded.Delete, contentDescription = stringResource(R.string.eintrag_loeschen, e.label))
                 }
             }
@@ -262,7 +263,7 @@ fun DetailScreen(
                         val alt = eintrag
                         if (alt != null) repo.aktualisiere(alt, f, option.label, option.gramm, m, zp, slotId)
                         else repo.eintragen(f, option.label, option.gramm, m, zp, slotId)
-                        onEingetragen()
+                        aufHauptThread(onEingetragen)
                     }
                 },
             )
@@ -284,7 +285,7 @@ fun DetailScreen(
                         IconButton(onClick = {
                             scope.launch {
                                 repo.eintragen(f, o.label, o.gramm, 1.0, LocalDateTime.of(datum, zeit), slotId)
-                                onEingetragen()
+                                aufHauptThread(onEingetragen)
                             }
                         }) {
                             Icon(

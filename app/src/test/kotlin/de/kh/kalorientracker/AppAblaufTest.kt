@@ -1,9 +1,7 @@
 package de.kh.kalorientracker
 
 import android.graphics.Bitmap
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
@@ -12,7 +10,6 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
@@ -39,7 +36,11 @@ class AppAblaufTest {
     private fun foto(name: String) {
         rule.waitForIdle()
         val ordner = File(System.getProperty("bildschirmfotos") ?: "build/bildschirmfotos").apply { mkdirs() }
-        val bild = rule.onRoot().captureToImage().asAndroidBitmap()
+        // captureToImage wartet unter Robolectric auf ein Neuzeichnen, das nie kommt; daher direkt zeichnen.
+        val bild = rule.runOnUiThread {
+            val v = rule.activity.window.decorView
+            Bitmap.createBitmap(v.width, v.height, Bitmap.Config.ARGB_8888).also { v.draw(android.graphics.Canvas(it)) }
+        }
         File(ordner, "$name.png").outputStream().use { bild.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 

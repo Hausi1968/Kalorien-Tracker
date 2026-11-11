@@ -2,6 +2,7 @@
 
 package de.kh.kalorientracker.ui.produkt
 
+import de.kh.kalorientracker.ui.aufHauptThread
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -162,9 +163,10 @@ fun ProduktScreen(
                     )
                     val portion = portionG?.let { portionName.trim() to it }
                     scope.launch {
-                        repo.legeProduktAn(f, portion)
-                            .onSuccess { onGespeichert(it.id) }
-                            .onFailure { snackbar.showSnackbar(textBarcodeVergeben.format(it.message ?: "")) }
+                        val r = repo.legeProduktAn(f, portion)
+                        val neu = r.getOrNull()
+                        if (neu != null) aufHauptThread { onGespeichert(neu.id) }
+                        else snackbar.showSnackbar(textBarcodeVergeben.format(r.exceptionOrNull()?.message ?: ""))
                     }
                 },
             )
