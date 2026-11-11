@@ -1,6 +1,8 @@
 {
-  "version": "0.8.0",
-  "versionCode": 9,
-  "apk": "Kalorien-Tracker-0.8.0.apk",
-  "notizen": "Neu in 0.8.0: Samsung Health! Im Profil unter „Samsung Health“ legst du fest, ob Gewicht und verbrannte Kalorien aus der App, aus Samsung Health oder aus beidem zählen."
+  "version": "0.9.0",
+  "versionCode": 10,
+  "apk": "Kalorien-Tracker-0.9.0.apk",
+  "notizen": "Neu in 0.9: Deine Daten werden jetzt sicher mitgesichert (auch als Datei im Profil). Rückgängig nach Eintragen und Löschen. Plus-Knopf und Tastatur verdecken nichts mehr. Suche mit mehreren Wörtern klappt. Sicherere Updates.",
+  "sha256": "5d568c8a498648054eb39749cd5d34bce4cb88a66154d2b598a0d46cf4b31e19",
+  "groesse": 7375797
 }
