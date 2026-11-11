@@ -1,6 +1,6 @@
 {
-  "version": "0.5.0",
-  "versionCode": 5,
-  "apk": "Kalorien-Tracker-0.5.0.apk",
-  "notizen": "Neu in 0.5.0: Tagesziel selbst festlegen und Makro-Anteile einstellen (Profil → Ziel und Makros anpassen). Außerdem schönere Anzeige der Nährwerte auf schmalen Handys."
+  "version": "0.6.0",
+  "versionCode": 6,
+  "apk": "Kalorien-Tracker-0.6.0.apk",
+  "notizen": "Neu in 0.6.0: Eigene Rezepte! Im Tab Rezepte legst du ein Gericht aus Zutaten an, die App rechnet die Kalorien pro Portion aus. Danach findest du das Rezept auch in der normalen Suche."
 }
