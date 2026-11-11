@@ -23,6 +23,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ChevronLeft
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -98,6 +99,9 @@ fun TagebuchScreen(repo: KalorienRepository, onSuche: (LocalDate, Int) -> Unit, 
     val aktuellerSlot = Mahlzeiten.slotFuer(LocalTime.now()).id
     val aktivitaeten by remember(tag) { repo.aktivitaeten(tag) }.collectAsStateWithLifecycle(initialValue = emptyList())
     var aktivitaetOffen by remember { mutableStateOf(false) }
+    val wasser by remember(tag) { repo.wasser(tag) }.collectAsStateWithLifecycle(initialValue = 0)
+    val gestern by remember(tag) { repo.tag(tag.minusDays(1)) }.collectAsStateWithLifecycle(initialValue = null)
+    val textKopiert = stringResource(R.string.mahlzeit_kopiert)
 
     val textGeloescht = stringResource(R.string.tagebuch_geloescht)
     val textRueckgaengig = stringResource(R.string.rueckgaengig)
@@ -156,6 +160,14 @@ fun TagebuchScreen(repo: KalorienRepository, onSuche: (LocalDate, Int) -> Unit, 
                         aktuell = tag == heute && slot.id == aktuellerSlot,
                         onPlus = { onSuche(tag, slot.id) },
                         onEintrag = onEintrag,
+                        gesternAnzahl = gestern?.imSlot(slot.id)?.size ?: 0,
+                        onVonGestern = {
+                            val quelle = gestern?.imSlot(slot.id).orEmpty()
+                            scope.launch {
+                                val n = repo.kopiereMahlzeit(quelle, tag, slot.id)
+                                snackbar.showSnackbar(textKopiert.format(n, slot.name))
+                            }
+                        },
                         onLoeschen = { e ->
                             scope.launch {
                                 repo.loesche(e)
@@ -165,6 +177,13 @@ fun TagebuchScreen(repo: KalorienRepository, onSuche: (LocalDate, Int) -> Unit, 
                                 if (r == SnackbarResult.ActionPerformed) repo.wiederherstellen(e)
                             }
                         },
+                    )
+                }
+                item {
+                    WasserKarte(
+                        ml = wasser,
+                        onPlus = { scope.launch { repo.trinke(250, tag) } },
+                        onMinus = { scope.launch { repo.wasserZurueck(tag) } },
                     )
                 }
                 item {
@@ -257,6 +276,8 @@ private fun MahlzeitKarte(
     aktuell: Boolean,
     onPlus: () -> Unit,
     onEintrag: (String) -> Unit,
+    gesternAnzahl: Int,
+    onVonGestern: () -> Unit,
     onLoeschen: (DiaryEntryEntity) -> Unit,
 ) {
     val kcal = eintraege.sumOf { it.kcal }
@@ -287,6 +308,11 @@ private fun MahlzeitKarte(
                     contentDescription = stringResource(R.string.zu_mahlzeit_hinzufuegen, slot.name),
                     tint = MaterialTheme.colorScheme.primary,
                 )
+            }
+        }
+        if (eintraege.isEmpty() && gesternAnzahl > 0) {
+            TextButton(onClick = onVonGestern, modifier = Modifier.padding(start = Spacing.s)) {
+                Text(stringResource(R.string.von_gestern, gesternAnzahl))
             }
         }
         if (eintraege.isNotEmpty()) {
@@ -328,6 +354,42 @@ private fun EintragZeile(e: DiaryEntryEntity, onClick: () -> Unit, onLoeschen: (
                 contentDescription = stringResource(R.string.eintrag_loeschen, e.label),
                 tint = AppTheme.colors.textMuted,
             )
+        }
+    }
+}
+
+/** Wasser: Summe, Fortschritt zu 2 Litern, +250 ml mit einem Tipp, letzten Eintrag zurücknehmen. */
+@Composable
+private fun WasserKarte(ml: Int, onPlus: () -> Unit, onMinus: () -> Unit) {
+    val ziel = 2000
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    ) {
+        Row(
+            Modifier.fillMaxWidth().padding(start = Spacing.l, end = Spacing.xs, top = Spacing.s, bottom = Spacing.s),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(R.string.wasser), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.wasser_stand, Format.dezimal(ml / 1000.0, 2), Format.dezimal(ziel / 1000.0, 1)),
+                    style = MaterialTheme.typography.labelSmall, color = AppTheme.colors.textMuted,
+                )
+                Spacer(Modifier.height(Spacing.xs))
+                androidx.compose.material3.LinearProgressIndicator(
+                    progress = { (ml.toFloat() / ziel).coerceIn(0f, 1f) },
+                    modifier = Modifier.fillMaxWidth().height(6.dp),
+                    color = AppTheme.colors.water, trackColor = AppTheme.colors.surface2, drawStopIndicator = {},
+                )
+            }
+            if (ml > 0) {
+                IconButton(onClick = onMinus) {
+                    Icon(Icons.Rounded.Remove, contentDescription = stringResource(R.string.wasser_zurueck), tint = AppTheme.colors.textMuted)
+                }
+            }
+            TextButton(onClick = onPlus) { Text(stringResource(R.string.wasser_plus)) }
         }
     }
 }

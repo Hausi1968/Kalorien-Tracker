@@ -246,4 +246,14 @@
     <string name="update_spaeter">Später</string>
     <string name="update_erlaubnis">Bitte erlaube der App einmalig, Updates zu installieren, und tippe dann auf „Installieren“.</string>
     <string name="update_fehler">Der Download hat nicht geklappt. Bitte später noch einmal versuchen.</string>
+    <!-- Version 0.4 -->
+    <string name="favoriten">Favoriten</string>
+    <string name="favorit_hinzufuegen">Als Favorit merken</string>
+    <string name="favorit_entfernen">Aus Favoriten entfernen</string>
+    <string name="wasser">Wasser</string>
+    <string name="wasser_stand">%1$s von %2$s Litern</string>
+    <string name="wasser_plus">+ 250 ml</string>
+    <string name="wasser_zurueck">Letztes Glas zurücknehmen</string>
+    <string name="von_gestern">Von gestern übernehmen (%1$d)</string>
+    <string name="mahlzeit_kopiert">%1$d Einträge in %2$s übernommen</string>
 </resources>

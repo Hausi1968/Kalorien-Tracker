@@ -24,6 +24,8 @@ import androidx.compose.material.icons.rounded.CalendarToday
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Restaurant
 import androidx.compose.material.icons.rounded.Schedule
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.StarBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.DatePicker
@@ -34,6 +36,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -56,6 +59,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.kh.kalorientracker.R
 import de.kh.kalorientracker.core.Format
 import de.kh.kalorientracker.core.Mahlzeiten
@@ -147,10 +151,21 @@ fun DetailScreen(
 
     val f = food
     val bearbeiten = eintragId != null
+    val favoriten by repo.favoritIds.collectAsStateWithLifecycle(initialValue = emptySet())
     Seite(
         titel = f?.name ?: "",
         onZurueck = onZurueck,
         aktionen = {
+            if (f != null) {
+                val istFavorit = f.id in favoriten
+                IconButton(onClick = { scope.launch { repo.setzeFavorit(f.id, !istFavorit) } }) {
+                    Icon(
+                        if (istFavorit) Icons.Rounded.Star else Icons.Rounded.StarBorder,
+                        contentDescription = stringResource(if (istFavorit) R.string.favorit_entfernen else R.string.favorit_hinzufuegen),
+                        tint = if (istFavorit) AppTheme.colors.highlight else LocalContentColor.current,
+                    )
+                }
+            }
             val e = eintrag
             if (bearbeiten && e != null) {
                 IconButton(onClick = { scope.launch { repo.loesche(e); onEingetragen() } }) {

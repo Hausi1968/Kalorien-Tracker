@@ -160,6 +160,7 @@ class KalorienRepository(private val db: AppDatabase, private val off: OpenFoodF
         val roh = db.food().suche("$erstes%", "% $erstes%")
             .filter { f -> woerter.all { w -> f.nameNorm.contains(w) } }
         val zuletzt = db.diary().zuletztGegessen(200).associate { it.foodRef to it.zuletzt }
+        val favoriten = db.favorite().ladeIds().toSet()
         val jetzt = Instant.now()
         val kandidaten = roh.map { f ->
             Ranking.Kandidat(
@@ -168,7 +169,7 @@ class KalorienRepository(private val db: AppDatabase, private val off: OpenFoodF
                 istGrundnahrungsmittel = f.brand == null,
                 beliebtheit = f.beliebtheit,
                 zuletztGegessenVorTagen = zuletzt[f.id]?.let { Duration.between(Instant.ofEpochMilli(it), jetzt).toDays().toInt() },
-                istFavorit = false,
+                istFavorit = f.id in favoriten,
             )
         }
         val nachId = roh.associateBy { it.id }
@@ -302,4 +303,43 @@ class KalorienRepository(private val db: AppDatabase, private val off: OpenFoodF
 
     suspend fun loescheAktivitaet(e: ActivityEntryEntity) = db.activity().loesche(e.id)
     suspend fun wiederherstellenAktivitaet(e: ActivityEntryEntity) = db.activity().speichere(e)
+
+    // ---------- Favoriten ----------
+    val favoritIds: Flow<Set<String>> = db.favorite().ids().map { it.toSet() }
+    suspend fun favoriten(): List<FoodEntity> = db.favorite().lebensmittel()
+
+    suspend fun setzeFavorit(foodId: String, favorit: Boolean) {
+        if (favorit) db.favorite().speichere(FavoriteEntity(foodId, System.currentTimeMillis()))
+        else db.favorite().loesche(foodId)
+    }
+
+    // ---------- Wasser ----------
+    fun wasser(tag: LocalDate): Flow<Int> = db.water().summeAm(tag.toString())
+
+    suspend fun trinke(ml: Int, tag: LocalDate) = db.water().speichere(
+        WaterEntryEntity(UUID.randomUUID().toString(), tag.toString(), ml, System.currentTimeMillis()),
+    )
+
+    /** Letzten Wasser-Eintrag des Tages zurücknehmen. */
+    suspend fun wasserZurueck(tag: LocalDate) {
+        db.water().letzterAm(tag.toString())?.let { db.water().loesche(it.id) }
+    }
+
+    // ---------- Mahlzeit kopieren ----------
+
+    /** Kopiert alle Einträge einer Mahlzeit auf einen anderen Tag (gleiche Uhrzeit). Liefert die Anzahl. */
+    suspend fun kopiereMahlzeit(eintraege: List<DiaryEntryEntity>, nach: LocalDate, slotId: Int): Int {
+        val jetzt = System.currentTimeMillis()
+        eintraege.forEach { e ->
+            val uhrzeit = Instant.ofEpochMilli(e.eatenAt).atZone(zone).toLocalTime()
+            db.diary().speichere(
+                e.copy(
+                    id = UUID.randomUUID().toString(), day = nach.toString(),
+                    eatenAt = nach.atTime(uhrzeit).atZone(zone).toInstant().toEpochMilli(),
+                    slotId = slotId, createdAt = jetzt, updatedAt = jetzt,
+                ),
+            )
+        }
+        return eintraege.size
+    }
 }

@@ -21,8 +21,8 @@ android {
         applicationId = "de.kh.kalorientracker"
         minSdk = 28
         targetSdk = 35
-        versionCode = 3
-        versionName = "0.3.0"
+        versionCode = 4
+        versionName = "0.4.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations += listOf("de")
     }
@@ -57,6 +57,8 @@ android {
 
 ksp {
     arg("room.generateKotlin", "true")
+    // Datenbank-Schema je Version festhalten, damit Updates die Daten sicher übernehmen (Migrationen)
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {

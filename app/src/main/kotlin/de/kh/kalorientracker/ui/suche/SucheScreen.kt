@@ -85,6 +85,7 @@ fun SucheScreen(
     var eingabe by rememberSaveable { mutableStateOf("") }
     var treffer by remember { mutableStateOf<List<FoodEntity>?>(null) }
     var zuletzt by remember { mutableStateOf<List<FoodEntity>>(emptyList()) }
+    var favoriten by remember { mutableStateOf<List<FoodEntity>>(emptyList()) }
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val fokus = remember { FocusRequester() }
@@ -95,6 +96,7 @@ fun SucheScreen(
 
     LaunchedEffect(Unit) {
         zuletzt = repo.zuletztGegessen()
+        favoriten = repo.favoriten()
         if (eingabe.isEmpty()) fokus.requestFocus()
     }
     LaunchedEffect(eingabe) {
@@ -212,8 +214,8 @@ fun SucheScreen(
                 onl != null -> TrefferListe(stringResource(R.string.online_treffer), onl, onLebensmittel, { schnell(it) }) {
                     WeiterZeile(stringResource(R.string.nicht_dabei_anlegen), anlegen)
                 }
-                liste == null && zuletzt.isEmpty() -> LeerHinweis(stringResource(R.string.suche_hinweis_start))
-                liste == null -> TrefferListe(stringResource(R.string.zuletzt_gegessen), zuletzt, onLebensmittel, { schnell(it) }) {}
+                liste == null && zuletzt.isEmpty() && favoriten.isEmpty() -> LeerHinweis(stringResource(R.string.suche_hinweis_start))
+                liste == null -> StartListen(favoriten, zuletzt, onLebensmittel) { schnell(it) }
                 liste.isEmpty() -> NichtsGefunden(eingabe, online = false, onOnline = { sucheOnline() }, onAnlegen = anlegen)
                 else -> TrefferListe(null, liste, onLebensmittel, { schnell(it) }) {
                     WeiterZeile(stringResource(R.string.nicht_dabei_online), { sucheOnline() })
@@ -238,6 +240,34 @@ private fun TrefferListe(
             HorizontalDivider(color = AppTheme.colors.border, modifier = Modifier.padding(start = 72.dp))
         }
         item { fuss() }
+    }
+}
+
+/** Ohne Suchtext: erst Favoriten, dann zuletzt gegessen (ohne Doppelte). */
+@Composable
+private fun StartListen(
+    favoriten: List<FoodEntity>,
+    zuletzt: List<FoodEntity>,
+    onLebensmittel: (String) -> Unit,
+    onSchnell: (FoodEntity) -> Unit,
+) {
+    val favIds = favoriten.map { it.id }.toSet()
+    val rest = zuletzt.filterNot { it.id in favIds }
+    LazyColumn(contentPadding = PaddingValues(bottom = Spacing.xl)) {
+        if (favoriten.isNotEmpty()) {
+            item { AbschnittTitel(stringResource(R.string.favoriten), Modifier.padding(horizontal = Spacing.l)) }
+            items(favoriten, key = { "f" + it.id }) { f ->
+                LebensmittelZeile(f, onClick = { onLebensmittel(f.id) }, onSchnell = { onSchnell(f) })
+                HorizontalDivider(color = AppTheme.colors.border, modifier = Modifier.padding(start = 72.dp))
+            }
+        }
+        if (rest.isNotEmpty()) {
+            item { AbschnittTitel(stringResource(R.string.zuletzt_gegessen), Modifier.padding(horizontal = Spacing.l)) }
+            items(rest, key = { "z" + it.id }) { f ->
+                LebensmittelZeile(f, onClick = { onLebensmittel(f.id) }, onSchnell = { onSchnell(f) })
+                HorizontalDivider(color = AppTheme.colors.border, modifier = Modifier.padding(start = 72.dp))
+            }
+        }
     }
 }
 

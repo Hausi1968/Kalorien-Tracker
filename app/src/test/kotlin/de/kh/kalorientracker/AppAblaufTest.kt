@@ -32,7 +32,7 @@ import java.io.File
 @OptIn(ExperimentalTestApi::class)
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [34], qualifiers = "de-rDE-w411dp-h891dp-xxhdpi")
+@Config(sdk = [35], qualifiers = "de-rDE-w411dp-h891dp-xxhdpi")
 class AppAblaufTest {
     @get:Rule val rule = createAndroidComposeRule<MainActivity>()
 

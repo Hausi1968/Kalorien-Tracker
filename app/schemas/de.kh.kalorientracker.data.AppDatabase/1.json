@@ -1,0 +1,602 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "6e20258fd5cd0eec5b78496f059ec693",
+    "entities": [
+      {
+        "tableName": "profile",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `geschlecht` TEXT NOT NULL, `geburtsdatum` TEXT NOT NULL, `groesseCm` REAL NOT NULL, `pal` REAL NOT NULL, `ziel` TEXT NOT NULL, `zielgewichtKg` REAL, `tempoKgProWoche` REAL NOT NULL, `startGewichtKg` REAL NOT NULL, `startDatum` TEXT NOT NULL, `tageszielKcal` INTEGER NOT NULL, `fettProzent` REAL NOT NULL, `khProzent` REAL NOT NULL, `eiweissProzent` REAL NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "geschlecht",
+            "columnName": "geschlecht",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "geburtsdatum",
+            "columnName": "geburtsdatum",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "groesseCm",
+            "columnName": "groesseCm",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pal",
+            "columnName": "pal",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ziel",
+            "columnName": "ziel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zielgewichtKg",
+            "columnName": "zielgewichtKg",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tempoKgProWoche",
+            "columnName": "tempoKgProWoche",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startGewichtKg",
+            "columnName": "startGewichtKg",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startDatum",
+            "columnName": "startDatum",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tageszielKcal",
+            "columnName": "tageszielKcal",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fettProzent",
+            "columnName": "fettProzent",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "khProzent",
+            "columnName": "khProzent",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eiweissProzent",
+            "columnName": "eiweissProzent",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "food",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `source` TEXT NOT NULL, `barcode` TEXT, `name` TEXT NOT NULL, `nameNorm` TEXT NOT NULL, `brand` TEXT, `unitBase` TEXT NOT NULL, `kcal` REAL NOT NULL, `fett` REAL, `gesFett` REAL, `kh` REAL, `zucker` REAL, `ballaststoffe` REAL, `eiweiss` REAL, `salz` REAL, `beliebtheit` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "barcode",
+            "columnName": "barcode",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameNorm",
+            "columnName": "nameNorm",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "brand",
+            "columnName": "brand",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "unitBase",
+            "columnName": "unitBase",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kcal",
+            "columnName": "kcal",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fett",
+            "columnName": "fett",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "gesFett",
+            "columnName": "gesFett",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "kh",
+            "columnName": "kh",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "zucker",
+            "columnName": "zucker",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "ballaststoffe",
+            "columnName": "ballaststoffe",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "eiweiss",
+            "columnName": "eiweiss",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "salz",
+            "columnName": "salz",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "beliebtheit",
+            "columnName": "beliebtheit",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_food_nameNorm",
+            "unique": false,
+            "columnNames": [
+              "nameNorm"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_food_nameNorm` ON `${TABLE_NAME}` (`nameNorm`)"
+          },
+          {
+            "name": "index_food_barcode",
+            "unique": true,
+            "columnNames": [
+              "barcode"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_food_barcode` ON `${TABLE_NAME}` (`barcode`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "food_serving",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `foodId` TEXT NOT NULL, `label` TEXT NOT NULL, `gramm` REAL NOT NULL, `isDefault` INTEGER NOT NULL, FOREIGN KEY(`foodId`) REFERENCES `food`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "foodId",
+            "columnName": "foodId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "label",
+            "columnName": "label",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gramm",
+            "columnName": "gramm",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDefault",
+            "columnName": "isDefault",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_food_serving_foodId",
+            "unique": false,
+            "columnNames": [
+              "foodId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_food_serving_foodId` ON `${TABLE_NAME}` (`foodId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "food",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "foodId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "diary_entry",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `day` TEXT NOT NULL, `eatenAt` INTEGER NOT NULL, `slotId` INTEGER NOT NULL, `kind` TEXT NOT NULL, `foodRef` TEXT, `label` TEXT NOT NULL, `brand` TEXT, `servingLabel` TEXT, `quantity` REAL NOT NULL, `gramm` REAL, `kcal` REAL NOT NULL, `fett` REAL, `gesFett` REAL, `kh` REAL, `zucker` REAL, `ballaststoffe` REAL, `eiweiss` REAL, `salz` REAL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "day",
+            "columnName": "day",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eatenAt",
+            "columnName": "eatenAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "slotId",
+            "columnName": "slotId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kind",
+            "columnName": "kind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "foodRef",
+            "columnName": "foodRef",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "label",
+            "columnName": "label",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "brand",
+            "columnName": "brand",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "servingLabel",
+            "columnName": "servingLabel",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "quantity",
+            "columnName": "quantity",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gramm",
+            "columnName": "gramm",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "kcal",
+            "columnName": "kcal",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fett",
+            "columnName": "fett",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "gesFett",
+            "columnName": "gesFett",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "kh",
+            "columnName": "kh",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "zucker",
+            "columnName": "zucker",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "ballaststoffe",
+            "columnName": "ballaststoffe",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "eiweiss",
+            "columnName": "eiweiss",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "salz",
+            "columnName": "salz",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_diary_entry_day_slotId_eatenAt",
+            "unique": false,
+            "columnNames": [
+              "day",
+              "slotId",
+              "eatenAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_diary_entry_day_slotId_eatenAt` ON `${TABLE_NAME}` (`day`, `slotId`, `eatenAt`)"
+          },
+          {
+            "name": "index_diary_entry_foodRef_eatenAt",
+            "unique": false,
+            "columnNames": [
+              "foodRef",
+              "eatenAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_diary_entry_foodRef_eatenAt` ON `${TABLE_NAME}` (`foodRef`, `eatenAt`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "body_entry",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `day` TEXT NOT NULL, `measuredAt` INTEGER NOT NULL, `metric` TEXT NOT NULL, `value` REAL NOT NULL, `source` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "day",
+            "columnName": "day",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "measuredAt",
+            "columnName": "measuredAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "metric",
+            "columnName": "metric",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_body_entry_metric_day",
+            "unique": false,
+            "columnNames": [
+              "metric",
+              "day"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_body_entry_metric_day` ON `${TABLE_NAME}` (`metric`, `day`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "activity_entry",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `day` TEXT NOT NULL, `startedAt` INTEGER NOT NULL, `label` TEXT NOT NULL, `minutes` REAL, `kcal` REAL NOT NULL, `source` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "day",
+            "columnName": "day",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startedAt",
+            "columnName": "startedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "label",
+            "columnName": "label",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minutes",
+            "columnName": "minutes",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "kcal",
+            "columnName": "kcal",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_activity_entry_day",
+            "unique": false,
+            "columnNames": [
+              "day"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_activity_entry_day` ON `${TABLE_NAME}` (`day`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6e20258fd5cd0eec5b78496f059ec693')"
+    ]
+  }
+}

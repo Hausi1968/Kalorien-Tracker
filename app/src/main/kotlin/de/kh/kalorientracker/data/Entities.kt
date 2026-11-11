@@ -121,3 +121,19 @@ data class ActivityEntryEntity(
     val kcal: Double,
     val source: String = "manuell",
 )
+
+/** Favorit: verweist auf ein Lebensmittel (seit Datenbank-Version 2). */
+@Entity(tableName = "favorite")
+data class FavoriteEntity(
+    @PrimaryKey val foodId: String,
+    val createdAt: Long,
+)
+
+/** Getrunkene Menge Wasser in ml (seit Datenbank-Version 2). */
+@Entity(tableName = "water_entry", indices = [Index("day")])
+data class WaterEntryEntity(
+    @PrimaryKey val id: String,
+    val day: String,
+    val ml: Int,
+    val createdAt: Long,
+)

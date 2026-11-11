@@ -122,3 +122,36 @@ interface ActivityDao {
     @Query("DELETE FROM activity_entry WHERE id = :id")
     suspend fun loesche(id: String)
 }
+
+@Dao
+interface FavoriteDao {
+    @Query("SELECT foodId FROM favorite")
+    fun ids(): Flow<List<String>>
+
+    @Query("SELECT foodId FROM favorite")
+    suspend fun ladeIds(): List<String>
+
+    @Query("SELECT food.* FROM favorite JOIN food ON food.id = favorite.foodId ORDER BY food.name")
+    suspend fun lebensmittel(): List<FoodEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun speichere(f: FavoriteEntity)
+
+    @Query("DELETE FROM favorite WHERE foodId = :foodId")
+    suspend fun loesche(foodId: String)
+}
+
+@Dao
+interface WaterDao {
+    @Query("SELECT COALESCE(SUM(ml), 0) FROM water_entry WHERE day = :day")
+    fun summeAm(day: String): Flow<Int>
+
+    @Query("SELECT * FROM water_entry WHERE day = :day ORDER BY createdAt DESC LIMIT 1")
+    suspend fun letzterAm(day: String): WaterEntryEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun speichere(w: WaterEntryEntity)
+
+    @Query("DELETE FROM water_entry WHERE id = :id")
+    suspend fun loesche(id: String)
+}
