@@ -171,11 +171,13 @@ class KalorienRepository(
         // damit das Limit erst nach dem Filter greift ("milch hafer" findet Hafermilch).
         val weitere = woerter.drop(1).distinct()
         val sql = buildString {
-            append("SELECT * FROM food WHERE (nameNorm LIKE ? OR nameNorm LIKE ?)")
-            weitere.forEach { _ -> append(" AND nameNorm LIKE ?") }
+            // Auch die Marke zählt: "exquisa" findet die Produkte dieser Marke
+            append("SELECT * FROM food WHERE (nameNorm LIKE ? OR nameNorm LIKE ? OR LOWER(brand) LIKE ?)")
+            weitere.forEach { _ -> append(" AND (nameNorm LIKE ? OR LOWER(brand) LIKE ?)") }
             append(" ORDER BY (source IN ('start', 'user', 'rezept')) DESC, beliebtheit DESC, LENGTH(name) LIMIT 120")
         }
-        val argumente: Array<Any?> = (listOf("$erstes%", "% $erstes%") + weitere.map { "%$it%" }).toTypedArray()
+        val argumente: Array<Any?> =
+            (listOf("$erstes%", "% $erstes%", "$erstes%") + weitere.flatMap { listOf("%$it%", "%$it%") }).toTypedArray()
         val roh = db.food().sucheRoh(SimpleSQLiteQuery(sql, argumente))
         val zuletzt = db.diary().zuletztGegessen(200).associate { it.foodRef to it.zuletzt }
         val favoriten = db.favorite().ladeIds().toSet()
@@ -222,27 +224,88 @@ class KalorienRepository(
         return speichere(treffer)
     }
 
-    /** Speichert OFF-Treffer; Produkte, deren Barcode schon als eigenes Produkt existiert, bleiben unangetastet. */
+    /**
+     * Speichert OFF-Treffer. Unangetastet bleiben: Produkte, deren Barcode schon als eigenes Produkt existiert,
+     * und umbenannte Produkte (source "user"). Gelernte Suchbegriffe, Beliebtheit und alle Portionen bleiben.
+     */
     private suspend fun speichere(treffer: List<OffTreffer>): List<FoodEntity> {
         val neu = treffer.filter { t ->
             val vorhanden = t.food.barcode?.let { db.food().ladeBarcode(it) }
-            vorhanden == null || vorhanden.id == t.food.id
+            vorhanden == null || (vorhanden.id == t.food.id && vorhanden.source != "user")
         }
         db.withTransaction {
-            // Vorhandene Produkte behalten ihre Beliebtheit und alle Portionen (auch selbst angelegte);
-            // es kommen nur Portionen dazu, die es unter diesem Namen noch nicht gibt.
             val alt = db.food().ladeAlle(neu.map { it.food.id }).associateBy { it.id }
-            db.food().fuegeEin(neu.map { t -> t.food.copy(beliebtheit = maxOf(t.food.beliebtheit, alt[t.food.id]?.beliebtheit ?: 0)) })
-            val dazu = neu.flatMap { t ->
-                val vorhanden = if (t.food.id in alt) db.food().portionen(t.food.id).map { it.label }.toSet() else emptySet()
-                t.portionen.filter { it.label !in vorhanden }
-            }
-            db.food().fuegeServingsEin(dazu)
+            db.food().fuegeEin(
+                neu.map { t ->
+                    val a = alt[t.food.id]
+                    t.food.copy(
+                        beliebtheit = maxOf(t.food.beliebtheit, a?.beliebtheit ?: 0),
+                        // nameNorm kann gelernte Suchbegriffe enthalten: dann behalten
+                        nameNorm = a?.nameNorm?.takeIf { it.contains(t.food.nameNorm) } ?: t.food.nameNorm,
+                    )
+                },
+            )
+            neu.forEach { t -> ergaenzePortionen(t.food.id, t.portionen, vorhandenesProdukt = t.food.id in alt) }
         }
         val nachId = treffer.associate { it.food.id to it.food }
         return treffer.mapNotNull { t -> nachId[t.food.id] }
             .map { f -> f.barcode?.let { db.food().ladeBarcode(it) } ?: f }
             .distinctBy { it.id }
+    }
+
+    /**
+     * Neue Portionen hinzufügen, ohne Doppelte: Gibt es schon eine namenlose "Portion" mit gleichem Gewicht,
+     * bekommt sie den besseren Namen des Herstellers (z. B. "Becher").
+     */
+    private suspend fun ergaenzePortionen(foodId: String, neue: List<ServingEntity>, vorhandenesProdukt: Boolean) {
+        val vorhanden = if (vorhandenesProdukt) db.food().portionen(foodId) else emptyList()
+        val dazu = neue.filter { n ->
+            if (vorhanden.any { it.label == n.label }) return@filter false
+            val namenlos = vorhanden.firstOrNull { it.label == "Portion" && kotlin.math.abs(it.gramm - n.gramm) < 0.5 }
+            if (namenlos != null) {
+                db.food().benennePortion(namenlos.id, n.label)
+                false
+            } else {
+                true
+            }
+        }
+        db.food().fuegeServingsEin(dazu.map { it.copy(id = 0, isDefault = it.isDefault && vorhanden.none { v -> v.isDefault }) })
+    }
+
+    private val ergaenzt = mutableSetOf<String>()
+
+    /**
+     * Für Produkte aus dem mitgelieferten Katalog fehlt oft der Portionsname des Herstellers.
+     * Einmal je App-Start still bei Open Food Facts nachfragen. true = es kam etwas Neues dazu.
+     */
+    suspend fun portionenNachladen(food: FoodEntity): Boolean {
+        val ean = food.barcode ?: return false
+        if (food.source != "off" || !ergaenzt.add(food.id)) return false
+        val vorher = db.food().portionen(food.id).map { it.label to it.gramm }
+        val treffer = runCatching { off.produkt(ean) }.getOrNull() ?: return false
+        if (treffer.food.id != food.id) return false
+        db.withTransaction { ergaenzePortionen(food.id, treffer.portionen, vorhandenesProdukt = true) }
+        return db.food().portionen(food.id).map { it.label to it.gramm } != vorher
+    }
+
+    /**
+     * Lerneffekt: Wurde [suchbegriff] in der Suche nicht gefunden, das Produkt dann aber per Scan,
+     * merkt sich das Produkt den Begriff. Die nächste Suche danach findet es.
+     */
+    suspend fun lerneSuchbegriff(foodId: String, suchbegriff: String) {
+        val f = db.food().lade(foodId) ?: return
+        val neu = SuchText.normalisiere(suchbegriff).split(' ').filter { it.length >= 2 && !f.nameNorm.contains(it) }
+        if (neu.isEmpty()) return
+        db.food().fuegeEin(listOf(f.copy(nameNorm = (f.nameNorm + " " + neu.joinToString(" ")).take(400))))
+    }
+
+    /** Produkt umbenennen. Es gilt dann als eigenes Produkt und wird von Open Food Facts nicht mehr überschrieben. */
+    suspend fun benenneUm(foodId: String, name: String) {
+        val f = db.food().lade(foodId) ?: return
+        val alt = SuchText.normalisiere(f.name)
+        // Gelernte Begriffe und der alte Name bleiben suchbar
+        val norm = (SuchText.normalisiere(name) + " " + f.nameNorm.removePrefix(alt).trim() + " " + alt).trim().take(400)
+        db.food().fuegeEin(listOf(f.copy(name = name.trim(), nameNorm = norm, source = if (f.source == "off") "user" else f.source)))
     }
 
     /** Eigenes Produkt anlegen. Fehlertext statt Exception, wenn der Barcode schon vergeben ist. */

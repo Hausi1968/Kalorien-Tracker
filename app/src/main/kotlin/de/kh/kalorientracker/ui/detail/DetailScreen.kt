@@ -31,6 +31,7 @@ import androidx.compose.material.icons.rounded.AddCircle
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.CalendarToday
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.DriveFileRenameOutline
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Restaurant
 import androidx.compose.material.icons.rounded.Schedule
@@ -128,6 +129,7 @@ fun DetailScreen(
     var zeit by remember { mutableStateOf(LocalTime.now().withSecond(0).withNano(0)) }
     var slotId by remember { mutableIntStateOf(if (slotVorgabe > 0) slotVorgabe else Mahlzeiten.slotFuer(LocalTime.now()).id) }
     var neuePortionOffen by remember { mutableStateOf(false) }
+    var umbenennenOffen by remember { mutableStateOf(false) }
     var neuLaden by remember { mutableIntStateOf(0) }
     // Sperre gegen Doppeltipp: solange gespeichert wird, nimmt kein Knopf einen zweiten Tipp an
     var speichert by remember { mutableStateOf(false) }
@@ -177,6 +179,8 @@ fun DetailScreen(
         optionen = liste
         eintrag = e
         food = f
+        // Portionsnamen des Herstellers nachladen (z. B. "Becher" statt nur "Portion"), danach neu anzeigen
+        if (neuLaden == 0 && repo.portionenNachladen(f)) neuLaden++
     }
 
     val f = food
@@ -190,6 +194,11 @@ fun DetailScreen(
             if (f != null && f.source == "rezept" && onRezeptBearbeiten != null && !bearbeiten) {
                 IconButton(onClick = { onRezeptBearbeiten(f.id) }) {
                     Icon(Icons.Rounded.Edit, contentDescription = stringResource(R.string.rezept_bearbeiten))
+                }
+            }
+            if (f != null && !bearbeiten && (f.source == "off" || f.source == "user")) {
+                IconButton(onClick = { umbenennenOffen = true }) {
+                    Icon(Icons.Rounded.DriveFileRenameOutline, contentDescription = stringResource(R.string.umbenennen))
                 }
             }
             if (f != null) {
@@ -343,6 +352,19 @@ fun DetailScreen(
             Spacer(Modifier.height(Spacing.xl))
         }
 
+        if (umbenennenOffen) {
+            UmbenennenDialog(
+                alt = f.name,
+                onAbbrechen = { umbenennenOffen = false },
+                onSpeichern = { name ->
+                    umbenennenOffen = false
+                    scope.launch {
+                        repo.benenneUm(f.id, name)
+                        neuLaden++
+                    }
+                },
+            )
+        }
         if (neuePortionOffen) {
             NeuePortionDialog(
                 einheit = f.unitBase,
@@ -451,6 +473,31 @@ private fun Zeitpunkt(
             text = { TimePicker(state = state) },
         )
     }
+}
+
+/** Name ändern, z. B. wenn Open Food Facts einen unpassenden Namen liefert. Der alte bleibt suchbar. */
+@Composable
+private fun UmbenennenDialog(alt: String, onAbbrechen: () -> Unit, onSpeichern: (String) -> Unit) {
+    var name by remember { mutableStateOf(alt) }
+    AlertDialog(
+        onDismissRequest = onAbbrechen,
+        title = { Text(stringResource(R.string.umbenennen)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.s)) {
+                OutlinedTextField(
+                    value = name, onValueChange = { name = it.take(80) }, singleLine = true,
+                    label = { Text(stringResource(R.string.produkt_name)) },
+                )
+                Text(stringResource(R.string.umbenennen_hinweis), style = MaterialTheme.typography.bodySmall, color = AppTheme.colors.textMuted)
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onSpeichern(name.trim()) }, enabled = name.isNotBlank() && name.trim() != alt) {
+                Text(stringResource(R.string.speichern))
+            }
+        },
+        dismissButton = { TextButton(onClick = onAbbrechen) { Text(stringResource(R.string.abbrechen)) } },
+    )
 }
 
 @Composable

@@ -40,6 +40,9 @@ interface FoodDao {
     @Query("DELETE FROM food_serving WHERE foodId IN (:ids)")
     suspend fun loescheServings(ids: List<String>)
 
+    @Query("UPDATE food_serving SET label = :label WHERE id = :id")
+    suspend fun benennePortion(id: Long, label: String)
+
     @Query("DELETE FROM food_serving WHERE id IN (:ids)")
     suspend fun loescheServingIds(ids: List<Long>)
 

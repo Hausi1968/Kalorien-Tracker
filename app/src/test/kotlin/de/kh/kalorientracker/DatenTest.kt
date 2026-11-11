@@ -121,4 +121,60 @@ class DatenTest {
         // Mit Profil passiert beim nächsten Start nichts mehr
         assertFalse(Sicherung(ctx, neu).wiederherstellenFallsNoetig())
     }
+
+    @Test
+    fun portionsnamenAusHerstellerAngabe() {
+        assertEquals("Becher", OpenFoodFacts.portionsName("1 Becher (150 g)"))
+        assertEquals("Riegel", OpenFoodFacts.portionsName("1 Riegel = 25g"))
+        assertEquals("2 Scheiben", OpenFoodFacts.portionsName("2 Scheiben (50 g)"))
+        assertEquals("Portion", OpenFoodFacts.portionsName("30 g"))
+        assertEquals("Portion", OpenFoodFacts.portionsName(null))
+        assertEquals(150.0, OpenFoodFacts.grammAus("1 Becher (150 g)")!!, 0.01)
+        assertEquals(250.0, OpenFoodFacts.grammAus("250ml")!!, 0.01)
+    }
+
+    @Test
+    fun katalogprodukt_bekommtPortionsnamenNachgeladen() = runBlocking {
+        val db = neueDb()
+        db.food().fuegeEin(listOf(food("off:777", "Quark-Creme Salted Caramel")))
+        db.food().fuegeServingsEin(
+            listOf(
+                ServingEntity(foodId = "off:777", label = "100 g", gramm = 100.0),
+                ServingEntity(foodId = "off:777", label = "Portion", gramm = 150.0, isDefault = true),
+            ),
+        )
+        val off = object : OpenFoodFacts() {
+            override suspend fun produkt(ean: String) = OffTreffer(
+                food("off:777", "Quark-Creme Salted Caramel"),
+                listOf(
+                    ServingEntity(foodId = "off:777", label = "100 g", gramm = 100.0),
+                    ServingEntity(foodId = "off:777", label = "Becher", gramm = 150.0, isDefault = true),
+                ),
+            )
+        }
+        val repo = KalorienRepository(db, off)
+        assertTrue(repo.portionenNachladen(repo.lebensmittel("off:777")!!))
+        assertEquals(listOf("100 g", "Becher"), repo.portionen("off:777").map { it.label }.sorted())
+        assertFalse(repo.portionenNachladen(repo.lebensmittel("off:777")!!)) // nur einmal je Start
+    }
+
+    @Test
+    fun gescanntesProdukt_lerntSuchbegriffUndNamen() = runBlocking {
+        val db = neueDb()
+        val off = object : OpenFoodFacts() {
+            override suspend fun produkt(ean: String) = OffTreffer(food("off:4711", "Quark-Creme Salted Caramel"), emptyList())
+            override suspend fun suche(eingabe: String) = listOf(OffTreffer(food("off:4711", "Quark-Creme Salted Caramel"), emptyList()))
+        }
+        val repo = KalorienRepository(db, off)
+        assertTrue(repo.suche("zero quark").isEmpty())
+        repo.barcode("4711")
+        repo.lerneSuchbegriff("off:4711", "zero quark")
+        assertEquals(listOf("off:4711"), repo.suche("zero quark").map { it.id })
+
+        repo.benenneUm("off:4711", "Zero Quark Karamell")
+        repo.onlineSuche("quark") // darf den eigenen Namen nicht überschreiben
+        val f = repo.lebensmittel("off:4711")!!
+        assertEquals("Zero Quark Karamell", f.name)
+        assertEquals(listOf("off:4711"), repo.suche("salted caramel").map { it.id })
+    }
 }

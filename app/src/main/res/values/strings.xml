@@ -359,4 +359,6 @@
     <string name="auswahl_mahlzeit">Mahlzeit</string>
     <string name="auswahl_wie_bisher">wie bisher</string>
     <string name="makro_kh_kurz">KH</string>
+    <string name="umbenennen">Umbenennen</string>
+    <string name="umbenennen_hinweis">Der neue Name gilt nur in deiner App. Unter dem alten Namen findest du das Produkt weiterhin.</string>
 </resources>

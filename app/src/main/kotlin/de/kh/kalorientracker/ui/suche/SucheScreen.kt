@@ -70,6 +70,7 @@ import de.kh.kalorientracker.ui.AbschnittTitel
 import de.kh.kalorientracker.ui.Initiale
 import de.kh.kalorientracker.ui.KalorienDirektDialog
 import de.kh.kalorientracker.ui.Seite
+import de.kh.kalorientracker.ui.aufHauptThread
 import de.kh.kalorientracker.ui.theme.AppTheme
 import de.kh.kalorientracker.ui.theme.Spacing
 import kotlinx.coroutines.delay
@@ -135,7 +136,14 @@ fun SucheScreen(
                 val r = repo.barcode(ean)
                 laedt = false
                 when (r) {
-                    is BarcodeErgebnis.Gefunden -> onLebensmittel(r.food.id)
+                    is BarcodeErgebnis.Gefunden -> {
+                        // Lerneffekt: Suchbegriff, unter dem das Produkt nicht gefunden wurde, am Produkt merken
+                        val begriff = eingabe.trim()
+                        if (begriff.length >= 2 && treffer.orEmpty().none { it.id == r.food.id }) {
+                            repo.lerneSuchbegriff(r.food.id, begriff)
+                        }
+                        aufHauptThread { onLebensmittel(r.food.id) }
+                    }
                     BarcodeErgebnis.Unbekannt -> onProduktAnlegen(ean, null)
                     BarcodeErgebnis.KeineVerbindung -> {
                         val a = snackbar.showSnackbar(textOfflineBarcode, textAnlegen, duration = SnackbarDuration.Long)

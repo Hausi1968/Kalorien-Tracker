@@ -72,8 +72,11 @@ open class OpenFoodFacts {
         )
         val portionen = buildList {
             add(ServingEntity(foodId = id, label = "100 $einheit", gramm = 100.0))
-            p.zahl("serving_quantity")?.takeIf { it > 0 }?.let {
-                add(ServingEntity(foodId = id, label = "Portion", gramm = it, isDefault = true))
+            // Portion des Herstellers, z. B. "1 Becher (150 g)" -> "Becher" mit 150 g
+            val portionText = p.text("serving_size")
+            val portionGramm = p.zahl("serving_quantity")?.takeIf { it > 0 } ?: portionText?.let(::grammAus)
+            portionGramm?.let {
+                add(ServingEntity(foodId = id, label = portionsName(portionText), gramm = it, isDefault = true))
             }
             p.zahl("product_quantity")?.takeIf { it > 0 }?.let {
                 add(ServingEntity(foodId = id, label = "Packung", gramm = it, isDefault = isEmpty() || size == 1))
@@ -111,8 +114,28 @@ open class OpenFoodFacts {
         (this[k] as? JsonPrimitive)?.contentOrNull?.replace(',', '.')?.toDoubleOrNull()?.takeIf { it >= 0 }
 
     companion object {
+        private val EINHEITEN = setOf("g", "gr", "gramm", "ml", "l", "cl", "kg", "portion", "portionen", "serving", "x", "à", "a", "je", "pro")
+
+        /** "1 Becher (150 g)" -> "Becher", "2 Scheiben = 50 g" -> "2 Scheiben", "30 g" -> "Portion". */
+        fun portionsName(text: String?): String {
+            if (text.isNullOrBlank()) return "Portion"
+            val vorne = text.substringBefore('(').substringBefore('=').substringBefore(',').trim()
+            val woerter = vorne.split(Regex("""\s+""")).filter { it.isNotBlank() }
+            val anzahl = woerter.firstOrNull()?.toDoubleOrNull()?.takeIf { it != 1.0 }
+            val rest = woerter.dropWhile { it.replace(',', '.').toDoubleOrNull() != null }
+                .filter { w -> w.lowercase().trimEnd('.') !in EINHEITEN && !w.any(Char::isDigit) }
+            if (rest.isEmpty() || rest.joinToString(" ").length > 24) return "Portion"
+            val name = rest.joinToString(" ").replaceFirstChar { it.uppercase() }
+            return if (anzahl != null) "${anzahl.toInt()} $name" else name
+        }
+
+        /** Grammzahl aus einem Text wie "1 Riegel (25 g)" oder "250ml". */
+        fun grammAus(text: String): Double? =
+            Regex("""(\d+(?:[.,]\d+)?)\s*(g|ml)\b""", RegexOption.IGNORE_CASE).find(text)
+                ?.groupValues?.get(1)?.replace(',', '.')?.toDoubleOrNull()?.takeIf { it > 0 }
+
         private const val BASIS = "https://world.openfoodfacts.org"
         private const val SUCHE = "https://search.openfoodfacts.org"
-        private const val FELDER = "code,product_name,product_name_de,brands,quantity,product_quantity,serving_quantity,nutriments"
+        private const val FELDER = "code,product_name,product_name_de,brands,quantity,product_quantity,serving_quantity,serving_size,nutriments"
     }
 }
