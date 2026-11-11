@@ -1,6 +1,6 @@
 {
-  "version": "0.3.0",
-  "versionCode": 3,
-  "apk": "Kalorien-Tracker-0.3.0.apk",
-  "notizen": "Neu in 0.3.0:\n- Gewicht eintragen mit Kurve, Fortschritt zum Zielgewicht und BMI; das Tagesziel passt sich automatisch an\n- Übersicht mit Kalorien-Ring und Wochen-Balken\n- Kalorien direkt eintragen (ohne Lebensmittel)\n- Aktivitäten mit verbrannten kcal im Tagebuch\n- Die App sucht ab jetzt selbst nach Updates"
+  "version": "0.4.0",
+  "versionCode": 4,
+  "apk": "Kalorien-Tracker-0.4.0.apk",
+  "notizen": "Neu in 0.4.0: Favoriten mit Stern (stehen in der Suche ganz oben), Wasser-Tracker im Tagebuch und Mahlzeit von gestern mit einem Tipp übernehmen."
 }
