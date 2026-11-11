@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -181,7 +183,7 @@ fun RezeptEditorScreen(repo: KalorienRepository, rezeptId: String?, onZurueck: (
         },
     ) { pad ->
         LazyColumn(
-            Modifier.padding(pad).fillMaxSize(),
+            Modifier.padding(pad).consumeWindowInsets(pad).imePadding().fillMaxSize(),
             contentPadding = PaddingValues(Spacing.l),
             verticalArrangement = Arrangement.spacedBy(Spacing.m),
         ) {
@@ -311,7 +313,7 @@ private fun ZutatAuswahlSeite(
         }
         val liste = (online ?: emptyList()) + treffer.filter { t -> online?.none { it.id == t.id } ?: true }
         val zeige = if (eingabe.trim().length < 2) zuletzt else liste
-        LazyColumn(Modifier.padding(pad).fillMaxSize(), contentPadding = PaddingValues(bottom = 96.dp)) {
+        LazyColumn(Modifier.padding(pad).consumeWindowInsets(pad).imePadding().fillMaxSize(), contentPadding = PaddingValues(bottom = 96.dp)) {
             item {
                 OutlinedTextField(
                     value = eingabe, onValueChange = { eingabe = it.take(60) }, singleLine = true,

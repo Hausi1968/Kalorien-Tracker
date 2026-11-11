@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -128,6 +129,8 @@ fun RechnerScreen(
         Column(
             Modifier
                 .padding(pad)
+                // Was die Seite schon an Rand (inkl. Tastatur) abzieht, nicht noch einmal abziehen
+                .consumeWindowInsets(pad)
                 .imePadding()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = Spacing.l, vertical = Spacing.s),
