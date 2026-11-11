@@ -368,4 +368,14 @@
     <string name="suchbegriff_beispiel">z. B. Eiweißriegel</string>
     <string name="suchbegriff_hinzufuegen">+ Suchbegriff hinzufügen</string>
     <string name="suchbegriff_entfernen">%1$s entfernen</string>
+    <string name="nw_tag">% Tag</string>
+    <string name="nw_tag_hinweis_profil">% Tag: Anteil an deinem Tagesziel. Zucker und gesättigte Fette: höchstens 10 % der Kalorien, Ballaststoffe mindestens 30 g, Salz höchstens 6 g.</string>
+    <string name="nw_tag_hinweis_eu">% Tag: Anteil an der Referenzmenge für einen durchschnittlichen Erwachsenen (2000 kcal).</string>
+    <string name="mikros_keine">Zu Vitaminen und Mineralstoffen gibt es bei diesem Produkt keine Angaben.</string>
+    <string name="mikros_vitamine">Vitamine</string>
+    <string name="mikros_mineralstoffe">Mineralstoffe</string>
+    <string name="mikros_weitere">Weitere Angaben</string>
+    <string name="uebersicht_mikros">Mikros</string>
+    <string name="uebersicht_mikros_hinweis">Summe aller Einträge mit Angaben (%1$d von %2$d). Prozent: Anteil an der Referenzmenge für Erwachsene.</string>
+    <string name="uebersicht_mikros_leer">Keiner der heutigen Einträge hat Angaben zu Vitaminen oder Mineralstoffen. Viele Hersteller geben sie nicht an.</string>
 </resources>

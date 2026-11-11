@@ -54,6 +54,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.kh.kalorientracker.R
 import de.kh.kalorientracker.core.Format
 import de.kh.kalorientracker.core.Mahlzeiten
+import de.kh.kalorientracker.core.Mikros
 import de.kh.kalorientracker.data.DiaryEntryEntity
 import de.kh.kalorientracker.data.KalorienRepository
 import de.kh.kalorientracker.data.TagesDaten
@@ -105,6 +106,7 @@ fun UebersichtScreen(repo: KalorienRepository, start: LocalDate, onZurueck: () -
             PrimaryTabRow(selectedTabIndex = reiter, containerColor = MaterialTheme.colorScheme.background) {
                 Tab(reiter == 0, onClick = { reiter = 0 }, text = { Text(stringResource(R.string.uebersicht_kalorien)) })
                 Tab(reiter == 1, onClick = { reiter = 1 }, text = { Text(stringResource(R.string.uebersicht_naehrwerte)) })
+                Tab(reiter == 2, onClick = { reiter = 2 }, text = { Text(stringResource(R.string.uebersicht_mikros)) })
             }
             val d = daten ?: return@Column
             Column(
@@ -115,7 +117,11 @@ fun UebersichtScreen(repo: KalorienRepository, start: LocalDate, onZurueck: () -
                     Karte { Text(stringResource(R.string.uebersicht_leer), color = AppTheme.colors.textMuted) }
                     return@Column
                 }
-                if (reiter == 0) KalorienReiter(d, onEintrag) else NaehrwertReiter(d)
+                when (reiter) {
+                    0 -> KalorienReiter(d, onEintrag)
+                    1 -> NaehrwertReiter(d)
+                    else -> MikrosReiter(d)
+                }
             }
         }
     }
@@ -266,6 +272,52 @@ private fun NaehrwertReiter(d: TagesDaten) {
         NaehrwertZeile(stringResource(R.string.salz), s.salz, 6.0, hoechstens = true)
         Spacer(Modifier.height(Spacing.s))
         Text(stringResource(R.string.uebersicht_richtwerte), style = MaterialTheme.typography.bodySmall, color = AppTheme.colors.textMuted)
+    }
+}
+
+// ---------------- Mikros ----------------
+
+@Composable
+private fun MikrosReiter(d: TagesDaten) {
+    val mitAngaben = d.eintraege.filter { !it.mikros.isNullOrEmpty() }
+    if (mitAngaben.isEmpty()) {
+        Karte { Text(stringResource(R.string.uebersicht_mikros_leer), color = AppTheme.colors.textMuted) }
+        return
+    }
+    val summe = Mikros.summe(mitAngaben.map { Mikros.lese(it.mikros) })
+    Text(
+        stringResource(R.string.uebersicht_mikros_hinweis, mitAngaben.size, d.eintraege.size),
+        style = MaterialTheme.typography.bodySmall, color = AppTheme.colors.textMuted,
+    )
+    Mikros.Gruppe.entries.forEach { gruppe ->
+        val stoffe = Mikros.ALLE.filter { it.gruppe == gruppe && it.schluessel in summe }
+        if (stoffe.isEmpty()) return@forEach
+        Karte(
+            titel = stringResource(
+                when (gruppe) {
+                    Mikros.Gruppe.VITAMINE -> R.string.mikros_vitamine
+                    Mikros.Gruppe.MINERALSTOFFE -> R.string.mikros_mineralstoffe
+                    Mikros.Gruppe.WEITERE -> R.string.mikros_weitere
+                },
+            ),
+        ) {
+            stoffe.forEachIndexed { i, st ->
+                if (i > 0) HorizontalDivider(color = AppTheme.colors.border)
+                val g = summe.getValue(st.schluessel)
+                val prozent = Mikros.prozent(st, g)
+                Row(Modifier.fillMaxWidth().padding(vertical = Spacing.s), verticalAlignment = Alignment.CenterVertically) {
+                    Text(st.name, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                    Text(Mikros.anzeige(g), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.width(Spacing.m))
+                    Text(
+                        prozent?.let { "$it %" } ?: "",
+                        style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.End,
+                        color = if ((prozent ?: 0) >= 100) AppTheme.colors.success else AppTheme.colors.textMuted,
+                        modifier = Modifier.width(52.dp),
+                    )
+                }
+            }
+        }
     }
 }
 

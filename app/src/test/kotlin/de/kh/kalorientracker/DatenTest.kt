@@ -203,4 +203,22 @@ class DatenTest {
         assertTrue(repo.suche("joghurt").isEmpty())
         assertEquals(listOf("off:55"), repo.suche("skyr").map { it.id })
     }
+
+    @Test
+    fun apfelImNetz_bekommtStueckRichtwertUndMikrosImEintrag() = runBlocking {
+        val db = neueDb()
+        val apfel = food("off:2001", "Granny Smith Äpfel").copy(mikros = de.kh.kalorientracker.core.Mikros.kodiere(mapOf("vitamin-c" to 0.0069)))
+        db.food().fuegeEin(listOf(apfel))
+        db.food().fuegeServingsEin(listOf(ServingEntity(foodId = "off:2001", label = "100 g", gramm = 100.0)))
+        val repo = KalorienRepository(db, object : OpenFoodFacts() {
+            override suspend fun produkt(ean: String): OffTreffer? = throw java.io.IOException("offline")
+        })
+        assertTrue(repo.portionenNachladen(apfel))
+        val stueck = repo.portionen("off:2001").first { it.label == OpenFoodFacts.RICHTWERT_STUECK }
+        assertEquals(150.0, stueck.gramm, 0.1)
+
+        val e = repo.eintragen(apfel, stueck.label, stueck.gramm, 1.0, LocalDateTime.of(2026, 11, 11, 10, 0), 2)
+        val vitC = de.kh.kalorientracker.core.Mikros.lese(e.mikros)["vitamin-c"]!!
+        assertEquals(0.0069 * 1.5, vitC, 1e-9)
+    }
 }

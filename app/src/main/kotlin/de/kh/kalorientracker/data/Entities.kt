@@ -57,6 +57,8 @@ data class FoodEntity(
     val eiweiss: Double?,
     val salz: Double?,
     val beliebtheit: Int = 0,
+    /** Vitamine, Mineralstoffe, Cholesterin je 100 g/ml (seit DB-Version 5), siehe core.Mikros. */
+    val mikros: String? = null,
 )
 
 /** Nährwerte pro 100 g/ml (Erweiterung statt Property, damit Room sie nicht als Spalte sieht). */
@@ -104,6 +106,8 @@ data class DiaryEntryEntity(
     val salz: Double?,
     val createdAt: Long,
     val updatedAt: Long,
+    /** Vitamine, Mineralstoffe, Cholesterin für diesen Eintrag (absolut, seit DB-Version 5). */
+    val mikros: String? = null,
 )
 
 val DiaryEntryEntity.naehrwerte: Naehrwerte

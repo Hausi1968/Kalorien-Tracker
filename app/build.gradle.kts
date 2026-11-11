@@ -21,8 +21,8 @@ android {
         applicationId = "de.kh.kalorientracker"
         minSdk = 28
         targetSdk = 35
-        versionCode = 14
-        versionName = "0.11.2"
+        versionCode = 15
+        versionName = "0.12.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations += listOf("de")
     }
@@ -56,6 +56,9 @@ android {
 
     buildFeatures { compose = true; buildConfig = true }
     testOptions { unitTests.isIncludeAndroidResources = true }
+    // Exportierte Datenbank-Schemas für den Migrationstest
+    // Robolectric liest Test-Dateien aus den App-Assets: Schemas nur in der Debug-App, nie im Release
+    sourceSets.getByName("debug").assets.srcDir("$projectDir/schemas")
 }
 
 // Eine Release-App mit fremdem Schlüssel ließe sich nicht als Update installieren: Bau dann abbrechen.
@@ -94,6 +97,7 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
+    testImplementation(libs.room.testing)
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.test.junit)
     testImplementation(platform(libs.compose.bom))

@@ -93,6 +93,7 @@ import de.kh.kalorientracker.ui.theme.AppTheme
 import de.kh.kalorientracker.ui.theme.Spacing
 import kotlinx.coroutines.launch
 import java.time.Instant
+import kotlin.math.roundToInt
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -191,6 +192,7 @@ fun DetailScreen(
     val fokus = LocalFocusManager.current
     val bearbeiten = eintragId != null
     val favoriten by repo.favoritIds.collectAsStateWithLifecycle(initialValue = emptySet())
+    val profil by repo.profil.collectAsStateWithLifecycle(initialValue = null)
     Seite(
         titel = f?.name ?: "",
         onZurueck = onZurueck,
@@ -352,7 +354,7 @@ fun DetailScreen(
 
             // Nährwerte
             AbschnittTitel(stringResource(R.string.naehrwerte_titel, gramm?.let { Format.dezimal(it, 0) } ?: "–", f.unitBase))
-            NaehrwertTabelle(werte, f.naehrwerte100, f.unitBase)
+            NaehrwertTabelle(werte, f.naehrwerte100, f.unitBase, profil, de.kh.kalorientracker.core.Mikros.lese(f.mikros), gramm)
 
             // Suchbegriffe: zusätzliche Wörter, unter denen die Suche dieses Produkt findet
             AbschnittTitel(stringResource(R.string.suchbegriffe))
@@ -583,31 +585,105 @@ private fun NeuePortionDialog(einheit: String, onAbbrechen: () -> Unit, onSpeich
     )
 }
 
-@Composable
-private fun NaehrwertTabelle(portion: Naehrwerte?, pro100: Naehrwerte, einheit: String) {
-    val zeilen = listOf(
-        Triple(stringResource(R.string.nw_brennwert), portion?.kcal, pro100.kcal) to "kcal",
-        Triple(stringResource(R.string.nw_fett), portion?.fett, pro100.fett) to "g",
-        Triple(stringResource(R.string.nw_ges_fett), portion?.gesFett, pro100.gesFett) to "g",
-        Triple(stringResource(R.string.nw_kh), portion?.kh, pro100.kh) to "g",
-        Triple(stringResource(R.string.nw_zucker), portion?.zucker, pro100.zucker) to "g",
-        Triple(stringResource(R.string.nw_ballaststoffe), portion?.ballaststoffe, pro100.ballaststoffe) to "g",
-        Triple(stringResource(R.string.nw_eiweiss), portion?.eiweiss, pro100.eiweiss) to "g",
-        Triple(stringResource(R.string.nw_salz), portion?.salz, pro100.salz) to "g",
+/** Tagesbedarf für die %-Spalte: eigenes Ziel aus dem Profil, sonst EU-Referenzmengen (2000 kcal). */
+private data class Bedarf(
+    val kcal: Double, val fett: Double, val gesFett: Double, val kh: Double,
+    val zucker: Double, val ballaststoffe: Double, val eiweiss: Double, val salz: Double,
+)
+
+private fun bedarf(p: de.kh.kalorientracker.data.ProfileEntity?): Bedarf {
+    if (p == null) return Bedarf(2000.0, 70.0, 20.0, 260.0, 90.0, 30.0, 50.0, 6.0)
+    val k = p.tageszielKcal.toDouble()
+    val m = runCatching { de.kh.kalorientracker.core.MakroAnteile(p.fettProzent, p.khProzent, p.eiweissProzent).inGramm(k) }.getOrNull()
+    return Bedarf(
+        kcal = k, fett = (m?.fett ?: 70).toDouble(), gesFett = k * 0.10 / 9, kh = (m?.kh ?: 260).toDouble(),
+        zucker = k * 0.10 / 4, ballaststoffe = 30.0, eiweiss = (m?.eiweiss ?: 50).toDouble(), salz = 6.0,
     )
-    Karte {
+}
+
+@Composable
+private fun NaehrwertTabelle(
+    portion: Naehrwerte?, pro100: Naehrwerte, einheit: String,
+    profil: de.kh.kalorientracker.data.ProfileEntity?, mikros100: Map<String, Double>, gramm: Double?,
+) {
+    val b = bedarf(profil)
+    data class Zeile(val name: String, val p: Double?, val h: Double?, val e: String, val bedarf: Double?, val eingerueckt: Boolean = false)
+    val zeilen = listOf(
+        Zeile(stringResource(R.string.nw_brennwert), portion?.kcal, pro100.kcal, "kcal", b.kcal),
+        Zeile(stringResource(R.string.nw_fett), portion?.fett, pro100.fett, "g", b.fett),
+        Zeile(stringResource(R.string.nw_ges_fett), portion?.gesFett, pro100.gesFett, "g", b.gesFett, true),
+        Zeile(stringResource(R.string.nw_kh), portion?.kh, pro100.kh, "g", b.kh),
+        Zeile(stringResource(R.string.nw_zucker), portion?.zucker, pro100.zucker, "g", b.zucker, true),
+        Zeile(stringResource(R.string.nw_ballaststoffe), portion?.ballaststoffe, pro100.ballaststoffe, "g", b.ballaststoffe),
+        Zeile(stringResource(R.string.nw_eiweiss), portion?.eiweiss, pro100.eiweiss, "g", b.eiweiss),
+        Zeile(stringResource(R.string.nw_salz), portion?.salz, pro100.salz, "g", b.salz),
+    )
+    @Composable
+    fun Kopf() {
         Row(Modifier.fillMaxWidth()) {
             Spacer(Modifier.weight(1f))
-            Text(stringResource(R.string.nw_portion), style = MaterialTheme.typography.labelSmall, color = AppTheme.colors.textMuted, modifier = Modifier.width(90.dp))
-            Text(stringResource(R.string.nw_pro_100, einheit), style = MaterialTheme.typography.labelSmall, color = AppTheme.colors.textMuted, modifier = Modifier.width(90.dp))
+            Text(stringResource(R.string.nw_portion), style = MaterialTheme.typography.labelSmall, color = AppTheme.colors.textMuted, modifier = Modifier.width(76.dp))
+            Text(stringResource(R.string.nw_tag), style = MaterialTheme.typography.labelSmall, color = AppTheme.colors.textMuted, modifier = Modifier.width(44.dp))
+            Text(stringResource(R.string.nw_pro_100, einheit), style = MaterialTheme.typography.labelSmall, color = AppTheme.colors.textMuted, modifier = Modifier.width(76.dp))
         }
-        zeilen.forEachIndexed { i, (werte, e) ->
-            val (name, p, h) = werte
+    }
+    @Composable
+    fun ZeileAnzeigen(name: String, p: String, prozent: Int?, h: String, eingerueckt: Boolean) {
+        Row(Modifier.fillMaxWidth().padding(vertical = Spacing.s)) {
+            Text(
+                name, style = MaterialTheme.typography.bodyMedium,
+                color = if (eingerueckt) AppTheme.colors.textMuted else MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.weight(1f).padding(start = if (eingerueckt) Spacing.m else 0.dp),
+            )
+            Text(p, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.width(76.dp))
+            Text(prozent?.let { "$it %" } ?: "", style = MaterialTheme.typography.bodySmall, color = AppTheme.colors.textMuted, modifier = Modifier.width(44.dp))
+            Text(h, style = MaterialTheme.typography.bodyMedium, color = AppTheme.colors.textMuted, modifier = Modifier.width(76.dp))
+        }
+    }
+    Karte {
+        Kopf()
+        zeilen.forEachIndexed { i, z ->
             if (i > 0) HorizontalDivider(color = AppTheme.colors.border)
-            Row(Modifier.fillMaxWidth().padding(vertical = Spacing.s)) {
-                Text(name, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-                Text(wert(p, e), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.width(90.dp))
-                Text(wert(h, e), style = MaterialTheme.typography.bodyMedium, color = AppTheme.colors.textMuted, modifier = Modifier.width(90.dp))
+            val prozent = if (z.p != null && z.bedarf != null && z.bedarf > 0) (z.p / z.bedarf * 100).roundToInt() else null
+            ZeileAnzeigen(z.name, wert(z.p, z.e), prozent, wert(z.h, z.e), z.eingerueckt)
+        }
+        Spacer(Modifier.height(Spacing.xs))
+        Text(
+            stringResource(if (profil != null) R.string.nw_tag_hinweis_profil else R.string.nw_tag_hinweis_eu),
+            style = MaterialTheme.typography.bodySmall, color = AppTheme.colors.textMuted,
+        )
+    }
+
+    // Vitamine, Mineralstoffe und Weitere (nur was das Produkt angibt)
+    val faktor = (gramm ?: 0.0) / 100.0
+    if (mikros100.isEmpty()) {
+        Text(stringResource(R.string.mikros_keine), style = MaterialTheme.typography.bodySmall, color = AppTheme.colors.textMuted)
+        return
+    }
+    de.kh.kalorientracker.core.Mikros.Gruppe.entries.forEach { gruppe ->
+        val stoffe = de.kh.kalorientracker.core.Mikros.ALLE.filter { it.gruppe == gruppe && it.schluessel in mikros100 }
+        if (stoffe.isEmpty()) return@forEach
+        AbschnittTitel(
+            stringResource(
+                when (gruppe) {
+                    de.kh.kalorientracker.core.Mikros.Gruppe.VITAMINE -> R.string.mikros_vitamine
+                    de.kh.kalorientracker.core.Mikros.Gruppe.MINERALSTOFFE -> R.string.mikros_mineralstoffe
+                    de.kh.kalorientracker.core.Mikros.Gruppe.WEITERE -> R.string.mikros_weitere
+                },
+            ),
+        )
+        Karte {
+            Kopf()
+            stoffe.forEachIndexed { i, st ->
+                if (i > 0) HorizontalDivider(color = AppTheme.colors.border)
+                val h = mikros100.getValue(st.schluessel)
+                val p = h * faktor
+                ZeileAnzeigen(
+                    st.name,
+                    if (gramm != null) de.kh.kalorientracker.core.Mikros.anzeige(p) else "–",
+                    if (gramm != null) de.kh.kalorientracker.core.Mikros.prozent(st, p) else null,
+                    de.kh.kalorientracker.core.Mikros.anzeige(h), false,
+                )
             }
         }
     }

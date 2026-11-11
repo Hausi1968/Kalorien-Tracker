@@ -1,5 +1,7 @@
 package de.kh.kalorientracker.data
 
+import de.kh.kalorientracker.core.Mikros
+import de.kh.kalorientracker.core.Richtwerte
 import de.kh.kalorientracker.core.SuchText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -69,17 +71,24 @@ open class OpenFoodFacts {
             fett = n.zahl("fat_100g"), gesFett = n.zahl("saturated-fat_100g"),
             kh = n.zahl("carbohydrates_100g"), zucker = n.zahl("sugars_100g"),
             ballaststoffe = n.zahl("fiber_100g"), eiweiss = n.zahl("proteins_100g"), salz = n.zahl("salt_100g"),
+            mikros = Mikros.kodiere(
+                Mikros.ALLE.mapNotNull { st -> n.zahl("${st.schluessel}_100g")?.let { st.schluessel to it } }.toMap(),
+            ),
         )
         val portionen = buildList {
             add(ServingEntity(foodId = id, label = "100 $einheit", gramm = 100.0))
+            // Obst, Gemüse, Eier im Netz/Karton: durchschnittliches Stück als Richtwert
+            if (einheit == "g") Richtwerte.stueckFuer(SuchText.normalisiere(name))?.let {
+                add(ServingEntity(foodId = id, label = RICHTWERT_STUECK, gramm = it.gramm, isDefault = true))
+            }
             // Portion des Herstellers, z. B. "1 Becher (150 g)" -> "Becher" mit 150 g
             val portionText = p.text("serving_size")
             val portionGramm = p.zahl("serving_quantity")?.takeIf { it > 0 } ?: portionText?.let(::grammAus)
             portionGramm?.let {
-                add(ServingEntity(foodId = id, label = portionsName(portionText), gramm = it, isDefault = true))
+                add(ServingEntity(foodId = id, label = portionsName(portionText), gramm = it, isDefault = none { s -> s.isDefault }))
             }
             p.zahl("product_quantity")?.takeIf { it > 0 }?.let {
-                add(ServingEntity(foodId = id, label = "Packung", gramm = it, isDefault = isEmpty() || size == 1))
+                add(ServingEntity(foodId = id, label = "Packung", gramm = it, isDefault = none { s -> s.isDefault }))
             }
         }
         return OffTreffer(food, portionen)
@@ -114,6 +123,7 @@ open class OpenFoodFacts {
         (this[k] as? JsonPrimitive)?.contentOrNull?.replace(',', '.')?.toDoubleOrNull()?.takeIf { it >= 0 }
 
     companion object {
+        const val RICHTWERT_STUECK = "Stück (Richtwert)"
         private val EINHEITEN = setOf("g", "gr", "gramm", "ml", "l", "cl", "kg", "portion", "portionen", "serving", "x", "à", "a", "je", "pro")
 
         /** "1 Becher (150 g)" -> "Becher", "2 Scheiben = 50 g" -> "2 Scheiben", "30 g" -> "Portion". */

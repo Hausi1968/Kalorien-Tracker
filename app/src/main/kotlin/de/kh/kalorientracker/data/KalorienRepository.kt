@@ -5,7 +5,9 @@ import de.kh.kalorientracker.core.Geschlecht
 import de.kh.kalorientracker.core.Koerperdaten
 import de.kh.kalorientracker.core.MakroAnteile
 import de.kh.kalorientracker.core.MakroGramm
+import de.kh.kalorientracker.core.Mikros
 import de.kh.kalorientracker.core.Naehrwerte
+import de.kh.kalorientracker.core.Richtwerte
 import de.kh.kalorientracker.core.Ranking
 import de.kh.kalorientracker.core.RezeptRechner
 import de.kh.kalorientracker.core.RezeptZutat
@@ -145,6 +147,7 @@ class KalorienRepository(
             kcal = n.kcal, fett = n.fett, gesFett = n.gesFett, kh = n.kh, zucker = n.zucker,
             ballaststoffe = n.ballaststoffe, eiweiss = n.eiweiss, salz = n.salz,
             createdAt = erstellt, updatedAt = System.currentTimeMillis(),
+            mikros = Mikros.kodiere(Mikros.mal(Mikros.lese(food.mikros), gramm / 100.0)),
         )
     }
 
@@ -275,17 +278,35 @@ class KalorienRepository(
     private val ergaenzt = mutableSetOf<String>()
 
     /**
-     * Für Produkte aus dem mitgelieferten Katalog fehlt oft der Portionsname des Herstellers.
-     * Einmal je App-Start still bei Open Food Facts nachfragen. true = es kam etwas Neues dazu.
+     * Ergänzt ein Produkt beim Öffnen:
+     * - Obst, Gemüse, Eier bekommen ein Stück-Gewicht als Richtwert (auch ohne Internet).
+     * - Katalogprodukten fehlen oft Portionsname und Vitamine/Mineralstoffe: einmal je App-Start
+     *   still bei Open Food Facts nachfragen.
+     * true = es kam etwas Neues dazu.
      */
     suspend fun portionenNachladen(food: FoodEntity): Boolean {
-        val ean = food.barcode ?: return false
-        if (food.source != "off" || !ergaenzt.add(food.id)) return false
+        if (!ergaenzt.add(food.id)) return false
+        var neu = false
+        val vorhanden = db.food().portionen(food.id)
+        if (food.unitBase == "g" && food.source != "start" && vorhanden.none { it.label.startsWith("Stück") }) {
+            Richtwerte.stueckFuer(food.nameNorm)?.let { r ->
+                db.food().fuegeServingsEin(listOf(ServingEntity(foodId = food.id, label = OpenFoodFacts.RICHTWERT_STUECK, gramm = r.gramm)))
+                neu = true
+            }
+        }
+        val ean = food.barcode ?: return neu
+        if (food.source != "off") return neu
         val vorher = db.food().portionen(food.id).map { it.label to it.gramm }
-        val treffer = runCatching { off.produkt(ean) }.getOrNull() ?: return false
-        if (treffer.food.id != food.id) return false
-        db.withTransaction { ergaenzePortionen(food.id, treffer.portionen, vorhandenesProdukt = true) }
-        return db.food().portionen(food.id).map { it.label to it.gramm } != vorher
+        val treffer = runCatching { off.produkt(ean) }.getOrNull() ?: return neu
+        if (treffer.food.id != food.id) return neu
+        db.withTransaction {
+            ergaenzePortionen(food.id, treffer.portionen, vorhandenesProdukt = true)
+            if (food.mikros == null && treffer.food.mikros != null) {
+                db.food().fuegeEin(listOf(food.copy(mikros = treffer.food.mikros)))
+            }
+        }
+        return neu || db.food().portionen(food.id).map { it.label to it.gramm } != vorher ||
+            (food.mikros == null && treffer.food.mikros != null)
     }
 
     /**

@@ -178,3 +178,14 @@ class RezeptRechnerTest {
         assertNull(RezeptRechner.berechne(emptyList(), 2))
     }
 }
+
+class RichtwerteTest {
+    @org.junit.Test
+    fun stueckGewicht() {
+        org.junit.Assert.assertEquals(150.0, Richtwerte.stueckFuer(SuchText.normalisiere("Granny Smith Äpfel (Grün)"))!!.gramm, 0.1)
+        org.junit.Assert.assertEquals(60.0, Richtwerte.stueckFuer(SuchText.normalisiere("10 Freilandeier Größe M"))!!.gramm, 0.1)
+        org.junit.Assert.assertNull(Richtwerte.stueckFuer(SuchText.normalisiere("Tomaten passiert")))
+        org.junit.Assert.assertNull(Richtwerte.stueckFuer(SuchText.normalisiere("Apfelmus")))
+        org.junit.Assert.assertNull(Richtwerte.stueckFuer(SuchText.normalisiere("Eis Vanille")))
+    }
+}
