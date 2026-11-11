@@ -1,8 +1,8 @@
 {
-  "version": "0.11.1",
-  "versionCode": 13,
-  "apk": "Kalorien-Tracker-0.11.1.apk",
-  "notizen": "Neu in 0.11.1: Was du online gefunden und ausgewählt hast, findet die Suche beim nächsten Mal direkt unter demselben Suchbegriff – auch ohne Internet.",
-  "sha256": "23bcdcbe8f8526ccdd2f6945106b973bb5f04dc652ac9cb9408d65f21e55a5c3",
-  "groesse": 7476805
+  "version": "0.11.2",
+  "versionCode": 14,
+  "apk": "Kalorien-Tracker-0.11.2.apk",
+  "notizen": "Neu in 0.11.2: Eigene Suchbegriffe je Produkt – in der Detailansicht ganz unten unter „Suchbegriffe“ hinzufügen oder entfernen.",
+  "sha256": "a75d851dae61a36351345bff152b474fa9b7d26250a7842cbff7be9ff0475bd7",
+  "groesse": 7477449
 }
