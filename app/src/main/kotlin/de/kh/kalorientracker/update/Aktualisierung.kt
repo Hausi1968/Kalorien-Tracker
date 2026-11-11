@@ -10,8 +10,6 @@ import de.kh.kalorientracker.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
@@ -24,7 +22,7 @@ import java.net.URL
 data class NeueVersion(val version: String, val notizen: String, val apkUrl: String)
 
 /**
- * Updates "aus der Luft": fragt die neueste Veröffentlichung im GitHub-Repository ab,
+ * Updates "aus der Luft": liest latest.json aus dem GitHub-Zweig "updates",
  * lädt die APK herunter und übergibt sie dem Android-Installer. Der Nutzer bestätigt immer selbst.
  * Updates passen nur, wenn sie mit demselben Schlüssel signiert sind wie die installierte App.
  */
@@ -38,18 +36,15 @@ class Aktualisierung(private val context: Context) {
     suspend fun pruefe(immer: Boolean = false): NeueVersion? {
         val jetzt = System.currentTimeMillis()
         if (!immer && jetzt - prefs.getLong("zuletzt", 0) < 20 * 60 * 60 * 1000L) return null
-        val text = hole("https://api.github.com/repos/$REPO/releases/latest")
+        val text = hole("$QUELLE/latest.json?t=${jetzt / 60_000}")
         prefs.edit().putLong("zuletzt", jetzt).apply()
         val r = json.parseToJsonElement(text).jsonObject
-        val tag = (r["tag_name"] as? JsonPrimitive)?.contentOrNull ?: return null
-        val version = tag.removePrefix("v")
-        if (!istNeuer(version, aktuelleVersion)) return null
-        val apk = (r["assets"] as? JsonArray)
-            ?.mapNotNull { it as? JsonObject }
-            ?.firstOrNull { (it["name"] as? JsonPrimitive)?.contentOrNull?.endsWith(".apk") == true }
-            ?.let { (it["browser_download_url"] as? JsonPrimitive)?.contentOrNull } ?: return null
-        val notizen = (r["body"] as? JsonPrimitive)?.contentOrNull.orEmpty()
-        return NeueVersion(version, notizen, apk)
+        val code = (r["versionCode"] as? JsonPrimitive)?.contentOrNull?.toIntOrNull() ?: return null
+        val version = (r["version"] as? JsonPrimitive)?.contentOrNull ?: return null
+        if (code <= BuildConfig.VERSION_CODE) return null
+        val apk = (r["apk"] as? JsonPrimitive)?.contentOrNull ?: return null
+        val notizen = (r["notizen"] as? JsonPrimitive)?.contentOrNull.orEmpty()
+        return NeueVersion(version, notizen, if (apk.startsWith("http")) apk else "$QUELLE/$apk")
     }
 
     /** Lädt die APK in den Cache. [fortschritt] bekommt 0..1. */
@@ -124,6 +119,9 @@ class Aktualisierung(private val context: Context) {
 
     companion object {
         const val REPO = "Hausi1968/Kalorien-Tracker"
+
+        /** Update-Infos liegen im Zweig "updates" des Repositorys: latest.json + APK-Dateien. */
+        const val QUELLE = "https://raw.githubusercontent.com/$REPO/updates"
 
         /** "0.10.0" > "0.9.2"; Zusätze wie "-beta" werden ignoriert. */
         fun istNeuer(kandidat: String, aktuell: String): Boolean {
