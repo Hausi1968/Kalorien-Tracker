@@ -280,6 +280,7 @@ private fun WeiterZeile(text: String, onClick: () -> Unit) {
 @Composable
 fun herkunft(f: FoodEntity): String = f.brand ?: when (f.source) {
     "user" -> stringResource(R.string.eigenes_produkt)
+    "rezept" -> stringResource(R.string.eigenes_rezept)
     "off" -> stringResource(R.string.open_food_facts)
     else -> stringResource(R.string.grundnahrungsmittel)
 }

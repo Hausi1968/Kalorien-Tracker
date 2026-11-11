@@ -2,6 +2,8 @@
 
 package de.kh.kalorientracker.ui
 
+import de.kh.kalorientracker.ui.rezepte.RezeptEditorScreen
+import de.kh.kalorientracker.ui.rezepte.RezepteScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -84,6 +86,8 @@ object Routen {
     const val RECHNER = "rechner"
     const val PRODUKT = "produkt-neu?barcode={barcode}&name={name}"
     const val EINTRAG = "eintrag/{eintragId}"
+    const val REZEPT = "rezept?id={id}"
+    fun rezept(id: String?) = "rezept?id=${android.net.Uri.encode(id.orEmpty())}"
     fun produkt(barcode: String?, name: String?) =
         "produkt-neu?barcode=${barcode.orEmpty()}&name=${android.net.Uri.encode(name.orEmpty())}"
     fun eintrag(id: String) = "eintrag/$id"
@@ -132,7 +136,26 @@ private fun HauptNavigation(repo: KalorienRepository, aktualisierung: Aktualisie
                     onEintrag = { id -> nav.navigate(Routen.eintrag(id)) },
                 )
             }
-            composable(Tab.REZEPTE.route) { PlatzhalterScreen(R.string.tab_rezepte, R.string.platzhalter_rezepte) }
+            composable(Tab.REZEPTE.route) {
+                RezepteScreen(
+                    repo,
+                    onOeffnen = { id -> nav.navigate(Routen.detail(id, java.time.LocalDate.now(), 0)) },
+                    onNeu = { nav.navigate(Routen.rezept(null)) },
+                )
+            }
+            composable(Routen.REZEPT, arguments = listOf(navArgument("id") { type = NavType.StringType; defaultValue = "" })) { e ->
+                RezeptEditorScreen(
+                    repo,
+                    rezeptId = e.arguments?.getString("id")?.takeIf { it.isNotEmpty() },
+                    onZurueck = { nav.popBackStack() },
+                    onGespeichert = { id ->
+                        // zurück zur Rezeptliste (auch wenn der Editor aus der Detailseite kam, deren Werte sonst veraltet wären)
+                        if (!nav.popBackStack(Tab.REZEPTE.route, inclusive = false)) nav.popBackStack()
+                        // Neues Rezept: gleich öffnen, damit man eine Portion eintragen kann
+                        if (e.arguments?.getString("id").isNullOrEmpty()) nav.navigate(Routen.detail(id, java.time.LocalDate.now(), 0))
+                    },
+                )
+            }
             composable(Tab.VERLAUF.route) { GewichtScreen(repo) }
             composable(Tab.PROFIL.route) {
                 ProfilScreen(
@@ -171,7 +194,8 @@ private fun HauptNavigation(repo: KalorienRepository, aktualisierung: Aktualisie
                     nameVorschlag = e.arguments?.getString("name")?.ifEmpty { null },
                     onZurueck = { nav.popBackStack() },
                     onGespeichert = { id ->
-                        nav.popBackStack()
+                        // zurück zur Rezeptliste (auch wenn der Editor aus der Detailseite kam, deren Werte sonst veraltet wären)
+                        if (!nav.popBackStack(Tab.REZEPTE.route, inclusive = false)) nav.popBackStack()
                         nav.navigate(Routen.detail(id, tag, slot))
                     },
                 )
@@ -198,6 +222,7 @@ private fun HauptNavigation(repo: KalorienRepository, aktualisierung: Aktualisie
                     slotVorgabe = e.arguments?.getInt("slot") ?: 0,
                     onZurueck = { nav.popBackStack() },
                     onEingetragen = { if (!nav.popBackStack(Tab.TAGEBUCH.route, inclusive = false)) nav.zuTab(Tab.TAGEBUCH.route) },
+                    onRezeptBearbeiten = { id -> nav.navigate(Routen.rezept(id)) },
                 )
             }
         }

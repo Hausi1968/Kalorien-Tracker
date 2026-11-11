@@ -23,6 +23,7 @@ import androidx.compose.material.icons.rounded.AddCircle
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.CalendarToday
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Restaurant
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Star
@@ -107,6 +108,7 @@ fun DetailScreen(
     eintragId: String? = null,
     onZurueck: () -> Unit,
     onEingetragen: () -> Unit,
+    onRezeptBearbeiten: ((String) -> Unit)? = null,
 ) {
     var food by remember { mutableStateOf<FoodEntity?>(null) }
     var eintrag by remember { mutableStateOf<DiaryEntryEntity?>(null) }
@@ -157,6 +159,11 @@ fun DetailScreen(
         titel = f?.name ?: "",
         onZurueck = onZurueck,
         aktionen = {
+            if (f != null && f.source == "rezept" && onRezeptBearbeiten != null && !bearbeiten) {
+                IconButton(onClick = { onRezeptBearbeiten(f.id) }) {
+                    Icon(Icons.Rounded.Edit, contentDescription = stringResource(R.string.rezept_bearbeiten))
+                }
+            }
             if (f != null) {
                 val istFavorit = f.id in favoriten
                 IconButton(onClick = { scope.launch { repo.setzeFavorit(f.id, !istFavorit) } }) {

@@ -155,3 +155,24 @@ interface WaterDao {
     @Query("DELETE FROM water_entry WHERE id = :id")
     suspend fun loesche(id: String)
 }
+
+@Dao
+interface RezeptDao {
+    @Query("SELECT * FROM food WHERE source = 'rezept' ORDER BY name COLLATE NOCASE")
+    fun alle(): Flow<List<FoodEntity>>
+
+    @Query("SELECT * FROM recipe_ingredient WHERE rezeptId = :id ORDER BY position")
+    suspend fun zutaten(id: String): List<RezeptZutatEntity>
+
+    @Insert
+    suspend fun fuegeZutatenEin(z: List<RezeptZutatEntity>)
+
+    @Query("DELETE FROM recipe_ingredient WHERE rezeptId = :id")
+    suspend fun loescheZutaten(id: String)
+
+    @Query("DELETE FROM food WHERE id = :id")
+    suspend fun loescheFood(id: String)
+
+    @Query("DELETE FROM favorite WHERE foodId = :id")
+    suspend fun loescheFavorit(id: String)
+}

@@ -152,3 +152,29 @@ class FormatTest {
         assertEquals(92.5, Format.parseDezimal("92,5")!!, 0.0)
     }
 }
+
+class RezeptRechnerTest {
+    private val nudeln = Naehrwerte(350.0, 1.5, null, 70.0, 3.0, 3.0, 12.0, 0.0)
+    private val sosse = Naehrwerte(50.0, 2.0, null, 6.0, 5.0, 1.0, 1.5, 0.8)
+
+    @Test fun summeUndPortion() {
+        val r = RezeptRechner.berechne(listOf(RezeptZutat(nudeln, 400.0), RezeptZutat(sosse, 600.0)), portionen = 4)!!
+        assertEquals(1700.0, r.gesamt.kcal, 0.001)          // 1400 + 300
+        assertEquals(1000.0, r.gesamtGramm, 0.001)
+        assertEquals(170.0, r.pro100.kcal, 0.001)
+        assertEquals(250.0, r.portionGramm, 0.001)
+        assertEquals(425.0, r.proPortion.kcal, 0.001)
+        assertEquals(57.0 / 4, r.proPortion.eiweiss!!, 0.001) // 48 g + 9 g Eiweiß
+    }
+
+    @Test fun gekochtesGewichtVerteiltGleicheKalorien() {
+        val r = RezeptRechner.berechne(listOf(RezeptZutat(nudeln, 400.0)), portionen = 2, gesamtGramm = 1000.0)!!
+        assertEquals(1400.0, r.gesamt.kcal, 0.001)
+        assertEquals(140.0, r.pro100.kcal, 0.001)
+        assertEquals(700.0, r.proPortion.kcal, 0.001)
+    }
+
+    @Test fun leeresRezept() {
+        assertNull(RezeptRechner.berechne(emptyList(), 2))
+    }
+}

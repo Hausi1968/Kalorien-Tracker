@@ -140,3 +140,19 @@ data class WaterEntryEntity(
     val ml: Int,
     val createdAt: Long,
 )
+
+/**
+ * Zutat eines eigenen Rezepts. Das Rezept selbst liegt als Lebensmittel (source "rezept") in food,
+ * damit es in Suche, Favoriten und Tagebuch ohne Sonderweg funktioniert.
+ */
+@Entity(tableName = "recipe_ingredient", indices = [Index("rezeptId")])
+data class RezeptZutatEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val rezeptId: String,
+    val position: Int,
+    val foodId: String,
+    val label: String,
+    val servingLabel: String?,
+    val quantity: Double,
+    val gramm: Double,
+)

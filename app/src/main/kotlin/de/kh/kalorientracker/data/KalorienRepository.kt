@@ -7,6 +7,8 @@ import de.kh.kalorientracker.core.MakroAnteile
 import de.kh.kalorientracker.core.MakroGramm
 import de.kh.kalorientracker.core.Naehrwerte
 import de.kh.kalorientracker.core.Ranking
+import de.kh.kalorientracker.core.RezeptRechner
+import de.kh.kalorientracker.core.RezeptZutat
 import de.kh.kalorientracker.core.SuchText
 import de.kh.kalorientracker.core.Tagesbilanz
 import de.kh.kalorientracker.core.Ziel
@@ -241,6 +243,68 @@ class KalorienRepository(private val db: AppDatabase, private val off: OpenFoodF
     /** Eigene Portionsgröße zu einem Lebensmittel. */
     suspend fun neuePortion(foodId: String, label: String, gramm: Double) =
         db.food().fuegeServingsEin(listOf(ServingEntity(foodId = foodId, label = label, gramm = gramm)))
+
+    // ---------- Rezepte ----------
+
+    val rezepte: Flow<List<FoodEntity>> = db.rezept().alle()
+
+    /** Zutaten eines Rezepts samt Lebensmittel (fehlende Lebensmittel werden übersprungen). */
+    suspend fun rezeptZutaten(rezeptId: String): List<Pair<RezeptZutatEntity, FoodEntity>> {
+        val z = db.rezept().zutaten(rezeptId)
+        val foods = db.food().ladeAlle(z.map { it.foodId }.distinct()).associateBy { it.id }
+        return z.mapNotNull { zutat -> foods[zutat.foodId]?.let { zutat to it } }
+    }
+
+    /** Anzahl Portionen und Gesamtgewicht eines gespeicherten Rezepts (für den Editor). */
+    suspend fun rezeptKopf(rezeptId: String): Pair<Int, Double?> {
+        val s = db.food().portionen(rezeptId)
+        val portionen = s.firstOrNull { it.label.startsWith("Portion (1/") }
+            ?.label?.substringAfter("1/")?.substringBefore(")")?.toIntOrNull() ?: 1
+        return portionen to s.firstOrNull { it.label == "Ganzes Rezept" }?.gramm
+    }
+
+    /**
+     * Speichert ein Rezept als Lebensmittel mit Werten pro 100 g und einer Portion (Gesamtgewicht / Portionen).
+     * Neue Rezepte bekommen die id "rezept:<uuid>".
+     */
+    suspend fun speichereRezept(
+        id: String?, name: String, portionen: Int, gesamtGramm: Double?,
+        zutaten: List<Pair<RezeptZutatEntity, FoodEntity>>,
+    ): FoodEntity? {
+        val werte = RezeptRechner.berechne(
+            zutaten.map { (z, f) -> RezeptZutat(f.naehrwerte100, z.gramm) }, portionen, gesamtGramm,
+        ) ?: return null
+        val rid = id ?: "rezept:${UUID.randomUUID()}"
+        val p = werte.pro100
+        val food = FoodEntity(
+            id = rid, source = "rezept", barcode = null, name = name.trim(), nameNorm = SuchText.normalisiere(name),
+            brand = null, unitBase = "g", kcal = p.kcal, fett = p.fett, gesFett = p.gesFett, kh = p.kh,
+            zucker = p.zucker, ballaststoffe = p.ballaststoffe, eiweiss = p.eiweiss, salz = p.salz,
+            beliebtheit = db.food().lade(rid)?.beliebtheit ?: 0,
+        )
+        db.withTransaction {
+            db.food().loescheServings(listOf(rid))
+            db.food().fuegeEin(listOf(food))
+            db.food().fuegeServingsEin(
+                listOf(
+                    ServingEntity(foodId = rid, label = "Portion (1/$portionen)", gramm = werte.portionGramm, isDefault = true),
+                    ServingEntity(foodId = rid, label = "Ganzes Rezept", gramm = werte.gesamtGramm),
+                    ServingEntity(foodId = rid, label = "100 g", gramm = 100.0),
+                ),
+            )
+            db.rezept().loescheZutaten(rid)
+            db.rezept().fuegeZutatenEin(zutaten.mapIndexed { i, (z, _) -> z.copy(id = 0, rezeptId = rid, position = i) })
+        }
+        return food
+    }
+
+    /** Löscht das Rezept; Tagebuch-Einträge bleiben erhalten, weil sie ihre Werte selbst speichern. */
+    suspend fun loescheRezept(id: String) = db.withTransaction {
+        db.rezept().loescheZutaten(id)
+        db.rezept().loescheFavorit(id)
+        db.food().loescheServings(listOf(id))
+        db.rezept().loescheFood(id)
+    }
 
     // ---------- Gewicht ----------
     val gewichtVerlauf: Flow<List<BodyEntryEntity>> = db.body().gewichtVerlauf()

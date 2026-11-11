@@ -273,4 +273,30 @@
     <string name="prozent_eiweiss">Eiweiß %</string>
     <string name="makro_summe">Zusammen %1$s %% (muss 100 %% ergeben)</string>
     <string name="ziel_gespeichert">Ziel gespeichert</string>
+
+    <!-- 0.6: Rezepte -->
+    <string name="rezept_neu">Neues Rezept</string>
+    <string name="rezept_bearbeiten">Rezept bearbeiten</string>
+    <string name="rezepte_leer">Hier sammelst du deine eigenen Gerichte. Leg ein Rezept aus Zutaten an, dann trägst du später eine Portion mit einem Tipp ein.</string>
+    <string name="rezept_unterzeile">Eigenes Rezept · %1$s kcal / 100 g</string>
+    <string name="rezept_name">Name des Gerichts</string>
+    <string name="rezept_portionen">Portionen</string>
+    <string name="rezept_gewicht_gekocht">Gewicht fertig (g)</string>
+    <string name="rezept_gewicht_hinweis">Optional: Wenn du das fertige Gericht wiegst, stimmen die Werte pro Portion genauer (beim Kochen verdampft Wasser).</string>
+    <string name="rezept_zutaten">Zutaten</string>
+    <string name="rezept_zutaten_leer">Noch keine Zutaten. Füge die erste hinzu.</string>
+    <string name="rezept_zutat_hinzufuegen">Zutat hinzufügen</string>
+    <string name="rezept_zutat_entfernen">%1$s entfernen</string>
+    <string name="rezept_zutat_menge">%1$s · %2$s kcal</string>
+    <string name="rezept_pro_portion">Pro Portion (%1$s g)</string>
+    <string name="rezept_gesamt">Ganzes Rezept %1$s kcal · %2$s kcal / 100 g</string>
+    <string name="rezept_loeschen_frage">Rezept löschen?</string>
+    <string name="rezept_loeschen_text">Bereits eingetragene Portionen bleiben in deinem Tagebuch.</string>
+    <string name="rezept_anzahl">Anzahl %1$s</string>
+    <string name="rezept_menge_in">Menge in %1$s</string>
+    <string name="rezept_menge_ergebnis">= %1$s %2$s · %3$s kcal</string>
+    <string name="eigenes_rezept">Eigenes Rezept</string>
+    <string name="suche_laedt">Suche läuft …</string>
+    <string name="loeschen">Löschen</string>
+    <string name="hinzufuegen">Hinzufügen</string>
 </resources>

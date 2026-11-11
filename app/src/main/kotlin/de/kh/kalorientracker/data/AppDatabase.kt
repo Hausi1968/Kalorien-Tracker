@@ -17,8 +17,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ActivityEntryEntity::class,
         FavoriteEntity::class,
         WaterEntryEntity::class,
+        RezeptZutatEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -29,20 +30,34 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun activity(): ActivityDao
     abstract fun favorite(): FavoriteDao
     abstract fun water(): WaterDao
+    abstract fun rezept(): RezeptDao
 
     companion object {
         fun baue(context: Context): AppDatabase =
             Room.databaseBuilder(context, AppDatabase::class.java, "kalorien.db")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .apply { testAnpassung?.invoke(this) }
                 .build()
 
-        /** 0.3 → 0.4: Favoriten und Wasser. SQL wie in schemas/…/2.json, bestehende Daten bleiben. */
+        /** Nur für automatische Tests: z. B. Datenbankarbeit auf dem Test-Thread statt im Hintergrund. */
+        @Volatile var testAnpassung: ((RoomDatabase.Builder<AppDatabase>) -> Unit)? = null
+
+        /** 0.5 → 0.6: Rezept-Zutaten. SQL wie in schemas/…/4.json. */
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS `recipe_ingredient` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `rezeptId` TEXT NOT NULL, `position` INTEGER NOT NULL, `foodId` TEXT NOT NULL, `label` TEXT NOT NULL, `servingLabel` TEXT, `quantity` REAL NOT NULL, `gramm` REAL NOT NULL)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_recipe_ingredient_rezeptId` ON `recipe_ingredient` (`rezeptId`)")
+            }
+        }
+
+        /** 0.4 → 0.5: Tagesziel selbst festgelegt. */
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `profile` ADD COLUMN `zielManuell` INTEGER NOT NULL DEFAULT 0")
             }
         }
 
+        /** 0.3 → 0.4: Favoriten und Wasser. SQL wie in schemas/…/2.json, bestehende Daten bleiben. */
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("CREATE TABLE IF NOT EXISTS `favorite` (`foodId` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, PRIMARY KEY(`foodId`))")
