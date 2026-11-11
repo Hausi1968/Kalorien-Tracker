@@ -26,6 +26,7 @@ import de.kh.kalorientracker.ui.ProfilScreen
 import de.kh.kalorientracker.ui.rezepte.RezeptEditorScreen
 import de.kh.kalorientracker.ui.theme.KalorienTheme
 import de.kh.kalorientracker.update.Aktualisierung
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -146,5 +147,30 @@ class BildschirmTest {
         // Zweiter Aufruf liest nichts neu ein
         runBlocking { de.kh.kalorientracker.data.KatalogImport(ctx, db).fallsNoetig() }
         assertEquals(anzahl, runBlocking { db.food().anzahl() })
+    }
+
+    @Test fun quellenWahlFuerGewichtUndVerbrannt() = runBlocking {
+        val quellen = de.kh.kalorientracker.data.Quellen()
+        val r = KalorienRepository(db, quellen = quellen)
+        val heute = java.time.LocalDate.now()
+        r.speichereGewicht(92.0, heute)
+        r.speichereAktivitaet("Radfahren", 300.0, 45.0, heute)
+        r.uebernehmeHealthConnect(heute.minusDays(14), mapOf(heute to (System.currentTimeMillis() to 90.5)), mapOf(heute to 420.0))
+        suspend fun verbranntS() = r.tag(heute).first().verbrannt
+        suspend fun gewicht() = r.ladeLetztesGewicht()
+
+        assertEquals(92.0, gewicht()!!, 0.01)
+        assertEquals(300.0, verbranntS(), 0.01)
+
+        quellen.setze(de.kh.kalorientracker.data.QuellenWahl(de.kh.kalorientracker.data.Quelle.HC, de.kh.kalorientracker.data.Quelle.HC))
+        assertEquals(90.5, gewicht()!!, 0.01)
+        assertEquals(420.0, verbranntS(), 0.01)
+
+        quellen.setze(de.kh.kalorientracker.data.QuellenWahl(de.kh.kalorientracker.data.Quelle.BEIDE, de.kh.kalorientracker.data.Quelle.BEIDE))
+        assertEquals(720.0, verbranntS(), 0.01)
+
+        // Erneuter Abgleich ersetzt die alten Werte statt sie zu verdoppeln
+        r.uebernehmeHealthConnect(heute.minusDays(14), emptyMap(), mapOf(heute to 500.0))
+        assertEquals(800.0, verbranntS(), 0.01)
     }
 }

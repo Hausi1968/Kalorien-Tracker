@@ -15,8 +15,10 @@ codeScanner = "16.1.0"
 robolectric = "4.14.1"
 androidxTestCore = "1.6.1"
 androidxTestJunit = "1.2.1"
+healthConnect = "1.1.0-beta01"  # 1.1.0 final braucht compileSdk 36 und AGP 8.9
 
 [libraries]
+health-connect = { module = "androidx.health.connect:connect-client", version.ref = "healthConnect" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }

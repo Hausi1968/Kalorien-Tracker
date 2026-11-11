@@ -15,6 +15,7 @@ import de.kh.kalorientracker.core.Ziel
 import de.kh.kalorientracker.core.Zielvorgabe
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import java.time.Duration
 import java.time.Instant
@@ -47,15 +48,21 @@ sealed interface BarcodeErgebnis {
     data object KeineVerbindung : BarcodeErgebnis
 }
 
-class KalorienRepository(private val db: AppDatabase, private val off: OpenFoodFacts = OpenFoodFacts()) {
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+class KalorienRepository(
+    private val db: AppDatabase,
+    private val off: OpenFoodFacts = OpenFoodFacts(),
+    val quellen: Quellen = Quellen(),
+) {
+    private val gewichtModus get() = quellen.wahl.value.gewicht.name
     private val zone: ZoneId get() = ZoneId.systemDefault()
 
     // ---------- Profil ----------
     val profil: Flow<ProfileEntity?> = db.profile().beobachte()
-    val letztesGewicht: Flow<BodyEntryEntity?> = db.body().letztesGewicht()
+    val letztesGewicht: Flow<BodyEntryEntity?> = quellen.wahl.flatMapLatest { db.body().letztesGewicht(it.gewicht.name) }
 
     suspend fun ladeProfil(): ProfileEntity? = db.profile().lade()
-    suspend fun ladeLetztesGewicht(): Double? = db.body().ladeLetztesGewicht()?.value
+    suspend fun ladeLetztesGewicht(): Double? = db.body().ladeLetztesGewicht(gewichtModus)?.value
 
     /** Speichert Profil und Ziel; das Gewicht wird zusätzlich als Körperwert für heute abgelegt. */
     suspend fun speichereProfil(p: ProfileEntity, gewichtKg: Double) {
@@ -78,7 +85,7 @@ class KalorienRepository(private val db: AppDatabase, private val off: OpenFoodF
     fun tag(t: LocalDate): Flow<TagesDaten> = combine(
         db.profile().beobachte(),
         db.diary().eintraegeAm(t.toString()),
-        db.activity().verbranntAm(t.toString()),
+        quellen.wahl.flatMapLatest { db.activity().verbranntAm(t.toString(), it.verbrannt.name) },
     ) { p, e, v -> TagesDaten(t, p, e, v) }
 
     /** Gegessene kcal je Tag im Zeitraum (für die Wochenleiste). */
@@ -307,7 +314,7 @@ class KalorienRepository(private val db: AppDatabase, private val off: OpenFoodF
     }
 
     // ---------- Gewicht ----------
-    val gewichtVerlauf: Flow<List<BodyEntryEntity>> = db.body().gewichtVerlauf()
+    val gewichtVerlauf: Flow<List<BodyEntryEntity>> = quellen.wahl.flatMapLatest { db.body().gewichtVerlauf(it.gewicht.name) }
 
     /**
      * Gewicht für einen Tag speichern (pro Tag ein Wert) und das Tagesziel
@@ -320,9 +327,15 @@ class KalorienRepository(private val db: AppDatabase, private val off: OpenFoodF
                 metric = "gewicht_kg", value = kg,
             ),
         )
+        zielNachGewicht(kg)
+    }
+
+    /** Tagesziel an ein neues Gewicht anpassen (nicht, wenn es selbst festgelegt ist). */
+    suspend fun zielNachGewicht(kg: Double? = null) {
+        val gewicht = kg ?: ladeLetztesGewicht() ?: return
         val p = db.profile().lade() ?: return
         if (p.zielManuell) return
-        val neu = automatischesZiel(p, kg) ?: return
+        val neu = automatischesZiel(p, gewicht) ?: return
         if (neu != p.tageszielKcal) db.profile().speichere(p.copy(tageszielKcal = neu, updatedAt = System.currentTimeMillis()))
     }
 
@@ -340,7 +353,7 @@ class KalorienRepository(private val db: AppDatabase, private val off: OpenFoodF
      */
     suspend fun setzeZielUndMakros(kcal: Int?, fett: Double, kh: Double, eiweiss: Double) {
         val p = db.profile().lade() ?: return
-        val ziel = kcal ?: automatischesZiel(p, db.body().ladeLetztesGewicht()?.value ?: p.startGewichtKg) ?: p.tageszielKcal
+        val ziel = kcal ?: automatischesZiel(p, db.body().ladeLetztesGewicht(gewichtModus)?.value ?: p.startGewichtKg) ?: p.tageszielKcal
         db.profile().speichere(
             p.copy(
                 tageszielKcal = ziel, zielManuell = kcal != null,
@@ -371,7 +384,35 @@ class KalorienRepository(private val db: AppDatabase, private val off: OpenFoodF
         )
     }
 
-    fun aktivitaeten(tag: LocalDate): Flow<List<ActivityEntryEntity>> = db.activity().am(tag.toString())
+    fun aktivitaeten(tag: LocalDate): Flow<List<ActivityEntryEntity>> =
+        quellen.wahl.flatMapLatest { db.activity().am(tag.toString(), it.verbrannt.name) }
+
+    /**
+     * Übernimmt Werte aus Health Connect ab [von]: alte übernommene Werte in dem Zeitraum werden ersetzt.
+     * Gewicht: der letzte Wert je Tag. Verbrannt: aktive Kalorien je Tag.
+     */
+    suspend fun uebernehmeHealthConnect(von: LocalDate, gewichte: Map<LocalDate, Pair<Long, Double>>, aktivKcal: Map<LocalDate, Double>) =
+        db.withTransaction {
+            db.body().loescheHealthConnectAb(von.toString())
+            db.activity().loescheHealthConnectAb(von.toString())
+            gewichte.forEach { (tag, wert) ->
+                db.body().speichere(
+                    BodyEntryEntity(
+                        id = "hc:gewicht:$tag", day = tag.toString(), measuredAt = wert.first,
+                        metric = "gewicht_kg", value = wert.second, source = "health_connect",
+                    ),
+                )
+            }
+            aktivKcal.filterValues { it >= 1 }.forEach { (tag, kcal) ->
+                db.activity().speichere(
+                    ActivityEntryEntity(
+                        id = "hc:aktiv:$tag", day = tag.toString(),
+                        startedAt = tag.atStartOfDay(zone).toInstant().toEpochMilli(),
+                        label = "Aktive Kalorien (Samsung Health)", minutes = null, kcal = kcal, source = "health_connect",
+                    ),
+                )
+            }
+        }
 
     suspend fun speichereAktivitaet(bezeichnung: String, kcal: Double, minuten: Double?, tag: LocalDate) {
         val zeit = if (tag == LocalDate.now(zone)) LocalDateTime.now(zone) else tag.atTime(12, 0)

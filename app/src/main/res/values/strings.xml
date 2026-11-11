@@ -299,4 +299,25 @@
     <string name="suche_laedt">Suche läuft …</string>
     <string name="loeschen">Löschen</string>
     <string name="hinzufuegen">Hinzufügen</string>
+
+    <!-- 0.8: Samsung Health über Health Connect -->
+    <string name="hc_titel">Samsung Health</string>
+    <string name="hc_erklaerung">Gewicht und verbrannte Kalorien kann die App aus Samsung Health übernehmen. Das läuft über „Health Connect“ von Android. Die App liest nur, sie schreibt nichts zurück.</string>
+    <string name="hc_gewicht">Gewicht zählt aus</string>
+    <string name="hc_verbrannt">Verbrannte Kalorien zählen aus</string>
+    <string name="hc_quelle_app">Dieser App</string>
+    <string name="hc_quelle_hc">Samsung Health</string>
+    <string name="hc_quelle_beide">Beidem</string>
+    <string name="hc_erlaubnis_hinweis">Damit das klappt, braucht die App einmal deine Erlaubnis. In Samsung Health muss außerdem unter Einstellungen → Health Connect das Teilen eingeschaltet sein.</string>
+    <string name="hc_verbinden">Mit Samsung Health verbinden</string>
+    <string name="hc_verbunden">Verbunden. Die Werte werden beim Start der App übernommen.</string>
+    <string name="hc_jetzt_abgleichen">Jetzt übernehmen</string>
+    <string name="hc_abgeglichen">%1$d Werte aus Samsung Health übernommen</string>
+    <string name="hc_keine_erlaubnis">Noch keine Werte übernommen: Erlaubnis fehlt oder nichts ausgewählt</string>
+    <string name="hc_nicht_verfuegbar">Health Connect gibt es auf diesem Handy nicht. Die Werte trägst du dann hier in der App ein.</string>
+    <string name="hc_installieren_hinweis">Für die Verbindung braucht dein Handy die App „Health Connect“ aus dem Play Store (ab Android 14 ist sie schon eingebaut).</string>
+    <string name="hc_installieren">Health Connect installieren</string>
+    <string name="hc_datenschutz_titel">Gesundheitsdaten</string>
+    <string name="hc_datenschutz_text">Der Kalorien-Tracker liest aus Health Connect nur dein Gewicht und deine aktiven Kalorien, und nur wenn du das im Profil eingeschaltet hast. Die Werte bleiben auf deinem Handy, werden nicht hochgeladen und nicht an andere weitergegeben. Die App schreibt nichts in Health Connect zurück. Die Erlaubnis kannst du jederzeit in Health Connect wieder entziehen.</string>
+    <string name="schliessen">Schließen</string>
 </resources>

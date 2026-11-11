@@ -99,14 +99,18 @@ interface BodyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun speichere(e: BodyEntryEntity)
 
-    @Query("SELECT * FROM body_entry WHERE metric = 'gewicht_kg' ORDER BY measuredAt DESC LIMIT 1")
-    fun letztesGewicht(): Flow<BodyEntryEntity?>
+    // modus: APP = nur in der App eingetragen, HC = nur aus Health Connect, BEIDE = alles
+    @Query("SELECT * FROM body_entry WHERE metric = 'gewicht_kg' AND (:modus = 'BEIDE' OR (source = 'health_connect') = (:modus = 'HC')) ORDER BY measuredAt DESC LIMIT 1")
+    fun letztesGewicht(modus: String): Flow<BodyEntryEntity?>
 
-    @Query("SELECT * FROM body_entry WHERE metric = 'gewicht_kg' ORDER BY measuredAt DESC LIMIT 1")
-    suspend fun ladeLetztesGewicht(): BodyEntryEntity?
+    @Query("SELECT * FROM body_entry WHERE metric = 'gewicht_kg' AND (:modus = 'BEIDE' OR (source = 'health_connect') = (:modus = 'HC')) ORDER BY measuredAt DESC LIMIT 1")
+    suspend fun ladeLetztesGewicht(modus: String): BodyEntryEntity?
 
-    @Query("SELECT * FROM body_entry WHERE metric = 'gewicht_kg' ORDER BY day")
-    fun gewichtVerlauf(): Flow<List<BodyEntryEntity>>
+    @Query("SELECT * FROM body_entry WHERE metric = 'gewicht_kg' AND (:modus = 'BEIDE' OR (source = 'health_connect') = (:modus = 'HC')) ORDER BY day, measuredAt")
+    fun gewichtVerlauf(modus: String): Flow<List<BodyEntryEntity>>
+
+    @Query("DELETE FROM body_entry WHERE source = 'health_connect' AND day >= :von")
+    suspend fun loescheHealthConnectAb(von: String)
 
     @Query("DELETE FROM body_entry WHERE id = :id")
     suspend fun loesche(id: String)
@@ -114,14 +118,17 @@ interface BodyDao {
 
 @Dao
 interface ActivityDao {
-    @Query("SELECT COALESCE(SUM(kcal), 0) FROM activity_entry WHERE day = :day")
-    fun verbranntAm(day: String): Flow<Double>
+    @Query("SELECT COALESCE(SUM(kcal), 0) FROM activity_entry WHERE day = :day AND (:modus = 'BEIDE' OR (source = 'health_connect') = (:modus = 'HC'))")
+    fun verbranntAm(day: String, modus: String): Flow<Double>
+
+    @Query("DELETE FROM activity_entry WHERE source = 'health_connect' AND day >= :von")
+    suspend fun loescheHealthConnectAb(von: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun speichere(e: ActivityEntryEntity)
 
-    @Query("SELECT * FROM activity_entry WHERE day = :day ORDER BY startedAt")
-    fun am(day: String): Flow<List<ActivityEntryEntity>>
+    @Query("SELECT * FROM activity_entry WHERE day = :day AND (:modus = 'BEIDE' OR (source = 'health_connect') = (:modus = 'HC')) ORDER BY startedAt")
+    fun am(day: String, modus: String): Flow<List<ActivityEntryEntity>>
 
     @Query("DELETE FROM activity_entry WHERE id = :id")
     suspend fun loesche(id: String)

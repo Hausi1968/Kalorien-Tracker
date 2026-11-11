@@ -177,6 +177,7 @@ fun ProfilScreen(
     aktualisierung: Aktualisierung,
     onZielAendern: () -> Unit,
     onNeueVersion: (NeueVersion) -> Unit,
+    healthConnect: de.kh.kalorientracker.gesundheit.HealthConnect? = null,
 ) {
     val p by repo.profil.collectAsStateWithLifecycle(initialValue = null)
     val snackbar = remember { SnackbarHostState() }
@@ -251,6 +252,7 @@ fun ProfilScreen(
                 Text(stringResource(R.string.ziel_anpassen))
             }
             HinweisBox(stringResource(R.string.rechner_datenschutz))
+            healthConnect?.let { hc -> de.kh.kalorientracker.gesundheit.HealthConnectKarte(hc) { text -> scope.launch { snackbar.showSnackbar(text) } } }
             Karte(titel = stringResource(R.string.app_version, aktualisierung.aktuelleVersion)) {
                 OutlinedButton(onClick = {
                     scope.launch {
