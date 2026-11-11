@@ -1,6 +1,6 @@
 {
-  "version": "0.6.1",
-  "versionCode": 7,
-  "apk": "Kalorien-Tracker-0.6.1.apk",
-  "notizen": "0.6.1: Fehler behoben – beim Tippen auf dem Willkommen-Bildschirm (und beim Produkt anlegen) waren die Eingabefelder unter der Tastatur verschwunden."
+  "version": "0.7.0",
+  "versionCode": 8,
+  "apk": "Kalorien-Tracker-0.7.0.apk",
+  "notizen": "Neu in 0.7.0: Rund 100.000 Produkte aus Deutschland, Österreich und der Schweiz sind jetzt direkt in der App. Die Suche findet sie sofort, auch ohne Internet. Beim ersten Start nach dem Update dauert das Einrichten ein paar Sekunden."
 }
