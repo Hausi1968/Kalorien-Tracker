@@ -92,6 +92,10 @@ object Routen {
     const val PRODUKT = "produkt-neu?barcode={barcode}&name={name}"
     const val EINTRAG = "eintrag/{eintragId}"
     const val REZEPT = "rezept?id={id}"
+    const val UEBERSICHT = "uebersicht?tag={tag}"
+    const val AUSWAHL = "auswahl?tag={tag}&id={id}"
+    fun auswahl(tag: LocalDate, id: String?) = "auswahl?tag=$tag&id=${id.orEmpty()}"
+    fun uebersicht(tag: LocalDate) = "uebersicht?tag=$tag"
     fun rezept(id: String?) = "rezept?id=${android.net.Uri.encode(id.orEmpty())}"
     fun produkt(barcode: String?, name: String?) =
         "produkt-neu?barcode=${barcode.orEmpty()}&name=${android.net.Uri.encode(name.orEmpty())}"
@@ -142,6 +146,30 @@ private fun HauptNavigation(
                 TagebuchScreen(
                     repo,
                     onSuche = { tag, slot -> nav.navigate(Routen.suche(tag, slot)) },
+                    onEintrag = { id -> nav.navigate(Routen.eintrag(id)) },
+                    onUebersicht = { tag -> nav.navigate(Routen.uebersicht(tag)) },
+                    onAuswahl = { tag, id -> nav.navigate(Routen.auswahl(tag, id)) },
+                )
+            }
+            composable(
+                Routen.AUSWAHL,
+                arguments = listOf(
+                    navArgument("tag") { type = NavType.StringType; defaultValue = "" },
+                    navArgument("id") { type = NavType.StringType; defaultValue = "" },
+                ),
+            ) { e ->
+                de.kh.kalorientracker.ui.tagebuch.AuswahlScreen(
+                    repo,
+                    tag = e.arguments?.getString("tag").zuDatum(),
+                    vorauswahl = e.arguments?.getString("id"),
+                    onFertig = { nav.popBackStack() },
+                )
+            }
+            composable(Routen.UEBERSICHT, arguments = listOf(navArgument("tag") { type = NavType.StringType; defaultValue = "" })) { e ->
+                de.kh.kalorientracker.ui.uebersicht.UebersichtScreen(
+                    repo,
+                    start = e.arguments?.getString("tag").zuDatum(),
+                    onZurueck = { nav.popBackStack() },
                     onEintrag = { id -> nav.navigate(Routen.eintrag(id)) },
                 )
             }

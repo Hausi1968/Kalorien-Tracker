@@ -478,8 +478,22 @@ class KalorienRepository(
             e.copy(
                 id = UUID.randomUUID().toString(), day = nach.toString(),
                 eatenAt = nach.atTime(uhrzeit).atZone(zone).toInstant().toEpochMilli(),
-                slotId = slotId, createdAt = jetzt, updatedAt = jetzt,
+                slotId = if (slotId == 0) e.slotId else slotId, createdAt = jetzt, updatedAt = jetzt,
             ).also { db.diary().speichere(it) }
+        }
+    }
+
+    /** Verschiebt Einträge auf einen anderen Tag und/oder in eine andere Mahlzeit (0 = Mahlzeit bleibt). Uhrzeit bleibt. */
+    suspend fun verschiebe(eintraege: List<DiaryEntryEntity>, nach: LocalDate, slotId: Int) {
+        val jetzt = System.currentTimeMillis()
+        eintraege.forEach { e ->
+            val uhrzeit = Instant.ofEpochMilli(e.eatenAt).atZone(zone).toLocalTime()
+            db.diary().speichere(
+                e.copy(
+                    day = nach.toString(), eatenAt = nach.atTime(uhrzeit).atZone(zone).toInstant().toEpochMilli(),
+                    slotId = if (slotId == 0) e.slotId else slotId, updatedAt = jetzt,
+                ),
+            )
         }
     }
 }

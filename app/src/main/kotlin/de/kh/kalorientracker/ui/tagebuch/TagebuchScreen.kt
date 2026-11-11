@@ -1,10 +1,11 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.ExperimentalFoundationApi::class)
 
 package de.kh.kalorientracker.ui.tagebuch
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -96,7 +98,13 @@ private val DE = Locale.GERMANY
 private val UHRZEIT = DateTimeFormatter.ofPattern("HH:mm", DE)
 
 @Composable
-fun TagebuchScreen(repo: KalorienRepository, onSuche: (LocalDate, Int) -> Unit, onEintrag: (String) -> Unit) {
+fun TagebuchScreen(
+    repo: KalorienRepository,
+    onSuche: (LocalDate, Int) -> Unit,
+    onEintrag: (String) -> Unit,
+    onUebersicht: (LocalDate) -> Unit = {},
+    onAuswahl: (LocalDate, String?) -> Unit = { _, _ -> },
+) {
     val heute = LocalDate.now()
     var tag by rememberSaveable { mutableStateOf(heute) }
     val daten by remember(tag) { repo.tag(tag) }.collectAsStateWithLifecycle(initialValue = null)
@@ -131,6 +139,9 @@ fun TagebuchScreen(repo: KalorienRepository, onSuche: (LocalDate, Int) -> Unit, 
         titel = tagTitel(tag, heute),
         snackbar = snackbar,
         aktionen = {
+            IconButton(onClick = { onUebersicht(tag) }) {
+                Icon(Icons.Rounded.BarChart, contentDescription = stringResource(R.string.uebersicht_oeffnen))
+            }
             IconButton(onClick = { tag = tag.minusDays(1) }) {
                 Icon(Icons.Rounded.ChevronLeft, contentDescription = stringResource(R.string.tag_vorher))
             }
@@ -180,7 +191,8 @@ fun TagebuchScreen(repo: KalorienRepository, onSuche: (LocalDate, Int) -> Unit, 
             if (d == null) {
                 item { Box(Modifier.fillMaxWidth().height(120.dp).background(AppTheme.colors.surface2, MaterialTheme.shapes.large)) }
             } else {
-                item { BilanzGleichung(d.bilanz) }
+                // Antippen der Bilanz öffnet die Tagesübersicht mit Diagrammen
+                item { BilanzGleichung(d.bilanz, Modifier.clickable { onUebersicht(tag) }) }
                 item { Karte { MakroDreier(d.summe.fett, d.summe.kh, d.summe.eiweiss, d.makroZiel) } }
                 items(Mahlzeiten.STANDARD, key = { it.id }) { slot ->
                     MahlzeitKarte(
@@ -189,6 +201,7 @@ fun TagebuchScreen(repo: KalorienRepository, onSuche: (LocalDate, Int) -> Unit, 
                         aktuell = tag == heute && slot.id == aktuellerSlot,
                         onPlus = { onSuche(tag, slot.id) },
                         onEintrag = onEintrag,
+                        onAuswahl = { id -> onAuswahl(tag, id) },
                         gesternAnzahl = gestern?.imSlot(slot.id)?.size ?: 0,
                         onVonGestern = {
                             val quelle = gestern?.imSlot(slot.id).orEmpty()
@@ -308,6 +321,7 @@ private fun MahlzeitKarte(
     aktuell: Boolean,
     onPlus: () -> Unit,
     onEintrag: (String) -> Unit,
+    onAuswahl: (String?) -> Unit,
     gesternAnzahl: Int,
     onVonGestern: () -> Unit,
     onLoeschen: (DiaryEntryEntity) -> Unit,
@@ -349,19 +363,34 @@ private fun MahlzeitKarte(
         }
         if (eintraege.isNotEmpty()) {
             HorizontalDivider(color = AppTheme.colors.border)
-            eintraege.forEach { e -> EintragZeile(e, onClick = { if (e.foodRef != null) onEintrag(e.id) }, onLoeschen = { onLoeschen(e) }) }
-            TextButton(onClick = onPlus, modifier = Modifier.padding(start = Spacing.s)) {
-                Text(stringResource(R.string.lebensmittel_hinzufuegen))
+            eintraege.forEach { e ->
+                EintragZeile(
+                    e, onClick = { if (e.foodRef != null) onEintrag(e.id) }, onLoeschen = { onLoeschen(e) },
+                    onLange = { onAuswahl(e.id) },
+                )
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                TextButton(onClick = onPlus, modifier = Modifier.padding(start = Spacing.s)) {
+                    Text(stringResource(R.string.lebensmittel_hinzufuegen))
+                }
+                Spacer(Modifier.weight(1f))
+                // Verschieben, kopieren, mehrere löschen
+                TextButton(onClick = { onAuswahl(eintraege.first().id) }) {
+                    Text(stringResource(R.string.auswahl_oeffnen))
+                }
             }
         }
     }
 }
 
 @Composable
-private fun EintragZeile(e: DiaryEntryEntity, onClick: () -> Unit, onLoeschen: () -> Unit) {
+private fun EintragZeile(e: DiaryEntryEntity, onClick: () -> Unit, onLoeschen: () -> Unit, onLange: () -> Unit) {
     val zeit = Instant.ofEpochMilli(e.eatenAt).atZone(ZoneId.systemDefault()).toLocalTime().format(UHRZEIT)
     Row(
-        Modifier.fillMaxWidth().clickable(onClickLabel = stringResource(R.string.eintrag_bearbeiten), onClick = onClick).padding(start = Spacing.l, top = Spacing.s, bottom = Spacing.s),
+        Modifier.fillMaxWidth().combinedClickable(
+            onClickLabel = stringResource(R.string.eintrag_bearbeiten), onClick = onClick,
+            onLongClickLabel = stringResource(R.string.auswahl_oeffnen), onLongClick = onLange,
+        ).padding(start = Spacing.l, top = Spacing.s, bottom = Spacing.s),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Initiale(e.label)

@@ -95,6 +95,41 @@ class BildschirmTest {
         assertEquals(false, p.zielManuell)
     }
 
+    private fun beispielTag(): java.time.LocalDate = runBlocking {
+        val tag = java.time.LocalDate.now()
+        suspend fun lm(n: String) = repo.suche(n).first()
+        repo.eintragen(lm("haferflocken"), "100 g", 100.0, 0.8, tag.atTime(7, 30), 1)
+        repo.eintragen(lm("apfel"), "100 g", 100.0, 1.5, tag.atTime(10, 0), 2)
+        repo.eintragen(lm("vollkornbrot"), "100 g", 100.0, 1.2, tag.atTime(12, 15), 3)
+        repo.eintragen(lm("gouda"), "100 g", 100.0, 0.6, tag.atTime(12, 15), 3)
+        repo.eintragen(lm("nudeln"), "100 g", 100.0, 1.25, tag.atTime(18, 30), 5)
+        tag
+    }
+
+    @Test fun tagesuebersichtKalorienUndNaehrwerte() {
+        val tag = beispielTag()
+        rule.setContent { KalorienTheme { de.kh.kalorientracker.ui.uebersicht.UebersichtScreen(repo, tag, {}, {}) } }
+        warteAufText("Einträge mit viel")
+        foto("12-uebersicht-kalorien")
+        rule.onNodeWithText("Nährwerte").performClick()
+        warteAufText("Weitere Nährwerte")
+        foto("13-uebersicht-naehrwerte")
+    }
+
+    @Test fun eintraegeAuswaehlenUndVerschieben() {
+        val tag = beispielTag()
+        var fertig = false
+        rule.setContent { KalorienTheme { de.kh.kalorientracker.ui.tagebuch.AuswahlScreen(repo, tag, null, onFertig = { fertig = true }) } }
+        warteAufText("Mittagessen")
+        rule.onNodeWithText("Mittagessen").performClick() // ganze Mahlzeit auswählen
+        foto("14-auswahl")
+        val mittag = runBlocking { db.diary().eintraegeAm(tag.toString()).first().filter { it.slotId == 3 } }
+        runBlocking { repo.verschiebe(mittag, tag.minusDays(1), 5) }
+        val gestern = runBlocking { db.diary().eintraegeAm(tag.minusDays(1).toString()).first() }
+        assertEquals(2, gestern.size)
+        assertEquals(setOf(5), gestern.map { it.slotId }.toSet())
+    }
+
     @Test fun rezeptAusZweiZutaten() {
         var gespeichert: String? = null
         rule.setContent { KalorienTheme { RezeptEditorScreen(repo, null, onZurueck = {}, onGespeichert = { gespeichert = it }) } }

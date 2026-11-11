@@ -100,7 +100,8 @@ class AppAblaufTest {
         warteAufText("Schnell eintragen")
         foto("05-apfel-detail")
         rule.onNodeWithText("Eintragen").performClick()
-
+        // Zurück im Tagebuch, sobald die Detailseite weg ist
+        rule.waitUntil(10_000) { rule.onAllNodesWithText("Schnell eintragen").fetchSemanticsNodes().isEmpty() }
         warteAufText("Apfel")
         warteAufText("78")
         foto("06-tagebuch-mit-apfel")
