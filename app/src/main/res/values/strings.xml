@@ -71,7 +71,7 @@
     <string name="produkt_anlegen">Produkt anlegen</string>
 
     <!-- Lebensmittel / Eintragen -->
-    <string name="startdaten_hinweis">Startwert: gerundeter Durchschnitt. Genaue Produktdaten kommen mit dem Katalog.</string>
+    <string name="startdaten_hinweis">Durchschnittswert für dieses Grundnahrungsmittel. Für ein bestimmtes Produkt such nach der Marke oder scanne den Barcode.</string>
     <string name="menge">Menge</string>
     <string name="menge_fehlt">Bitte eine Menge eingeben</string>
     <string name="portion_waehlen">Portion wählen</string>
@@ -195,7 +195,7 @@
     <string name="nw_salz_g">Salz in g</string>
     <string name="produkt_privat">Eigene Produkte bleiben nur auf deinem Handy.</string>
     <string name="datenquellen">Datenquellen</string>
-    <string name="datenquellen_text">Produktdaten per Barcode und Online-Suche: Open Food Facts (openfoodfacts.org), Daten unter der Open Database License (ODbL). Startwerte für Grundnahrungsmittel: eigene gerundete Durchschnittswerte.</string>
+    <string name="datenquellen_text">Produktdaten (mitgelieferte Datenbank, Barcode und Online-Suche): Open Food Facts (openfoodfacts.org), Daten unter der Open Database License (ODbL). Startwerte für Grundnahrungsmittel: eigene gerundete Durchschnittswerte.</string>
     <!-- Version 0.3: Gewicht, Übersicht, Kalorien direkt, Aktivitäten, Updates -->
     <string name="gewicht_heute">Gewicht heute</string>
     <string name="gewicht_weniger">0,1 kg weniger</string>

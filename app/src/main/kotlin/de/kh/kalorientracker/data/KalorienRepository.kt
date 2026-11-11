@@ -168,7 +168,7 @@ class KalorienRepository(private val db: AppDatabase, private val off: OpenFoodF
             Ranking.Kandidat(
                 id = f.id,
                 name = f.name,
-                istGrundnahrungsmittel = f.brand == null,
+                istGrundnahrungsmittel = f.source == "start",
                 beliebtheit = f.beliebtheit,
                 zuletztGegessenVorTagen = zuletzt[f.id]?.let { Duration.between(Instant.ofEpochMilli(it), jetzt).toDays().toInt() },
                 istFavorit = f.id in favoriten,

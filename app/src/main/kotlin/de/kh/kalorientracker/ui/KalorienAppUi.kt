@@ -60,7 +60,10 @@ import java.time.LocalDate
  */
 @Composable
 fun KalorienAppUi(container: AppContainer) {
-    LaunchedEffect(Unit) { container.startdaten.fallsLeer() }
+    LaunchedEffect(Unit) {
+        container.startdaten.fallsLeer()
+        container.katalog.fallsNoetig()
+    }
     val profilDa by remember { container.repo.profil.map { it != null } }
         .collectAsStateWithLifecycle(initialValue = null)
 
@@ -69,6 +72,11 @@ fun KalorienAppUi(container: AppContainer) {
         false -> RechnerScreen(container.repo, erstesMal = true, onFertig = {}, onZurueck = null)
         true -> HauptNavigation(container.repo, container.aktualisierung)
     }
+
+    // Automatische Update-Prüfung schon ab dem ersten Bildschirm (höchstens etwa einmal am Tag)
+    var neueVersion by remember { mutableStateOf<NeueVersion?>(null) }
+    LaunchedEffect(Unit) { neueVersion = runCatching { container.aktualisierung.pruefe() }.getOrNull() }
+    neueVersion?.let { UpdateDialog(container.aktualisierung, it, onSchliessen = { neueVersion = null }) }
 }
 
 private enum class Tab(val route: String, val label: Int, val icon: ImageVector) {
@@ -99,7 +107,6 @@ object Routen {
 private fun HauptNavigation(repo: KalorienRepository, aktualisierung: Aktualisierung) {
     val nav = rememberNavController()
     var neueVersion by remember { mutableStateOf<NeueVersion?>(null) }
-    LaunchedEffect(Unit) { neueVersion = runCatching { aktualisierung.pruefe() }.getOrNull() }
     neueVersion?.let { UpdateDialog(aktualisierung, it, onSchliessen = { neueVersion = null }) }
     val eintrag by nav.currentBackStackEntryAsState()
     val aktuelleRoute = eintrag?.destination?.route

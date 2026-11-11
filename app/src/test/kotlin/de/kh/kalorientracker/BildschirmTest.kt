@@ -128,4 +128,23 @@ class BildschirmTest {
         assertEquals(erwartetKcal, f.kcal, 0.01)
         assertEquals(115.0, runBlocking { repo.portionen(id) }.first { it.isDefault }.gramm, 0.01) // 230 g / 2 Portionen
     }
+
+    @Test fun katalogEinlesenUndSuchen() {
+        val start = System.currentTimeMillis()
+        runBlocking { de.kh.kalorientracker.data.KatalogImport(ctx, db).fallsNoetig() }
+        val dauer = System.currentTimeMillis() - start
+        val anzahl = runBlocking { db.food().anzahl() }
+        println("KATALOG $anzahl Einträge in $dauer ms")
+        org.junit.Assert.assertTrue(anzahl > 50_000)
+        // Grundnahrungsmittel bleiben vorne, auch wenn es viele Markenprodukte gibt
+        val t = System.currentTimeMillis()
+        val treffer = runBlocking { repo.suche("haferflocken") }
+        println("SUCHE ${treffer.size} Treffer in ${System.currentTimeMillis() - t} ms: " + treffer.take(5).joinToString { it.name + "/" + it.brand })
+        assertEquals("start:haferflocken", treffer.first().id)
+        val nutella = runBlocking { repo.suche("nutella") }
+        println("NUTELLA " + nutella.take(3).joinToString { it.name + "/" + it.brand })
+        // Zweiter Aufruf liest nichts neu ein
+        runBlocking { de.kh.kalorientracker.data.KatalogImport(ctx, db).fallsNoetig() }
+        assertEquals(anzahl, runBlocking { db.food().anzahl() })
+    }
 }

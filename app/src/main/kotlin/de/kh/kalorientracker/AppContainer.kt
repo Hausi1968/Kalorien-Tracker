@@ -12,6 +12,7 @@ class AppContainer(context: Context) {
     private val db = AppDatabase.baue(context)
     val repo = KalorienRepository(db)
     val startdaten = StartdatenImport(context, db)
+    val katalog = de.kh.kalorientracker.data.KatalogImport(context, db)
     val aktualisierung = Aktualisierung(context)
 }
 

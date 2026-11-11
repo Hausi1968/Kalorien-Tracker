@@ -30,16 +30,20 @@ interface FoodDao {
     @Insert
     suspend fun fuegeServingsEin(s: List<ServingEntity>)
 
+    /** Für den Katalog: vorhandene Einträge (z. B. schon online geladen oder eigener Barcode) bleiben unangetastet. */
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun fuegeEinWennNeu(foods: List<FoodEntity>): List<Long>
+
     @Query("DELETE FROM food_serving WHERE foodId IN (:ids)")
     suspend fun loescheServings(ids: List<String>)
 
-    /** Einfache Suche über den normalisierten Namen; reicht für die Startdaten. Für den großen Katalog folgt FTS. */
+    /** Suche über den normalisierten Namen; eigene Sachen und Grundnahrungsmittel zuerst, dann nach Beliebtheit. */
     @Query(
         """
         SELECT * FROM food
         WHERE nameNorm LIKE :muster1 OR nameNorm LIKE :muster2
-        ORDER BY beliebtheit DESC, LENGTH(name)
-        LIMIT 60
+        ORDER BY (source IN ('start', 'user', 'rezept')) DESC, beliebtheit DESC, LENGTH(name)
+        LIMIT 120
         """,
     )
     suspend fun suche(muster1: String, muster2: String): List<FoodEntity>
