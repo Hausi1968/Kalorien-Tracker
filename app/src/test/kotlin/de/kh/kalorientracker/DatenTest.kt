@@ -177,4 +177,17 @@ class DatenTest {
         assertEquals("Zero Quark Karamell", f.name)
         assertEquals(listOf("off:4711"), repo.suche("salted caramel").map { it.id })
     }
+
+    @Test
+    fun onlineGefunden_wirdBeimNaechstenMalLokalGefunden() = runBlocking {
+        val db = neueDb()
+        val off = object : OpenFoodFacts() {
+            override suspend fun suche(eingabe: String) = listOf(OffTreffer(food("off:99", "Proteinriegel Cookie Dough"), emptyList()))
+        }
+        val repo = KalorienRepository(db, off)
+        assertTrue(repo.suche("eiweissriegel").isEmpty())
+        val online = repo.onlineSuche("eiweissriegel")!!
+        repo.lerneSuchbegriff(online.first().id, "eiweissriegel")
+        assertEquals(listOf("off:99"), repo.suche("eiweissriegel").map { it.id })
+    }
 }

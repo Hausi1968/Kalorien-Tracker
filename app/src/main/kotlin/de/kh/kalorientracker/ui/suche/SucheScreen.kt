@@ -243,7 +243,22 @@ fun SucheScreen(
             val anlegen = { onProduktAnlegen(null, eingabe.trim().ifEmpty { null }) }
             when {
                 onl != null && onl.isEmpty() -> NichtsGefunden(eingabe, online = true, onOnline = null, onAnlegen = anlegen)
-                onl != null -> TrefferListe(stringResource(R.string.online_treffer), onl, onLebensmittel, { schnell(it) }) {
+                // Lerneffekt: Was lokal nicht gefunden wurde und online gewählt wird, merkt sich den Suchbegriff
+                onl != null -> TrefferListe(
+                    stringResource(R.string.online_treffer), onl,
+                    { id ->
+                        val begriff = eingabe.trim()
+                        scope.launch {
+                            if (begriff.length >= 2) repo.lerneSuchbegriff(id, begriff)
+                            aufHauptThread { onLebensmittel(id) }
+                        }
+                    },
+                    { f ->
+                        val begriff = eingabe.trim()
+                        if (begriff.length >= 2) scope.launch { repo.lerneSuchbegriff(f.id, begriff) }
+                        schnell(f)
+                    },
+                ) {
                     WeiterZeile(stringResource(R.string.nicht_dabei_anlegen), anlegen)
                 }
                 liste == null && zuletzt.isEmpty() && favoriten.isEmpty() -> LeerHinweis(stringResource(R.string.suche_hinweis_start))
