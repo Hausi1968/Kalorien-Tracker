@@ -1,6 +1,6 @@
 {
-  "version": "0.6.0",
-  "versionCode": 6,
-  "apk": "Kalorien-Tracker-0.6.0.apk",
-  "notizen": "Neu in 0.6.0: Eigene Rezepte! Im Tab Rezepte legst du ein Gericht aus Zutaten an, die App rechnet die Kalorien pro Portion aus. Danach findest du das Rezept auch in der normalen Suche."
+  "version": "0.6.1",
+  "versionCode": 7,
+  "apk": "Kalorien-Tracker-0.6.1.apk",
+  "notizen": "0.6.1: Fehler behoben – beim Tippen auf dem Willkommen-Bildschirm (und beim Produkt anlegen) waren die Eingabefelder unter der Tastatur verschwunden."
 }
