@@ -1,8 +1,8 @@
 {
-  "version": "0.11.0",
-  "versionCode": 12,
-  "apk": "Kalorien-Tracker-0.11.0.apk",
-  "notizen": "Neu in 0.11: Portionen wie auf der Packung (z. B. Becher 150 g). Was du suchst und dann scannst, merkt sich die App für die nächste Suche. Produkte umbenennen (Stift-Symbol). Suche findet auch Marken.",
-  "sha256": "8a2d313cff6bd67af8560059f6bd8f1784a42e38fd5c785a3b926589480c6779",
+  "version": "0.11.1",
+  "versionCode": 13,
+  "apk": "Kalorien-Tracker-0.11.1.apk",
+  "notizen": "Neu in 0.11.1: Was du online gefunden und ausgewählt hast, findet die Suche beim nächsten Mal direkt unter demselben Suchbegriff – auch ohne Internet.",
+  "sha256": "23bcdcbe8f8526ccdd2f6945106b973bb5f04dc652ac9cb9408d65f21e55a5c3",
   "groesse": 7476805
 }
