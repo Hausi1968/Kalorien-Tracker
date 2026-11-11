@@ -1,8 +1,8 @@
 {
-  "version": "0.10.0",
-  "versionCode": 11,
-  "apk": "Kalorien-Tracker-0.10.0.apk",
-  "notizen": "Neu in 0.10: Tagesübersicht mit Diagrammen (Kalorien und Nährwerte je Mahlzeit, Einträge mit viel …). Einträge auswählen und verschieben, kopieren oder löschen: Eintrag lange drücken oder „Auswählen“ in der Mahlzeit.",
-  "sha256": "ad67f6b9b6ee0d6299eb5174c77f65bc80dad75ae8656cd62bda97e2ca117cc8",
-  "groesse": 7460001
+  "version": "0.11.0",
+  "versionCode": 12,
+  "apk": "Kalorien-Tracker-0.11.0.apk",
+  "notizen": "Neu in 0.11: Portionen wie auf der Packung (z. B. Becher 150 g). Was du suchst und dann scannst, merkt sich die App für die nächste Suche. Produkte umbenennen (Stift-Symbol). Suche findet auch Marken.",
+  "sha256": "8a2d313cff6bd67af8560059f6bd8f1784a42e38fd5c785a3b926589480c6779",
+  "groesse": 7476805
 }
