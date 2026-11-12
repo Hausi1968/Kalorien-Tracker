@@ -18,6 +18,9 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
 
+/** Der Dienst hat geantwortet, aber mit einem Fehler (z. B. überlastet): das Handy ist also online. */
+class DienstAntwort(val code: Int) : IOException("HTTP $code")
+
 /** Ein Produkt aus Open Food Facts, schon in unser Format übersetzt. */
 data class OffTreffer(val food: FoodEntity, val portionen: List<ServingEntity>)
 
@@ -29,9 +32,14 @@ data class OffTreffer(val food: FoodEntity, val portionen: List<ServingEntity>)
 open class OpenFoodFacts {
     private val json = Json { ignoreUnknownKeys = true; isLenient = true }
 
-    /** null = Produkt unbekannt. Wirft IOException ohne Verbindung. */
+    /** null = Produkt unbekannt. Wirft IOException ohne Verbindung, DienstAntwort bei Fehlern des Dienstes. */
     open suspend fun produkt(ean: String): OffTreffer? {
-        val text = hole("$BASIS/api/v2/product/$ean.json?fields=$FELDER")
+        val text = try {
+            hole("$BASIS/api/v2/product/$ean.json?fields=$FELDER")
+        } catch (e: DienstAntwort) {
+            // Unbekannte Barcodes beantwortet der Dienst mit 404: das ist kein Verbindungsfehler
+            if (e.code == 404) return null else throw e
+        }
         val wurzel = json.parseToJsonElement(text).jsonObject
         if ((wurzel["status"] as? JsonPrimitive)?.intOrNull != 1) return null
         val p = wurzel["product"] as? JsonObject ?: return null
@@ -101,7 +109,7 @@ open class OpenFoodFacts {
             c.readTimeout = 12000
             // OFF bittet um eine erkennbare App-Kennung, ohne persönliche Daten.
             c.setRequestProperty("User-Agent", "KalorienTracker-Android/0.2")
-            if (c.responseCode !in 200..299) throw IOException("HTTP ${c.responseCode}")
+            if (c.responseCode !in 200..299) throw DienstAntwort(c.responseCode)
             c.inputStream.bufferedReader().use { it.readText() }
         } finally {
             c.disconnect()

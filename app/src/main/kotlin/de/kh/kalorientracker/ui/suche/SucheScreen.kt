@@ -123,6 +123,7 @@ fun SucheScreen(
     val textRueckgaengig = stringResource(R.string.rueckgaengig)
     val textOffline = stringResource(R.string.keine_verbindung)
     val textOfflineBarcode = stringResource(R.string.keine_verbindung_barcode)
+    val textDienstGestoert = stringResource(R.string.dienst_gestoert_barcode)
     val textAnlegen = stringResource(R.string.produkt_anlegen)
     val textScanFehler = stringResource(R.string.scan_fehler)
 
@@ -149,10 +150,11 @@ fun SucheScreen(
                         }
                         aufHauptThread { onLebensmittel(r.food.id) }
                     }
-                    BarcodeErgebnis.Unbekannt -> onProduktAnlegen(ean, null)
-                    BarcodeErgebnis.KeineVerbindung -> {
-                        val a = snackbar.showSnackbar(textOfflineBarcode, textAnlegen, duration = SnackbarDuration.Long)
-                        if (a == SnackbarResult.ActionPerformed) onProduktAnlegen(ean, null)
+                    BarcodeErgebnis.Unbekannt -> aufHauptThread { onProduktAnlegen(ean, null) }
+                    BarcodeErgebnis.KeineVerbindung, BarcodeErgebnis.DienstGestoert -> {
+                        val text = if (r == BarcodeErgebnis.DienstGestoert) textDienstGestoert else textOfflineBarcode
+                        val a = snackbar.showSnackbar(text, textAnlegen, duration = SnackbarDuration.Long)
+                        if (a == SnackbarResult.ActionPerformed) aufHauptThread { onProduktAnlegen(ean, null) }
                     }
                 }
             }

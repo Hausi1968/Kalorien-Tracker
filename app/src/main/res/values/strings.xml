@@ -177,6 +177,7 @@
     <string name="speichern">Speichern</string>
     <string name="kj">kJ</string>
     <string name="keine_verbindung">Keine Internetverbindung. Die Online-Suche braucht Netz.</string>
+    <string name="dienst_gestoert_barcode">Open Food Facts antwortet gerade nicht. Versuch es gleich noch mal oder leg das Produkt selbst an.</string>
     <string name="keine_verbindung_barcode">Ohne Internet kann der Barcode nicht nachgeschlagen werden.</string>
     <string name="scan_fehler">Der Scanner ließ sich nicht starten. Sind die Google-Play-Dienste aktuell?</string>
     <string name="online_treffer">Aus Open Food Facts (jetzt auch offline gespeichert)</string>

@@ -50,6 +50,8 @@ sealed interface BarcodeErgebnis {
     data class Gefunden(val food: FoodEntity) : BarcodeErgebnis
     data object Unbekannt : BarcodeErgebnis
     data object KeineVerbindung : BarcodeErgebnis
+    /** Online, aber Open Food Facts antwortet gerade nicht richtig. */
+    data object DienstGestoert : BarcodeErgebnis
 }
 
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
@@ -229,10 +231,15 @@ class KalorienRepository(
         }
         val treffer = try {
             off.produkt(ean)
+        } catch (e: DienstAntwort) {
+            return BarcodeErgebnis.DienstGestoert
         } catch (e: java.io.IOException) {
             return BarcodeErgebnis.KeineVerbindung
-        } catch (e: kotlinx.serialization.SerializationException) {
-            return BarcodeErgebnis.KeineVerbindung
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            // Unerwartete Antwort (z. B. Daten in ungewohnter Form): nicht als "kein Internet" melden
+            return BarcodeErgebnis.DienstGestoert
         } ?: return BarcodeErgebnis.Unbekannt
         speichere(listOf(treffer))
         return BarcodeErgebnis.Gefunden(treffer.food)

@@ -95,6 +95,19 @@ class DatenTest {
     }
 
     @Test
+    fun barcode_dienstFehlerIstNichtKeinInternet() = runBlocking {
+        val db = neueDb()
+        val gestoert = object : OpenFoodFacts() {
+            override suspend fun produkt(ean: String): de.kh.kalorientracker.data.OffTreffer? = throw de.kh.kalorientracker.data.DienstAntwort(503)
+        }
+        val offline = object : OpenFoodFacts() {
+            override suspend fun produkt(ean: String): de.kh.kalorientracker.data.OffTreffer? = throw java.net.UnknownHostException()
+        }
+        assertEquals(de.kh.kalorientracker.data.BarcodeErgebnis.DienstGestoert, KalorienRepository(db, gestoert).barcode("123"))
+        assertEquals(de.kh.kalorientracker.data.BarcodeErgebnis.KeineVerbindung, KalorienRepository(db, offline).barcode("123"))
+    }
+
+    @Test
     fun gescanntesProdukt_istSuchbarUndKommtInDieSicherung() = runBlocking {
         val alt = neueDb()
         alt.profile().speichere(profil)
