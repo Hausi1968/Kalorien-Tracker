@@ -1,8 +1,8 @@
 {
-  "version": "0.23.0",
-  "versionCode": 26,
-  "apk": "Kalorien-Tracker-0.23.0.apk",
-  "notizen": "Verbessert: Bei großer Schrift auf dem Handy werden die Knöpfe im Tagebuch nicht mehr zusammengequetscht.",
-  "sha256": "bc3f015b66ae8c4c204505408f5bcdab714da94d6d7484ae9545b2975a60b82a",
+  "version": "0.24.0",
+  "versionCode": 27,
+  "apk": "Kalorien-Tracker-0.24.0.apk",
+  "notizen": "Verbessert: Alles, was du scannst oder online suchst, gehört jetzt zu deiner eigenen Sammlung und kommt mit in die Sicherung, auch wenn du es noch nicht gegessen hast.",
+  "sha256": "5450f813f2ad958c1eeea14bcb7b90f247833a3fe778907b49fe42b501e902e2",
   "groesse": 10528664
 }
