@@ -1,8 +1,8 @@
 {
-  "version": "0.28.0",
-  "versionCode": 31,
-  "apk": "Kalorien-Tracker-0.28.0.apk",
-  "notizen": "Neu: Im Profil wählbar, ob im Tagebuch das Frühstück oder das Abendessen oben steht.",
-  "sha256": "e8eaa9555d430ce0081525e5e02d9171b2318b580654560aec8571d24610fc07",
+  "version": "0.29.0",
+  "versionCode": 32,
+  "apk": "Kalorien-Tracker-0.29.0.apk",
+  "notizen": "Neu: Zucker im Tagebuch neben Fett, KH und Eiweiß. Reihenfolge der Mahlzeiten im Profil wählbar.",
+  "sha256": "a2c404bbe7685d6353cb1a88d772b893e391c9f6b40d38d300d30616dcf60d93",
   "groesse": 10546092
 }
