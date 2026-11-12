@@ -95,6 +95,29 @@ class DatenTest {
     }
 
     @Test
+    fun gescanntesProdukt_istSuchbarUndKommtInDieSicherung() = runBlocking {
+        val alt = neueDb()
+        alt.profile().speichere(profil)
+        val off = object : OpenFoodFacts() {
+            override suspend fun produkt(ean: String) = OffTreffer(food("off:$ean", "Skyr Vanille").copy(barcode = ean), emptyList())
+        }
+        val repo = KalorienRepository(alt, off)
+        // Ein Produkt aus der mitgelieferten Liste, das nur gescannt wird
+        alt.food().fuegeEin(listOf(food("off:111", "Hafer Drink")))
+        repo.barcode("4000000000001") // online geladen, nie gegessen
+        repo.barcode("111")           // schon vorhanden, nur gescannt
+        alt.food().fuegeEin(listOf(food("off:222", "Nie gesehen")))
+
+        assertEquals(listOf("off:4000000000001"), repo.suche("skyr").map { it.id })
+        val datei = ByteArrayOutputStream()
+        Sicherung(ctx, alt).exportiere(datei)
+        val neu = neueDb()
+        val daten = Sicherung(ctx, neu).importiere(ByteArrayInputStream(datei.toByteArray()))
+        assertEquals(setOf("off:4000000000001", "off:111"), daten.lebensmittel.map { it.id }.toSet())
+        assertEquals(listOf("off:4000000000001"), KalorienRepository(neu).suche("skyr").map { it.id })
+    }
+
+    @Test
     fun sicherung_exportierenUndAufNeuemHandyEinlesen() = runBlocking {
         val alt = neueDb()
         StartdatenImport(ctx, alt).fallsLeer()

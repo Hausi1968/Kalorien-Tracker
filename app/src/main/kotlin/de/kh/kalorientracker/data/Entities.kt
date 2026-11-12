@@ -62,6 +62,11 @@ data class FoodEntity(
     val beliebtheit: Int = 0,
     /** Vitamine, Mineralstoffe, Cholesterin je 100 g/ml (seit DB-Version 5), siehe core.Mikros. */
     val mikros: String? = null,
+    /**
+     * Wann das Produkt gescannt oder online geladen wurde (seit DB-Version 9). Solche Produkte gehören
+     * zur eigenen Sammlung und kommen in die Sicherung, auch wenn sie noch nie gegessen wurden.
+     */
+    val geladenAm: Long? = null,
 )
 
 /**

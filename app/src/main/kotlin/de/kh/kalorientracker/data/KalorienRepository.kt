@@ -222,7 +222,11 @@ class KalorienRepository(
 
     /** Erst lokal (inkl. früher geladener OFF-Produkte), dann online. Online-Treffer werden gespeichert. */
     suspend fun barcode(ean: String): BarcodeErgebnis {
-        db.food().ladeBarcode(ean)?.let { return BarcodeErgebnis.Gefunden(it) }
+        db.food().ladeBarcode(ean)?.let { f ->
+            // Auch ein schon mitgeliefertes Produkt gehört nach dem Scannen zur eigenen Sammlung
+            if (f.geladenAm == null && f.source == "off") db.food().fuegeEin(listOf(f.copy(geladenAm = System.currentTimeMillis())))
+            return BarcodeErgebnis.Gefunden(f)
+        }
         val treffer = try {
             off.produkt(ean)
         } catch (e: java.io.IOException) {
@@ -255,12 +259,14 @@ class KalorienRepository(
             val vorhanden = t.food.barcode?.let { db.food().ladeBarcode(it) }
             vorhanden == null || (vorhanden.id == t.food.id && vorhanden.source != "user")
         }
+        val jetzt = System.currentTimeMillis()
         db.withTransaction {
             val alt = db.food().ladeAlle(neu.map { it.food.id }).associateBy { it.id }
             db.food().fuegeEin(
                 neu.map { t ->
                     val a = alt[t.food.id]
                     t.food.copy(
+                        geladenAm = a?.geladenAm ?: jetzt,
                         beliebtheit = maxOf(t.food.beliebtheit, a?.beliebtheit ?: 0),
                         // nameNorm kann gelernte Suchbegriffe enthalten: dann behalten
                         nameNorm = a?.nameNorm?.takeIf { it.contains(t.food.nameNorm) } ?: t.food.nameNorm,

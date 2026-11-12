@@ -58,6 +58,11 @@ class AppAblaufTest {
         File(ordner, "$name.png").outputStream().use { bild.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
+    /** Tippen, auch wenn sich die Liste gerade neu aufbaut: so lange versuchen, bis ein Treffer da ist und reagiert. */
+    private fun tippeBisEsKlappt(text: String) = rule.waitUntil(10_000) {
+        runCatching { rule.onAllNodesWithText(text).onFirst().performClick(); true }.getOrDefault(false)
+    }
+
     private fun warteAufText(text: String) =
         rule.waitUntil(10_000) { rule.onAllNodesWithText(text, substring = true, useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty() }
 
@@ -97,8 +102,7 @@ class AppAblaufTest {
         foto("04-suche-apfel")
 
         // Die Trefferliste kann sich kurz neu aufbauen (Katalog wird im Hintergrund eingelesen): erst warten, dann tippen
-        rule.waitUntil(10_000) { rule.onAllNodesWithText("Apfel").fetchSemanticsNodes().isNotEmpty() }
-        rule.onAllNodesWithText("Apfel").onFirst().performClick()
+        tippeBisEsKlappt("Apfel")
         warteAufText("Schnell eintragen")
         foto("05-apfel-detail")
         rule.onNodeWithText("Eintragen").performClick()
@@ -109,7 +113,7 @@ class AppAblaufTest {
         foto("06-tagebuch-mit-apfel")
 
         // Bearbeiten: Eintrag antippen, Menge 2, speichern
-        rule.onAllNodesWithText("Apfel").onFirst().performClick()
+        tippeBisEsKlappt("Apfel")
         warteAufText("Speichern")
         foto("07-eintrag-bearbeiten")
     }

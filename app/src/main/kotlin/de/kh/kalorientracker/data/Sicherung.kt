@@ -41,10 +41,10 @@ interface SicherungDao {
     @Query("SELECT * FROM water_entry") suspend fun wasser(): List<WaterEntryEntity>
     @Query("SELECT * FROM recipe_ingredient") suspend fun zutaten(): List<RezeptZutatEntity>
 
-    /** Eigene Produkte, Rezepte und alles, worauf Tagebuch, Favoriten oder Rezepte zeigen (außer Grundnahrungsmitteln). */
+    /** Eigene Produkte, Rezepte, gescannte oder online geladene Produkte und alles, worauf Tagebuch, Favoriten oder Rezepte zeigen (außer Grundnahrungsmitteln). */
     @Query(
         """
-        SELECT * FROM food WHERE source IN ('user', 'rezept')
+        SELECT * FROM food WHERE source IN ('user', 'rezept') OR geladenAm IS NOT NULL
            OR (source != 'start' AND (id IN (SELECT foodRef FROM diary_entry WHERE foodRef IS NOT NULL)
                OR id IN (SELECT foodId FROM favorite) OR id IN (SELECT foodId FROM recipe_ingredient)))
         """,
