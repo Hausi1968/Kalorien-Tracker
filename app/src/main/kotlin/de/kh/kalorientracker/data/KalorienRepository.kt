@@ -636,6 +636,11 @@ class KalorienRepository(
     }
 
     /** Alle Fotos, die noch an einem Eintrag hängen (zum Aufräumen alter Dateien). */
+    /** Wie viele Tage in Folge (bis heute oder gestern) etwas eingetragen wurde. */
+    fun serie(): Flow<Int> = db.diary().tageMitEintrag().map { tage ->
+        de.kh.kalorientracker.core.Serie.laenge(tage.mapNotNull { runCatching { LocalDate.parse(it) }.getOrNull() }.toSet(), LocalDate.now(zone))
+    }
+
     suspend fun benutzteFotos(): Set<String> = db.diary().fotos().toSet()
 
     // ---------- Erinnerungen ----------

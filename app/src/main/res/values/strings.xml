@@ -135,6 +135,20 @@
     <string name="ueberschuss">Überschuss</string>
     <string name="zieldatum">Ziel erreicht etwa</string>
     <string name="zieldatum_wert">%1$s (in %2$d Wochen)</string>
+    <string name="widget_name">Heute übrig</string>
+    <string name="widget_beschreibung">Zeigt, wie viele Kalorien du heute noch essen kannst.</string>
+    <string name="widget_heute_uebrig">Heute übrig</string>
+    <string name="widget_heute_zu_viel">Heute zu viel</string>
+    <string name="widget_zeile">Ziel %1$s · gegessen %2$s</string>
+    <string name="widget_kein_ziel">Öffne die App und leg dein Ziel fest</string>
+    <plurals name="serie_tage">
+        <item quantity="one">%d Tag in Folge eingetragen.</item>
+        <item quantity="other">%d Tage in Folge eingetragen.</item>
+    </plurals>
+    <string name="serie_lob">Weiter so!</string>
+    <string name="serie_lob_7">Eine ganze Woche, stark!</string>
+    <string name="serie_lob_30">Über einen Monat, klasse!</string>
+    <string name="serie_lob_100">Über 100 Tage, Wahnsinn!</string>
     <string name="aerztlich_begleitet">Ich werde ärztlich begleitet</string>
     <string name="aerztlich_begleitet_hinweis">Zum Beispiel von Hausarzt oder Diabetologin. Dann darf dein Tagesziel unter deinem Grundumsatz liegen, aber nie unter 1.500 kcal (Frauen 1.200 kcal).</string>
     <string name="warnung_begleitet">Dein Tagesziel liegt unter deinem Grundumsatz. Halte das nur mit ärztlicher Begleitung durch.</string>

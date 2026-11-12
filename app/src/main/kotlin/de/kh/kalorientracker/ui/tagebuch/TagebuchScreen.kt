@@ -31,6 +31,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ChevronLeft
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.LocalFireDepartment
 import androidx.compose.material.icons.rounded.PhotoCamera
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material3.Card
@@ -61,6 +62,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -122,6 +124,7 @@ fun TagebuchScreen(
     val wasser by remember(tag) { repo.wasser(tag) }.collectAsStateWithLifecycle(initialValue = 0)
     val gestern by remember(tag) { repo.tag(tag.minusDays(1)) }.collectAsStateWithLifecycle(initialValue = null)
     val textKopiert = stringResource(R.string.mahlzeit_kopiert)
+    val serie by remember { repo.serie() }.collectAsStateWithLifecycle(initialValue = 0)
 
     val liste = rememberLazyListState()
     val textGeloescht = stringResource(R.string.tagebuch_geloescht)
@@ -206,6 +209,7 @@ fun TagebuchScreen(
             } else {
                 // Antippen der Bilanz öffnet die Tagesübersicht mit Diagrammen
                 item { BilanzGleichung(d.bilanz, Modifier.clickable { onUebersicht(tag) }) }
+                if (tag == heute && serie >= 2) item { SerienZeile(serie) }
                 item { Karte { MakroDreier(d.summe.fett, d.summe.kh, d.summe.eiweiss, d.makroZiel) } }
                 items(Mahlzeiten.STANDARD, key = { it.id }) { slot ->
                     MahlzeitKarte(
@@ -441,6 +445,33 @@ private fun EintragZeile(e: DiaryEntryEntity, onClick: () -> Unit, onLoeschen: (
             )
         }
     }
+}
+
+/** Kleine Anerkennung: so viele Tage in Folge eingetragen. */
+@Composable
+private fun SerienZeile(tage: Int) {
+    Row(
+        Modifier.fillMaxWidth().background(AppTheme.colors.accentSoft, MaterialTheme.shapes.large)
+            .padding(horizontal = Spacing.l, vertical = Spacing.s),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            Icons.Rounded.LocalFireDepartment, contentDescription = null,
+            tint = AppTheme.colors.onAccentSoft, modifier = Modifier.size(20.dp),
+        )
+        Spacer(Modifier.width(Spacing.s))
+        Text(
+            pluralStringResource(R.plurals.serie_tage, tage, tage) + " " + stringResource(serienLob(tage)),
+            style = MaterialTheme.typography.bodyMedium, color = AppTheme.colors.onAccentSoft,
+        )
+    }
+}
+
+private fun serienLob(tage: Int) = when {
+    tage >= 100 -> R.string.serie_lob_100
+    tage >= 30 -> R.string.serie_lob_30
+    tage >= 7 -> R.string.serie_lob_7
+    else -> R.string.serie_lob
 }
 
 /** Wasser: Summe, Fortschritt zu 2 Litern, +250 ml mit einem Tipp, letzten Eintrag zurücknehmen. */

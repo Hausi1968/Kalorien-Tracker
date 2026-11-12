@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_flaeche"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_hintergrund"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/widget_titel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/nunito_bold"
+        android:text="@string/widget_heute_uebrig"
+        android:textColor="@color/widget_text_leise"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/widget_wert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/nunito_extrabold"
+        android:text="–"
+        android:textColor="@color/widget_text"
+        android:textSize="28sp" />
+
+    <TextView
+        android:id="@+id/widget_zeile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/nunito_regular"
+        android:maxLines="1"
+        android:textColor="@color/widget_text_leise"
+        android:textSize="12sp" />
+</LinearLayout>

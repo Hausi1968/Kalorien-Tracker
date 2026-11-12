@@ -76,6 +76,10 @@ interface FoodDao {
 
 @Dao
 interface DiaryDao {
+    /** Tage mit mindestens einem Eintrag, neueste zuerst (für die Serie). */
+    @Query("SELECT DISTINCT day FROM diary_entry ORDER BY day DESC LIMIT 400")
+    fun tageMitEintrag(): Flow<List<String>>
+
     @Query("SELECT DISTINCT foto FROM diary_entry WHERE foto IS NOT NULL")
     suspend fun fotos(): List<String>
 

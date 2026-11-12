@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 
 /** Einfache manuelle Abhängigkeiten statt Hilt; reicht für die erste Version. */
 class AppContainer(context: Context) {
+    private val appContext = context.applicationContext
     private val db = AppDatabase.baue(context)
     val quellen = de.kh.kalorientracker.data.Quellen(context)
     val repo = KalorienRepository(db, quellen = quellen)
@@ -47,6 +48,23 @@ class AppContainer(context: Context) {
         if (startJob != null) return
         startJob = scope.launch {
             runCatching { erinnerungen.kanalAnlegen(); erinnerungen.planeAlle() }
+            // Widget folgt jeder Änderung von heute, solange die App läuft
+            launch {
+                runCatching {
+                    while (true) {
+                        // Um Mitternacht auf den neuen Tag umschalten
+                        val heute = java.time.LocalDate.now()
+                        val bisMitternacht = java.time.Duration.between(
+                            java.time.LocalDateTime.now(), heute.plusDays(1).atStartOfDay(),
+                        ).toMillis() + 1000
+                        kotlinx.coroutines.withTimeoutOrNull(bisMitternacht) {
+                            repo.tag(heute).collect { d ->
+                                de.kh.kalorientracker.widget.RestWidget.zeichne(appContext, d.takeIf { it.profil != null }?.bilanz)
+                            }
+                        }
+                    }
+                }
+            }
             runCatching { sicherung.wiederherstellenFallsNoetig() }
             runCatching { startdaten.fallsLeer() }
             launch { runCatching { healthConnect.abgleichen() } }
