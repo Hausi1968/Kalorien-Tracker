@@ -14,6 +14,7 @@ import de.kh.kalorientracker.data.Sicherung
 import de.kh.kalorientracker.data.StartdatenImport
 import de.kh.kalorientracker.core.SuchText
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -286,6 +287,26 @@ class DatenTest {
         assertEquals(500.0, repo.tag(tag).first().verbrannt, 0.01)
         quellen.setze(quellen.wahl.value.copy(hcAnteil = 50))
         assertEquals(300.0, repo.tag(tag).first().verbrannt, 0.01) // 400 × 50 % + 100 selbst eingetragen
+    }
+
+    @Test
+    fun verbranntFeldFolgtNeuemAbgleich() = runBlocking {
+        val db = Room.inMemoryDatabaseBuilder(ctx, AppDatabase::class.java).build()
+        db.profile().speichere(profil)
+        val quellen = de.kh.kalorientracker.data.Quellen()
+        quellen.setze(de.kh.kalorientracker.data.QuellenWahl(verbrannt = de.kh.kalorientracker.data.Quelle.HC, hcAnteil = 50))
+        val repo = KalorienRepository(db, quellen = quellen)
+        val tag = java.time.LocalDate.now()
+        val werte = mutableListOf<Double>()
+        val job = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+            repo.tag(tag).collect { werte += it.verbrannt }
+        }
+        repo.uebernehmeHealthConnect(tag.minusDays(14), emptyMap(), mapOf(tag to 20.0))
+        kotlinx.coroutines.withTimeout(5000) { while (werte.lastOrNull() != 10.0) kotlinx.coroutines.delay(20) }
+        repo.uebernehmeHealthConnect(tag.minusDays(14), emptyMap(), mapOf(tag to 50.0))
+        runCatching { kotlinx.coroutines.withTimeout(5000) { while (werte.lastOrNull() != 25.0) kotlinx.coroutines.delay(20) } }
+        assertEquals(25.0, werte.last(), 0.01)
+        job.cancel()
     }
 
     @Test
