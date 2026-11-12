@@ -5,6 +5,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Updates aus GitHub installieren; der Nutzer bestätigt jedes Update selbst -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- Erinnerungen ("Mittagessen eintragen?"), nur wenn der Nutzer sie einschaltet -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Nach einem Neustart des Handys die Erinnerungen wieder einplanen -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Nur lesen: Gewicht und aktive Kalorien aus Health Connect (z. B. von Samsung Health) -->
     <uses-permission android:name="android.permission.health.READ_WEIGHT" />
     <uses-permission android:name="android.permission.health.READ_ACTIVE_CALORIES_BURNED" />
@@ -50,6 +54,15 @@
                 <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
             </intent-filter>
         </activity-alias>
+        <receiver
+            android:name=".erinnerung.ErinnerungEmpfaenger"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.dateien"

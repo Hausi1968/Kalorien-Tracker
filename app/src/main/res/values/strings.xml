@@ -435,4 +435,18 @@
     <string name="woche_drueber">über dem Ziel</string>
     <string name="woche_ohne">nichts eingetragen</string>
     <string name="woche_hinweis">Der Durchschnitt zählt nur Tage mit Einträgen. „Im Ziel“ heißt: nicht mehr gegessen als Ziel plus verbrannte Kalorien. Tag antippen öffnet ihn.</string>
+    <string name="erinnerung_titel">Erinnerungen</string>
+    <string name="erinnerung_text">Die App erinnert dich nur, wenn die Mahlzeit noch fehlt bzw. du heute noch nicht gewogen bist. Die Uhrzeit ist ungefähr, Android bündelt Erinnerungen, um Akku zu sparen.</string>
+    <string name="erinnerung_fruehstueck">Frühstück eintragen</string>
+    <string name="erinnerung_mittag">Mittagessen eintragen</string>
+    <string name="erinnerung_abend">Abendessen eintragen</string>
+    <string name="erinnerung_wiegen">Morgens wiegen</string>
+    <string name="erinnerung_kanal">Erinnerungen</string>
+    <string name="erinnerung_fruehstueck_titel">Frühstück schon eingetragen?</string>
+    <string name="erinnerung_mittag_titel">Mittagessen schon eingetragen?</string>
+    <string name="erinnerung_abend_titel">Abendessen schon eingetragen?</string>
+    <string name="erinnerung_mahlzeit_text">Tippe hier, um es kurz nachzutragen.</string>
+    <string name="erinnerung_wiegen_titel">Heute schon gewogen?</string>
+    <string name="erinnerung_wiegen_text">Am besten morgens nach dem Aufstehen. Tippe hier zum Eintragen.</string>
+    <string name="erinnerung_erlaubnis_fehlt">Ohne Erlaubnis für Mitteilungen kann die App nicht erinnern.</string>
 </resources>

@@ -26,6 +26,7 @@ class AppContainer(context: Context) {
     val aktualisierung = Aktualisierung(context)
     val sicherung = Sicherung(context, db)
     val fotos = de.kh.kalorientracker.data.Fotos(context)
+    val erinnerungen = de.kh.kalorientracker.erinnerung.Erinnerungen(context)
     val kiSchluessel = de.kh.kalorientracker.data.KiSchluessel(context)
     val erkenner: de.kh.kalorientracker.data.FotoErkenner = de.kh.kalorientracker.data.ClaudeErkenner(kiSchluessel)
 
@@ -45,6 +46,7 @@ class AppContainer(context: Context) {
     fun starte() {
         if (startJob != null) return
         startJob = scope.launch {
+            runCatching { erinnerungen.kanalAnlegen(); erinnerungen.planeAlle() }
             runCatching { sicherung.wiederherstellenFallsNoetig() }
             runCatching { startdaten.fallsLeer() }
             launch { runCatching { healthConnect.abgleichen() } }

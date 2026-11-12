@@ -70,6 +70,7 @@ fun KalorienAppUi(container: AppContainer) {
         true -> HauptNavigation(
             container.repo, container.aktualisierung, container.healthConnect, container.sicherung,
             de.kh.kalorientracker.ui.foto.FotoWerkzeug(container.fotos, container.kiSchluessel, container.erkenner),
+            container.erinnerungen,
         )
     }
 
@@ -116,6 +117,7 @@ private fun HauptNavigation(
     healthConnect: de.kh.kalorientracker.gesundheit.HealthConnect,
     sicherung: de.kh.kalorientracker.data.Sicherung,
     foto: de.kh.kalorientracker.ui.foto.FotoWerkzeug? = null,
+    erinnerungen: de.kh.kalorientracker.erinnerung.Erinnerungen? = null,
 ) {
     val nav = rememberNavController()
     var neueVersion by remember { mutableStateOf<NeueVersion?>(null) }
@@ -208,6 +210,7 @@ private fun HauptNavigation(
                     healthConnect = healthConnect,
                     sicherung = sicherung,
                     kiSchluessel = foto?.schluessel,
+                    erinnerungen = erinnerungen,
                 )
             }
             composable(Routen.RECHNER) {

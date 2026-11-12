@@ -17,6 +17,7 @@ import de.kh.kalorientracker.core.Ziel
 import de.kh.kalorientracker.core.Zielvorgabe
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import java.time.Duration
@@ -626,4 +627,14 @@ class KalorienRepository(
 
     /** Alle Fotos, die noch an einem Eintrag hängen (zum Aufräumen alter Dateien). */
     suspend fun benutzteFotos(): Set<String> = db.diary().fotos().toSet()
+
+    // ---------- Erinnerungen ----------
+
+    /** Gibt es an diesem Tag schon einen Eintrag in der Mahlzeit? */
+    suspend fun hatEintrag(tag: LocalDate, slotId: Int): Boolean =
+        db.diary().eintraegeAm(tag.toString()).first().any { it.slotId == slotId }
+
+    /** Wurde heute schon ein Gewicht eingetragen (oder aus Health Connect übernommen)? */
+    suspend fun heuteGewogen(): Boolean =
+        db.body().ladeLetztesGewicht(gewichtModus)?.day == LocalDate.now(zone).toString()
 }
