@@ -67,7 +67,10 @@ fun KalorienAppUi(container: AppContainer) {
     when (profilDa) {
         null -> Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background))
         false -> RechnerScreen(container.repo, erstesMal = true, onFertig = {}, onZurueck = null)
-        true -> HauptNavigation(container.repo, container.aktualisierung, container.healthConnect, container.sicherung)
+        true -> HauptNavigation(
+            container.repo, container.aktualisierung, container.healthConnect, container.sicherung,
+            de.kh.kalorientracker.ui.foto.FotoWerkzeug(container.fotos, container.kiSchluessel, container.erkenner),
+        )
     }
 
     // Automatische Update-Prüfung schon ab dem ersten Bildschirm (höchstens etwa einmal am Tag)
@@ -94,6 +97,8 @@ object Routen {
     const val REZEPT = "rezept?id={id}"
     const val UEBERSICHT = "uebersicht?tag={tag}"
     const val AUSWAHL = "auswahl?tag={tag}&id={id}"
+    const val FOTO = "foto?tag={tag}&slot={slot}"
+    fun foto(tag: LocalDate, slot: Int) = "foto?tag=$tag&slot=$slot"
     fun auswahl(tag: LocalDate, id: String?) = "auswahl?tag=$tag&id=${id.orEmpty()}"
     fun uebersicht(tag: LocalDate) = "uebersicht?tag=$tag"
     fun rezept(id: String?) = "rezept?id=${android.net.Uri.encode(id.orEmpty())}"
@@ -110,6 +115,7 @@ private fun HauptNavigation(
     aktualisierung: Aktualisierung,
     healthConnect: de.kh.kalorientracker.gesundheit.HealthConnect,
     sicherung: de.kh.kalorientracker.data.Sicherung,
+    foto: de.kh.kalorientracker.ui.foto.FotoWerkzeug? = null,
 ) {
     val nav = rememberNavController()
     var neueVersion by remember { mutableStateOf<NeueVersion?>(null) }
@@ -201,6 +207,7 @@ private fun HauptNavigation(
                     onNeueVersion = { neueVersion = it },
                     healthConnect = healthConnect,
                     sicherung = sicherung,
+                    kiSchluessel = foto?.schluessel,
                 )
             }
             composable(Routen.RECHNER) {
@@ -214,6 +221,17 @@ private fun HauptNavigation(
                     onZurueck = { nav.popBackStack() },
                     onLebensmittel = { id -> nav.navigate(Routen.detail(id, tag, slot)) },
                     onProduktAnlegen = { ean, name -> nav.navigate(Routen.produkt(ean, name)) },
+                    onFoto = if (foto != null) ({ nav.navigate(Routen.foto(tag, slot)) }) else null,
+                )
+            }
+            if (foto != null) composable(Routen.FOTO, arguments = tagArgs) { e ->
+                de.kh.kalorientracker.ui.foto.FotoScreen(
+                    repo, foto,
+                    tag = e.arguments?.getString("tag").zuDatum(),
+                    slot = e.arguments?.getInt("slot") ?: 0,
+                    onZurueck = { nav.popBackStack() },
+                    onFertig = { if (!nav.popBackStack(Tab.TAGEBUCH.route, inclusive = false)) nav.zuTab(Tab.TAGEBUCH.route) },
+                    onSchluessel = { nav.zuTab(Tab.PROFIL.route) },
                 )
             }
             composable(
@@ -246,6 +264,7 @@ private fun HauptNavigation(
                     tag = LocalDate.now(),
                     slotVorgabe = 0,
                     eintragId = e.arguments?.getString("eintragId"),
+                    fotos = foto?.fotos,
                     onZurueck = { nav.popBackStack() },
                     onEingetragen = { nav.popBackStack() },
                 )

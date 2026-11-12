@@ -378,4 +378,44 @@
     <string name="uebersicht_mikros">Mikros</string>
     <string name="uebersicht_mikros_hinweis">Summe aller Einträge mit Angaben (%1$d von %2$d). Prozent: Anteil an der Referenzmenge für Erwachsene.</string>
     <string name="uebersicht_mikros_leer">Keiner der heutigen Einträge hat Angaben zu Vitaminen oder Mineralstoffen. Viele Hersteller geben sie nicht an.</string>
+
+    <!-- Mahlzeit per Foto -->
+    <string name="foto_titel">Mahlzeit fotografieren</string>
+    <string name="foto_einleitung">Fotografiere deinen Teller oder wähle ein Foto aus. Die App schlägt die Lebensmittel mit Mengen vor, und du prüfst alles, bevor es eingetragen wird.</string>
+    <string name="foto_aufnehmen">Foto aufnehmen</string>
+    <string name="foto_galerie">Foto aus der Galerie wählen</string>
+    <string name="foto_galerie_kurz">Galerie</string>
+    <string name="foto_neu">Neues Foto</string>
+    <string name="foto_beschreibung">Foto der Mahlzeit</string>
+    <string name="foto_vorhanden">mit Foto</string>
+    <string name="foto_erkennt">Lebensmittel werden erkannt … das dauert meist 5 bis 20 Sekunden.</string>
+    <string name="foto_pruefen">Bitte prüfen und anpassen</string>
+    <string name="foto_nichts_erkannt">Auf dem Foto wurde nichts erkannt. Füge die Lebensmittel selbst hinzu.</string>
+    <string name="foto_hinzufuegen">Lebensmittel hinzufügen</string>
+    <string name="foto_austauschen">Anderes Lebensmittel wählen</string>
+    <string name="foto_waehlen">Passendes Lebensmittel wählen</string>
+    <string name="foto_entfernen">%1$s entfernen</string>
+    <string name="foto_menge">Menge in %1$s</string>
+    <string name="foto_erkannt_als">erkannt als „%1$s“</string>
+    <string name="foto_nicht_gefunden">„%1$s“ nicht gefunden</string>
+    <string name="foto_nicht_gefunden_hinweis">Wähle ein passendes Lebensmittel, sonst wird es nicht eingetragen.</string>
+    <string name="foto_eintragen">%1$d Lebensmittel eintragen (%2$s kcal)</string>
+    <string name="foto_eingetragen">%1$d Lebensmittel eingetragen (%2$s kcal)</string>
+    <string name="foto_nochmal">Nochmal versuchen</string>
+    <string name="foto_nicht_lesbar">Das Foto konnte nicht geöffnet werden. Versuche es mit einem anderen.</string>
+    <string name="foto_ohne_schluessel">Für die automatische Erkennung brauchst du einen Zugangsschlüssel (Profil → Foto-Erkennung). Ohne Schlüssel fügst du die Lebensmittel selbst hinzu.</string>
+    <string name="foto_schluessel_eintragen">Schlüssel eintragen</string>
+    <string name="foto_fehler_schluessel">Der Zugangsschlüssel wurde nicht angenommen. Prüfe ihn im Profil.</string>
+    <string name="foto_fehler_netz">Keine Verbindung zum Internet. Versuche es gleich nochmal oder füge die Lebensmittel selbst hinzu.</string>
+    <string name="foto_fehler_abgelehnt">Dieses Foto konnte nicht ausgewertet werden. Füge die Lebensmittel selbst hinzu.</string>
+    <string name="foto_fehler_unbekannt">Die Erkennung hat gerade nicht geklappt. Versuche es nochmal oder füge die Lebensmittel selbst hinzu.</string>
+    <string name="schluessel_titel">Foto-Erkennung</string>
+    <string name="schluessel_text">Damit die App Lebensmittel auf Fotos erkennt, schickt sie das Foto an den KI-Dienst Claude (Anthropic). Dafür brauchst du einen eigenen Zugangsschlüssel von platform.claude.com. Ein Foto kostet etwa 1 bis 3 Cent. Der Schlüssel bleibt nur auf diesem Handy.</string>
+    <string name="schluessel_feld">Zugangsschlüssel</string>
+    <string name="schluessel_ungueltig">Der Schlüssel beginnt mit „sk-ant-“.</string>
+    <string name="schluessel_hinterlegt">Schlüssel hinterlegt (endet auf %1$s)</string>
+    <string name="schluessel_aendern">Ändern</string>
+    <string name="schluessel_entfernen">Entfernen</string>
+    <string name="schluessel_gespeichert">Schlüssel gespeichert</string>
+    <string name="schluessel_entfernt">Schlüssel entfernt</string>
 </resources>

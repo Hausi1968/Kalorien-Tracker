@@ -281,12 +281,14 @@ private fun mengenText(z: RezeptZutatEntity): String =
  * dann Menge in Gramm oder als Portion angeben.
  */
 @Composable
-private fun ZutatAuswahlSeite(
+fun ZutatAuswahlSeite(
     repo: KalorienRepository,
+    titel: String? = null,
+    startText: String = "",
     onZurueck: () -> Unit,
     onFertig: (food: FoodEntity, label: String?, menge: Double, gramm: Double) -> Unit,
 ) {
-    var eingabe by remember { mutableStateOf("") }
+    var eingabe by remember { mutableStateOf(startText) }
     var treffer by remember { mutableStateOf<List<FoodEntity>>(emptyList()) }
     var online by remember { mutableStateOf<List<FoodEntity>?>(null) }
     var laedt by remember { mutableStateOf(false) }
@@ -303,7 +305,7 @@ private fun ZutatAuswahlSeite(
     androidx.activity.compose.BackHandler { if (gewaehltesFood != null) gewaehltesFood = null else onZurueck() }
 
     Seite(
-        titel = stringResource(R.string.rezept_zutat_hinzufuegen),
+        titel = titel ?: stringResource(R.string.rezept_zutat_hinzufuegen),
         onZurueck = { if (gewaehltesFood != null) gewaehltesFood = null else onZurueck() },
     ) { pad ->
         val f = gewaehltesFood

@@ -13,6 +13,7 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.room.Room
@@ -208,4 +209,62 @@ class BildschirmTest {
         r.uebernehmeHealthConnect(heute.minusDays(14), emptyMap(), mapOf(heute to 500.0))
         assertEquals(800.0, verbranntS(), 0.01)
     }
+
+    @Test fun mahlzeitPerFotoPruefenUndEintragen() {
+        // Testbild: ein "Teller" in Farbe, gespeichert wie ein echtes Foto
+        val fotos = de.kh.kalorientracker.data.Fotos(ctx)
+        val name = "test-teller.jpg"
+        fotos.datei(name).outputStream().use { out ->
+            val b = Bitmap.createBitmap(640, 480, Bitmap.Config.ARGB_8888)
+            android.graphics.Canvas(b).apply {
+                drawColor(android.graphics.Color.rgb(230, 225, 215))
+                drawCircle(320f, 240f, 200f, android.graphics.Paint().apply { color = android.graphics.Color.WHITE })
+                drawCircle(260f, 220f, 70f, android.graphics.Paint().apply { color = android.graphics.Color.rgb(245, 240, 225) })
+                drawCircle(390f, 230f, 60f, android.graphics.Paint().apply { color = android.graphics.Color.rgb(200, 140, 80) })
+                drawCircle(320f, 330f, 50f, android.graphics.Paint().apply { color = android.graphics.Color.rgb(60, 140, 60) })
+            }
+            b.compress(Bitmap.CompressFormat.JPEG, 85, out)
+        }
+        val schluessel = de.kh.kalorientracker.data.KiSchluessel().apply { setze("sk-ant-test-0000000000000000000000") }
+        val erkenner = object : de.kh.kalorientracker.data.FotoErkenner {
+            override val bereit = true
+            override suspend fun erkenne(jpeg: ByteArray) = Result.success(
+                listOf(
+                    de.kh.kalorientracker.data.ErkanntesLebensmittel("Reis gekocht", 180.0),
+                    de.kh.kalorientracker.data.ErkanntesLebensmittel("Hähnchenbrust gebraten", 120.0),
+                    de.kh.kalorientracker.data.ErkanntesLebensmittel("Brokkoli", 90.0),
+                    de.kh.kalorientracker.data.ErkanntesLebensmittel("Zauberbohnen", 30.0),
+                ),
+            )
+        }
+        val werkzeug = de.kh.kalorientracker.ui.foto.FotoWerkzeug(fotos, schluessel, erkenner)
+        val tag = java.time.LocalDate.now()
+        var fertig = false
+        rule.setContent {
+            KalorienTheme {
+                de.kh.kalorientracker.ui.foto.FotoScreen(
+                    repo, werkzeug, tag, 3, onZurueck = {}, onFertig = { fertig = true }, onSchluessel = {}, startFoto = name,
+                )
+            }
+        }
+        warteAufText("Bitte prüfen")
+        warteAufText("Reis (gekocht)")
+        foto("15-foto-pruefen")
+        // Unbekanntes wird angezeigt, aber nicht eingetragen
+        rule.onNodeWithText("„Zauberbohnen“ nicht gefunden").assertExists()
+        // Menge beim Reis ändern: 180 → 150 g
+        rule.onAllNodes(hasSetTextAction()).onFirst().performTextClearance()
+        rule.onAllNodes(hasSetTextAction()).onFirst().performTextInput("150")
+        rule.onNode(androidx.compose.ui.test.hasScrollToNodeAction())
+            .performScrollToNode(hasText("3 Lebensmittel eintragen", substring = true))
+        foto("16-foto-eintragen")
+        rule.onNodeWithText("3 Lebensmittel eintragen", substring = true).performClick()
+        rule.waitUntil(10_000) { fertig }
+        val eintraege = runBlocking { db.diary().eintraegeAm(tag.toString()).first() }
+        assertEquals(3, eintraege.size)
+        assertEquals(setOf(name), eintraege.map { it.foto }.toSet())
+        assertEquals(setOf(3), eintraege.map { it.slotId }.toSet())
+        assertEquals(150.0, eintraege.first { it.label.startsWith("Reis") }.gramm!!, 0.01)
+    }
+
 }

@@ -103,9 +103,10 @@ class KalorienRepository(
         menge: Double,
         zeitpunkt: LocalDateTime,
         slotId: Int,
+        foto: String? = null,
     ): DiaryEntryEntity {
         val jetzt = System.currentTimeMillis()
-        val e = baueEintrag(UUID.randomUUID().toString(), food, portionLabel, grammJePortion, menge, zeitpunkt, slotId, jetzt)
+        val e = baueEintrag(UUID.randomUUID().toString(), food, portionLabel, grammJePortion, menge, zeitpunkt, slotId, jetzt, foto)
         db.diary().speichere(e)
         return e
     }
@@ -120,7 +121,7 @@ class KalorienRepository(
         zeitpunkt: LocalDateTime,
         slotId: Int,
     ) {
-        val neu = baueEintrag(alt.id, food, portionLabel, grammJePortion, menge, zeitpunkt, slotId, alt.createdAt)
+        val neu = baueEintrag(alt.id, food, portionLabel, grammJePortion, menge, zeitpunkt, slotId, alt.createdAt, alt.foto)
         db.diary().speichere(neu)
     }
 
@@ -128,7 +129,7 @@ class KalorienRepository(
 
     private fun baueEintrag(
         id: String, food: FoodEntity, portionLabel: String, grammJePortion: Double, menge: Double,
-        zeitpunkt: LocalDateTime, slotId: Int, erstellt: Long,
+        zeitpunkt: LocalDateTime, slotId: Int, erstellt: Long, foto: String? = null,
     ): DiaryEntryEntity {
         val gramm = grammJePortion * menge
         val n = food.naehrwerte100.fuerGramm(gramm)
@@ -148,6 +149,7 @@ class KalorienRepository(
             ballaststoffe = n.ballaststoffe, eiweiss = n.eiweiss, salz = n.salz,
             createdAt = erstellt, updatedAt = System.currentTimeMillis(),
             mikros = Mikros.kodiere(Mikros.mal(Mikros.lese(food.mikros), gramm / 100.0)),
+            foto = foto,
         )
     }
 
@@ -593,4 +595,29 @@ class KalorienRepository(
             )
         }
     }
+
+    // ---------- Foto-Mahlzeit ----------
+
+    /** Passendstes Lebensmittel für einen erkannten Namen (z. B. "Reis gekocht"), Rezepte ausgenommen. */
+    suspend fun zuordnen(name: String): FoodEntity? {
+        val n = name.trim()
+        if (n.length < 2) return null
+        suche(n).firstOrNull { it.source != "rezept" }?.let { return it }
+        // Ohne Treffer: nur das erste Wort (z. B. "Spiegelei mit Speck" → "Spiegelei")
+        val erstes = n.split(' ', ',').firstOrNull { it.length >= 3 } ?: return null
+        return if (erstes != n) suche(erstes).firstOrNull { it.source != "rezept" } else null
+    }
+
+    /** Mehrere Lebensmittel einer Foto-Mahlzeit in Gramm eintragen, alle mit demselben Foto. */
+    suspend fun eintragenMehrere(
+        posten: List<Pair<FoodEntity, Double>>,
+        zeitpunkt: LocalDateTime,
+        slotId: Int,
+        foto: String?,
+    ): List<DiaryEntryEntity> = posten.map { (food, gramm) ->
+        eintragen(food, food.unitBase, 1.0, gramm, zeitpunkt, slotId, foto)
+    }
+
+    /** Alle Fotos, die noch an einem Eintrag hängen (zum Aufräumen alter Dateien). */
+    suspend fun benutzteFotos(): Set<String> = db.diary().fotos().toSet()
 }

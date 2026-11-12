@@ -69,6 +69,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -119,6 +121,7 @@ fun DetailScreen(
     tag: LocalDate,
     slotVorgabe: Int,
     eintragId: String? = null,
+    fotos: de.kh.kalorientracker.data.Fotos? = null,
     onZurueck: () -> Unit,
     onEingetragen: () -> Unit,
     onRezeptBearbeiten: ((String) -> Unit)? = null,
@@ -247,6 +250,8 @@ fun DetailScreen(
                 .padding(horizontal = Spacing.l, vertical = Spacing.s),
             verticalArrangement = Arrangement.spacedBy(Spacing.m),
         ) {
+            val fotoName = eintrag?.foto
+            if (fotos != null && fotoName != null) MahlzeitFoto(fotos, fotoName)
             Text(herkunft(f), style = MaterialTheme.typography.bodyMedium, color = AppTheme.colors.textMuted)
             when (f.source) {
                 "start" -> HinweisBox(stringResource(R.string.startdaten_hinweis))
@@ -693,4 +698,24 @@ private fun wert(x: Double?, einheit: String): String = when {
     x == null -> "k. A."
     einheit == "kcal" -> "${Format.kcal(x)} kcal"
     else -> "${Format.gramm(x)} g"
+}
+
+
+/** Foto der Mahlzeit, zu der dieser Eintrag gehört. */
+@Composable
+private fun MahlzeitFoto(fotos: de.kh.kalorientracker.data.Fotos, name: String) {
+    var bild by remember(name) { mutableStateOf<androidx.compose.ui.graphics.ImageBitmap?>(null) }
+    LaunchedEffect(name) {
+        bild = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            runCatching { android.graphics.BitmapFactory.decodeFile(fotos.datei(name).path)?.asImageBitmap() }.getOrNull()
+        }
+    }
+    bild?.let {
+        androidx.compose.foundation.Image(
+            it, contentDescription = stringResource(R.string.foto_beschreibung),
+            contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+            modifier = Modifier.fillMaxWidth().height(200.dp)
+                .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
+        )
+    }
 }

@@ -31,6 +31,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ChevronLeft
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.PhotoCamera
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -396,7 +397,16 @@ private fun EintragZeile(e: DiaryEntryEntity, onClick: () -> Unit, onLoeschen: (
         Initiale(e.label)
         Spacer(Modifier.width(Spacing.m))
         Column(Modifier.weight(1f)) {
-            Text(e.label, style = MaterialTheme.typography.bodyLarge, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(e.label, style = MaterialTheme.typography.bodyLarge, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
+                if (e.foto != null) {
+                    Spacer(Modifier.width(Spacing.xs))
+                    Icon(
+                        Icons.Rounded.PhotoCamera, contentDescription = stringResource(R.string.foto_vorhanden),
+                        tint = AppTheme.colors.textMuted, modifier = Modifier.size(16.dp),
+                    )
+                }
+            }
             Text(
                 mengenText(e) + " · " + stringResource(
                     R.string.makro_kurz, Format.gramm(e.fett), Format.gramm(e.kh), Format.gramm(e.eiweiss),

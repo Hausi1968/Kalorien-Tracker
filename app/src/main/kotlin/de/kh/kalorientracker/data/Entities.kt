@@ -108,6 +108,8 @@ data class DiaryEntryEntity(
     val updatedAt: Long,
     /** Vitamine, Mineralstoffe, Cholesterin für diesen Eintrag (absolut, seit DB-Version 5). */
     val mikros: String? = null,
+    /** Dateiname des Mahlzeit-Fotos in files/fotos (seit DB-Version 6); mehrere Einträge können dasselbe Foto haben. */
+    val foto: String? = null,
 )
 
 val DiaryEntryEntity.naehrwerte: Naehrwerte

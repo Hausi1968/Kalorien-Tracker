@@ -21,6 +21,7 @@ import androidx.compose.material.icons.rounded.AddCircle
 import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.QrCodeScanner
+import androidx.compose.material.icons.rounded.PhotoCamera
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -87,6 +88,7 @@ fun SucheScreen(
     onZurueck: () -> Unit,
     onLebensmittel: (String) -> Unit,
     onProduktAnlegen: (barcode: String?, name: String?) -> Unit,
+    onFoto: (() -> Unit)? = null,
 ) {
     var eingabe by rememberSaveable { mutableStateOf("") }
     var treffer by remember { mutableStateOf<List<FoodEntity>?>(null) }
@@ -183,6 +185,11 @@ fun SucheScreen(
         onZurueck = onZurueck,
         snackbar = snackbar,
         aktionen = {
+            if (onFoto != null) {
+                IconButton(onClick = onFoto) {
+                    Icon(Icons.Rounded.PhotoCamera, contentDescription = stringResource(R.string.foto_titel))
+                }
+            }
             IconButton(onClick = { direktOffen = true }) {
                 Icon(Icons.Rounded.Bolt, contentDescription = stringResource(R.string.kalorien_direkt))
             }

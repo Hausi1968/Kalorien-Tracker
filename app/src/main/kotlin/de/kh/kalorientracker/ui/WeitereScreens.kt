@@ -179,6 +179,7 @@ fun ProfilScreen(
     onNeueVersion: (NeueVersion) -> Unit,
     healthConnect: de.kh.kalorientracker.gesundheit.HealthConnect? = null,
     sicherung: de.kh.kalorientracker.data.Sicherung? = null,
+    kiSchluessel: de.kh.kalorientracker.data.KiSchluessel? = null,
 ) {
     val p by repo.profil.collectAsStateWithLifecycle(initialValue = null)
     val snackbar = remember { SnackbarHostState() }
@@ -255,6 +256,7 @@ fun ProfilScreen(
             HinweisBox(stringResource(R.string.rechner_datenschutz))
             healthConnect?.let { hc -> de.kh.kalorientracker.gesundheit.HealthConnectKarte(hc) { text -> scope.launch { snackbar.showSnackbar(text) } } }
             sicherung?.let { SicherungKarte(it) { text -> scope.launch { snackbar.showSnackbar(text) } } }
+            kiSchluessel?.let { de.kh.kalorientracker.ui.foto.SchluesselKarte(it) { text -> scope.launch { snackbar.showSnackbar(text) } } }
             Karte(titel = stringResource(R.string.app_version, aktualisierung.aktuelleVersion)) {
                 OutlinedButton(onClick = {
                     scope.launch {

@@ -25,6 +25,9 @@ class AppContainer(context: Context) {
     val katalog = de.kh.kalorientracker.data.KatalogImport(context, db)
     val aktualisierung = Aktualisierung(context)
     val sicherung = Sicherung(context, db)
+    val fotos = de.kh.kalorientracker.data.Fotos(context)
+    val kiSchluessel = de.kh.kalorientracker.data.KiSchluessel(context)
+    val erkenner: de.kh.kalorientracker.data.FotoErkenner = de.kh.kalorientracker.data.ClaudeErkenner(kiSchluessel)
 
     /** Lebt so lange wie die App, nicht nur wie ein Bildschirm: Drehen o. Ä. bricht nichts ab. */
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -48,6 +51,7 @@ class AppContainer(context: Context) {
             runCatching { katalog.fallsNoetig() }
             _katalogBereit.value = true
             runCatching { sicherung.schreibe() }
+            runCatching { fotos.aufraeumen(repo.benutzteFotos()) }
         }
     }
 

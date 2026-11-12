@@ -76,6 +76,9 @@ interface FoodDao {
 
 @Dao
 interface DiaryDao {
+    @Query("SELECT DISTINCT foto FROM diary_entry WHERE foto IS NOT NULL")
+    suspend fun fotos(): List<String>
+
     @Query("SELECT * FROM diary_entry WHERE day = :day ORDER BY slotId, eatenAt")
     fun eintraegeAm(day: String): Flow<List<DiaryEntryEntity>>
 

@@ -31,14 +31,15 @@ class MigrationTest {
             close()
         }
         val db = helper.runMigrationsAndValidate(
-            "migration-test", 5, true,
-            AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4, AppDatabase.MIGRATION_4_5,
+            "migration-test", 6, true,
+            AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4, AppDatabase.MIGRATION_4_5, AppDatabase.MIGRATION_5_6,
         )
-        db.query("SELECT label, kcal, mikros FROM diary_entry WHERE id = 'e1'").use { c ->
+        db.query("SELECT label, kcal, mikros, foto FROM diary_entry WHERE id = 'e1'").use { c ->
             c.moveToFirst()
             assertEquals("Apfel", c.getString(0))
             assertEquals(78.0, c.getDouble(1), 0.01)
             assertEquals(true, c.isNull(2))
+            assertEquals(true, c.isNull(3))
         }
     }
 }

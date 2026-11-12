@@ -2,4 +2,6 @@
 <paths>
     <!-- Heruntergeladene Updates, nur für den Android-Installer freigegeben -->
     <cache-path name="updates" path="updates/" />
+    <!-- Kurzzeitige Ablage für die Kamera-App beim Fotografieren einer Mahlzeit -->
+    <cache-path name="aufnahme" path="aufnahme/" />
 </paths>

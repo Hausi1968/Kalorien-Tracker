@@ -1,4 +1,5 @@
 [versions]
+anthropic = "3.3.0"
 agp = "8.7.3"
 kotlin = "2.0.21"
 ksp = "2.0.21-1.0.28"
@@ -18,6 +19,7 @@ androidxTestJunit = "1.2.1"
 healthConnect = "1.1.0-beta01"  # 1.1.0 final braucht compileSdk 36 und AGP 8.9
 
 [libraries]
+anthropic-java = { module = "com.anthropic:anthropic-java", version.ref = "anthropic" }
 health-connect = { module = "androidx.health.connect:connect-client", version.ref = "healthConnect" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
