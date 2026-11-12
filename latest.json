@@ -1,8 +1,8 @@
 {
-  "version": "0.17.0",
-  "versionCode": 20,
-  "apk": "Kalorien-Tracker-0.17.0.apk",
-  "notizen": "Wer beim Produkt anlegen oder im Rezept-Editor mit ungespeicherten Eingaben zurückgeht, wird jetzt erst gefragt: Änderungen verwerfen?",
-  "sha256": "ba7203f3c71a948f8c198f580fafcaf9fd3fbae125281c9cc786ff299a87489d",
-  "groesse": 10183724
+  "version": "0.18.0",
+  "versionCode": 21,
+  "apk": "Kalorien-Tracker-0.18.0.apk",
+  "notizen": "Neu: Im Tagebuch wischst du nach links oder rechts, um den Tag zu wechseln. In der Suche liegen Barcode und Foto jetzt unten, gut mit dem Daumen erreichbar.",
+  "sha256": "5038e1d7545036dfbc1669108f5438f54cd399a799d54a579ec1fe33300fa157",
+  "groesse": 10200228
 }
