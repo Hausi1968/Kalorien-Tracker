@@ -1,8 +1,8 @@
 {
-  "version": "0.26.0",
-  "versionCode": 29,
-  "apk": "Kalorien-Tracker-0.26.0.apk",
-  "notizen": "Verbessert: Verbrannte Kalorien und Gewicht aus Samsung Health (über Health Connect) werden jetzt bei jedem Öffnen der App und alle 15 Minuten aktualisiert.",
-  "sha256": "45463d003f308af2aef2f53db2d7b0aabfe5ebbc16445801fc9d1c0ab6d51f0a",
-  "groesse": 10545212
+  "version": "0.27.0",
+  "versionCode": 30,
+  "apk": "Kalorien-Tracker-0.27.0.apk",
+  "notizen": "Neu: Im Profil unter Health Connect siehst du, wann zuletzt Werte geholt wurden und wie viele aktive kcal von der Uhr angekommen sind.",
+  "sha256": "a5ef370af11b05d2e24d056627ab9f0605f49c8771f32ee4f75d7c4bd52e4ccd",
+  "groesse": 10545668
 }
