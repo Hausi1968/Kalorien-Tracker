@@ -1,8 +1,8 @@
 {
-  "version": "0.19.0",
-  "versionCode": 22,
-  "apk": "Kalorien-Tracker-0.19.0.apk",
-  "notizen": "Neu: Eine freundlichere, runde Schrift. In den Listen zeigt ein kleines Symbol, was für ein Lebensmittel es ist (Obst, Brot, Getränk, Fleisch …).",
-  "sha256": "4f2e1d1d68f620b0ec0648cd0d5834a39738f29591376f9931557079ae0ebd4d",
-  "groesse": 10524836
+  "version": "0.20.0",
+  "versionCode": 23,
+  "apk": "Kalorien-Tracker-0.20.0.apk",
+  "notizen": "Neu: Im Rechner gibt es den Haken „Ich werde ärztlich begleitet“. Dann darf dein Tagesziel unter dem Grundumsatz liegen, aber nie unter 1.500 kcal (Frauen 1.200 kcal).",
+  "sha256": "51348435faf03c6603e7eea298d881712709e5941d540ba3ac2adbac43d65c83",
+  "groesse": 10525300
 }
