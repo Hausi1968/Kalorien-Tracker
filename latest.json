@@ -1,8 +1,8 @@
 {
-  "version": "0.18.0",
-  "versionCode": 21,
-  "apk": "Kalorien-Tracker-0.18.0.apk",
-  "notizen": "Neu: Im Tagebuch wischst du nach links oder rechts, um den Tag zu wechseln. In der Suche liegen Barcode und Foto jetzt unten, gut mit dem Daumen erreichbar.",
-  "sha256": "5038e1d7545036dfbc1669108f5438f54cd399a799d54a579ec1fe33300fa157",
-  "groesse": 10200228
+  "version": "0.19.0",
+  "versionCode": 22,
+  "apk": "Kalorien-Tracker-0.19.0.apk",
+  "notizen": "Neu: Eine freundlichere, runde Schrift. In den Listen zeigt ein kleines Symbol, was für ein Lebensmittel es ist (Obst, Brot, Getränk, Fleisch …).",
+  "sha256": "4f2e1d1d68f620b0ec0648cd0d5834a39738f29591376f9931557079ae0ebd4d",
+  "groesse": 10524836
 }
