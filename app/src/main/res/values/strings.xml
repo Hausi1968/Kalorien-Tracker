@@ -201,7 +201,7 @@
     <string name="nw_salz_g">Salz in g</string>
     <string name="produkt_privat">Eigene Produkte bleiben nur auf deinem Handy.</string>
     <string name="datenquellen">Datenquellen</string>
-    <string name="datenquellen_text">Produktdaten (mitgelieferte Datenbank, Barcode und Online-Suche): Open Food Facts (openfoodfacts.org), Daten unter der Open Database License (ODbL). Startwerte für Grundnahrungsmittel: eigene gerundete Durchschnittswerte.</string>
+    <string name="datenquellen_text">Produktdaten (mitgelieferte Datenbank, Barcode und Online-Suche): Open Food Facts (openfoodfacts.org), Daten unter der Open Database License (ODbL). Startwerte für Grundnahrungsmittel: eigene gerundete Durchschnittswerte. Schrift: Nunito, unter der SIL Open Font License.</string>
     <!-- Version 0.3: Gewicht, Übersicht, Kalorien direkt, Aktivitäten, Updates -->
     <string name="gewicht_heute">Gewicht heute</string>
     <string name="gewicht_weniger">0,1 kg weniger</string>

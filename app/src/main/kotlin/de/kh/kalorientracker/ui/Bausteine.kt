@@ -211,17 +211,23 @@ fun PrimaerButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifi
 
 /** Runder Platzhalter statt Produktbild: Anfangsbuchstabe auf accent-soft. */
 @Composable
-fun Initiale(name: String, modifier: Modifier = Modifier) {
+fun Initiale(name: String, modifier: Modifier = Modifier, quelle: String? = null) {
+    val art = de.kh.kalorientracker.data.lebensmittelart(name, quelle)
     Box(
         modifier.size(40.dp).background(AppTheme.colors.accentSoft, CircleShape),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            name.take(1).uppercase(),
-            style = MaterialTheme.typography.titleSmall,
-            color = AppTheme.colors.onAccentSoft,
-            textAlign = TextAlign.Center,
-        )
+        if (art != null) {
+            // Nur Schmuck: der Name steht daneben, deshalb keine Ansage für Vorleseprogramme
+            Icon(symbol(art), contentDescription = null, tint = AppTheme.colors.onAccentSoft, modifier = Modifier.size(22.dp))
+        } else {
+            Text(
+                name.take(1).uppercase(),
+                style = MaterialTheme.typography.titleSmall,
+                color = AppTheme.colors.onAccentSoft,
+                textAlign = TextAlign.Center,
+            )
+        }
     }
 }
 

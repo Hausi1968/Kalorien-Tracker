@@ -1,15 +1,21 @@
-// Schrift: vorgesehen ist Nunito (Google Fonts, OFL). Bis die TTF-Dateien in res/font liegen,
-// wird die Systemschrift verwendet. Zum Umstellen: nunito_*.ttf nach app/src/main/res/font kopieren
-// und AppFont unten auf FontFamily(Font(R.font.nunito_regular), ...) setzen.
+// Schrift: Nunito (Google Fonts, SIL Open Font License, siehe lizenzen/Nunito-OFL.txt),
+// als feste Schnitte 400/600/700/800 aus der variablen Schrift erzeugt.
 package de.kh.kalorientracker.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import de.kh.kalorientracker.R
 
-val AppFont: FontFamily = FontFamily.Default
+val AppFont: FontFamily = FontFamily(
+    Font(R.font.nunito_regular, FontWeight.Normal),
+    Font(R.font.nunito_semibold, FontWeight.SemiBold),
+    Font(R.font.nunito_bold, FontWeight.Bold),
+    Font(R.font.nunito_extrabold, FontWeight.ExtraBold),
+)
 
 private fun style(size: Int, line: Int, weight: FontWeight, tabular: Boolean = false) = TextStyle(
     fontFamily = AppFont, fontSize = size.sp, lineHeight = line.sp, fontWeight = weight,

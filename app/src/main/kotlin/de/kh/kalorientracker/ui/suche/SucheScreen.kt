@@ -374,7 +374,7 @@ private fun LebensmittelZeile(f: FoodEntity, onClick: () -> Unit, onSchnell: () 
             .padding(start = Spacing.l, top = Spacing.s, bottom = Spacing.s, end = Spacing.xs),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Initiale(f.name)
+        Initiale(f.name, quelle = f.source)
         Spacer(Modifier.width(Spacing.m))
         Column(Modifier.weight(1f)) {
             Text(
