@@ -1,8 +1,8 @@
 {
-  "version": "0.27.0",
-  "versionCode": 30,
-  "apk": "Kalorien-Tracker-0.27.0.apk",
-  "notizen": "Neu: Im Profil unter Health Connect siehst du, wann zuletzt Werte geholt wurden und wie viele aktive kcal von der Uhr angekommen sind.",
-  "sha256": "a5ef370af11b05d2e24d056627ab9f0605f49c8771f32ee4f75d7c4bd52e4ccd",
-  "groesse": 10545668
+  "version": "0.28.0",
+  "versionCode": 31,
+  "apk": "Kalorien-Tracker-0.28.0.apk",
+  "notizen": "Neu: Im Profil wählbar, ob im Tagebuch das Frühstück oder das Abendessen oben steht.",
+  "sha256": "e8eaa9555d430ce0081525e5e02d9171b2318b580654560aec8571d24610fc07",
+  "groesse": 10546092
 }
