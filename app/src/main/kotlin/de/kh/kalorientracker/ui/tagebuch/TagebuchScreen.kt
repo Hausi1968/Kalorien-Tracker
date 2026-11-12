@@ -211,7 +211,7 @@ fun TagebuchScreen(
                 // Antippen der Bilanz öffnet die Tagesübersicht mit Diagrammen
                 item { BilanzGleichung(d.bilanz, Modifier.clickable { onUebersicht(tag) }) }
                 if (tag == heute && serie >= 2) item { SerienZeile(serie) }
-                item { Karte { MakroDreier(d.summe.fett, d.summe.kh, d.summe.eiweiss, d.makroZiel) } }
+                item { Karte { MakroDreier(d.summe.fett, d.summe.kh, d.summe.eiweiss, d.makroZiel, zucker = d.summe.zucker, mitZucker = true) } }
                 items(mahlzeitenReihe, key = { it.id }) { slot ->
                     MahlzeitKarte(
                         slot = slot,

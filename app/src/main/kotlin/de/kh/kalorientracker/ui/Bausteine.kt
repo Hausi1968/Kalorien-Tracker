@@ -142,7 +142,8 @@ fun MakroBalken(name: String, gramm: Double?, zielGramm: Int?, farbe: Color, mod
             else stringResource(R.string.einheit_gramm, Format.gramm(gramm)),
             style = MaterialTheme.typography.labelMedium,
             color = AppTheme.colors.textMuted,
-            maxLines = 1,
+            // Bei großer Schrift darf „147 / 250 g“ in zwei Zeilen umbrechen statt abgeschnitten zu werden
+            maxLines = 2,
         )
         // Ohne Tagesziel (z. B. in der Detailansicht) kein leerer Balken
         if (zielGramm == null || zielGramm <= 0) return@Column
@@ -159,11 +160,17 @@ fun MakroBalken(name: String, gramm: Double?, zielGramm: Int?, farbe: Color, mod
 }
 
 @Composable
-fun MakroDreier(fett: Double?, kh: Double?, eiweiss: Double?, ziel: de.kh.kalorientracker.core.MakroGramm?) {
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Spacing.m)) {
+fun MakroDreier(
+    fett: Double?, kh: Double?, eiweiss: Double?, ziel: de.kh.kalorientracker.core.MakroGramm?,
+    /** Wenn gesetzt, kommt Zucker als vierte Spalte dazu (nur Gramm, ohne Ziel). */
+    zucker: Double? = null, mitZucker: Boolean = false,
+) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(if (mitZucker) Spacing.s else Spacing.m)) {
         MakroBalken(stringResource(R.string.makro_fett), fett, ziel?.fett, AppTheme.colors.macroFat, Modifier.weight(1f))
-        MakroBalken(stringResource(R.string.makro_kh), kh, ziel?.kh, AppTheme.colors.macroCarbs, Modifier.weight(1f))
+        // Bei vier Spalten wird „Kohlenhydrate“ zu „KH“, sonst passt es auf schmalen Handys nicht
+        MakroBalken(stringResource(if (mitZucker) R.string.makro_kh_kurz else R.string.makro_kh), kh, ziel?.kh, AppTheme.colors.macroCarbs, Modifier.weight(1f))
         MakroBalken(stringResource(R.string.makro_eiweiss), eiweiss, ziel?.eiweiss, AppTheme.colors.macroProtein, Modifier.weight(1f))
+        if (mitZucker) MakroBalken(stringResource(R.string.zucker), zucker ?: 0.0, null, AppTheme.colors.macroCarbs, Modifier.weight(1f))
     }
 }
 

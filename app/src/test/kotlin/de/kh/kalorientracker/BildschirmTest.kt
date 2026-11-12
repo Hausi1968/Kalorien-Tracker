@@ -127,6 +127,7 @@ class BildschirmTest {
         }
         warteAufText("Frühstück")
         foto("20-gross-tagebuch")
+        rule.onNodeWithText("Zucker").assertExists()
         assertEquals("Tagebuch: Knöpfe ohne Ansage", emptyList<String>(), stummeKnoepfe())
         rule.runOnUiThread { seite.value = 1 }
         warteAufText("Barcode")
