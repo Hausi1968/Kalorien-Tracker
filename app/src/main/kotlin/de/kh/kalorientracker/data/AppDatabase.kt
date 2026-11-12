@@ -19,7 +19,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         WaterEntryEntity::class,
         RezeptZutatEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -36,7 +36,7 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         fun baue(context: Context): AppDatabase =
             Room.databaseBuilder(context, AppDatabase::class.java, "kalorien.db")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
                 .apply { testAnpassung?.invoke(this) }
                 .build()
 
@@ -44,6 +44,12 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile var testAnpassung: ((RoomDatabase.Builder<AppDatabase>) -> Unit)? = null
 
         /** 0.12 → 0.13: Foto zur Mahlzeit. */
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `profile` ADD COLUMN `aerztlichBegleitet` INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         val MIGRATION_5_6 = object : Migration(5, 6) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `diary_entry` ADD COLUMN `foto` TEXT")

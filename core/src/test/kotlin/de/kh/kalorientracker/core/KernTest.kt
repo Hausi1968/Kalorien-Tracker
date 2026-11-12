@@ -41,6 +41,20 @@ class BedarfsrechnerTest {
         assertTrue(Warnung.UNTER_GRUNDUMSATZ in r.warnungen)
     }
 
+    @Test fun aerztlichBegleitetDarfUnterGrundumsatz() {
+        // Karstens Fall: Mann, 58, 170 cm, 93,2 kg, sitzend -> Grundumsatz 1710, Bedarf 2052
+        val k = Koerperdaten(Geschlecht.MANN, LocalDate.of(1968, 1, 1), 170.0, 93.2, 1.2)
+        val ohne = Bedarfsrechner.berechne(k, Zielvorgabe(Ziel.ABNEHMEN, 80.0, 0.5), LocalDate.of(2026, 11, 12))
+        assertEquals(1710, ohne.tagesziel)
+        val mit = Bedarfsrechner.berechne(k, Zielvorgabe(Ziel.ABNEHMEN, 80.0, 0.5, aerztlichBegleitet = true), LocalDate.of(2026, 11, 12))
+        assertEquals(1550, mit.tagesziel) // 2052 - 500
+        assertTrue(Warnung.BEGLEITET_UNTER_GRUNDUMSATZ in mit.warnungen)
+        assertTrue(Warnung.UNTER_GRUNDUMSATZ !in mit.warnungen)
+        // Mindestmenge gilt trotzdem
+        val schnell = Bedarfsrechner.berechne(k, Zielvorgabe(Ziel.ABNEHMEN, 80.0, 0.75, aerztlichBegleitet = true), LocalDate.of(2026, 11, 12))
+        assertEquals(Bedarfsrechner.MINIMUM_MANN, schnell.tagesziel)
+    }
+
     @Test fun minimumFrau() {
         val klein = Koerperdaten(Geschlecht.FRAU, LocalDate.of(1950, 1, 1), 150.0, 45.0, 1.2)
         val r = Bedarfsrechner.berechne(klein, Zielvorgabe(Ziel.ABNEHMEN, 42.0, 0.5), heute)

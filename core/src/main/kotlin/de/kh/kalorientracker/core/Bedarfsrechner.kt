@@ -24,6 +24,11 @@ data class Zielvorgabe(
     val zielgewichtKg: Double?,
     /** kg pro Woche, z.B. 0.5; bei HALTEN ignoriert. */
     val tempoKgProWoche: Double,
+    /**
+     * Abnehmen unter ärztlicher Begleitung: Das Tagesziel darf dann unter dem Grundumsatz liegen,
+     * aber nie unter der Mindestmenge (1.200 / 1.500 kcal).
+     */
+    val aerztlichBegleitet: Boolean = false,
 )
 
 enum class Warnung {
@@ -31,6 +36,8 @@ enum class Warnung {
     UNTER_GRUNDUMSATZ,
     /** Tagesziel wurde auf die Mindestmenge (1.200 / 1.500 kcal) angehoben. */
     UNTER_MINIMUM,
+    /** Tagesziel liegt unter dem Grundumsatz; erlaubt, weil ärztlich begleitet. */
+    BEGLEITET_UNTER_GRUNDUMSATZ,
     /** Zielgewicht passt nicht zum Ziel (z.B. abnehmen, aber Zielgewicht höher). */
     ZIELGEWICHT_UNPASSEND,
 }
@@ -80,8 +87,14 @@ object Bedarfsrechner {
         var ziel = tdee - tagesDifferenz
         if (z.ziel == Ziel.ABNEHMEN) {
             val minimum = if (k.geschlecht == Geschlecht.MANN) MINIMUM_MANN else MINIMUM_FRAU
-            if (ziel < bmr) { ziel = bmr; warnungen += Warnung.UNTER_GRUNDUMSATZ }
-            if (ziel < minimum) { ziel = minimum.toDouble(); warnungen += Warnung.UNTER_MINIMUM }
+            if (ziel < bmr) {
+                if (z.aerztlichBegleitet) warnungen += Warnung.BEGLEITET_UNTER_GRUNDUMSATZ
+                else { ziel = bmr; warnungen += Warnung.UNTER_GRUNDUMSATZ }
+            }
+            if (ziel < minimum) {
+                ziel = minimum.toDouble(); warnungen += Warnung.UNTER_MINIMUM
+                warnungen -= Warnung.BEGLEITET_UNTER_GRUNDUMSATZ
+            }
         }
         val tagesziel = rundeAuf10(ziel)
         val echtesDefizit = tdee - tagesziel

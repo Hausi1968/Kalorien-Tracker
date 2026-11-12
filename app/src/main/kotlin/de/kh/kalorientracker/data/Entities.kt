@@ -33,6 +33,8 @@ data class ProfileEntity(
     val updatedAt: Long,
     /** true = Tagesziel selbst festgelegt; wird dann bei neuem Gewicht nicht neu berechnet. */
     @ColumnInfo(defaultValue = "0") val zielManuell: Boolean = false,
+    /** Abnehmen unter ärztlicher Begleitung: Ziel darf unter dem Grundumsatz liegen (seit DB-Version 7). */
+    @ColumnInfo(defaultValue = "0") val aerztlichBegleitet: Boolean = false,
 )
 
 @Entity(

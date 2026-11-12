@@ -135,6 +135,9 @@
     <string name="ueberschuss">Überschuss</string>
     <string name="zieldatum">Ziel erreicht etwa</string>
     <string name="zieldatum_wert">%1$s (in %2$d Wochen)</string>
+    <string name="aerztlich_begleitet">Ich werde ärztlich begleitet</string>
+    <string name="aerztlich_begleitet_hinweis">Zum Beispiel von Hausarzt oder Diabetologin. Dann darf dein Tagesziel unter deinem Grundumsatz liegen, aber nie unter 1.500 kcal (Frauen 1.200 kcal).</string>
+    <string name="warnung_begleitet">Dein Tagesziel liegt unter deinem Grundumsatz. Halte das nur mit ärztlicher Begleitung durch.</string>
     <string name="warnung_grundumsatz">Dein Wunschtempo läge unter deinem Grundumsatz. Wir haben das Ziel deshalb auf den Grundumsatz angehoben.</string>
     <string name="warnung_minimum">Weniger als %1$s kcal am Tag sind ohne ärztliche Begleitung nicht ratsam. Das Ziel wurde angehoben.</string>
     <string name="warnung_zielgewicht">Das Zielgewicht passt nicht zum gewählten Ziel. Bitte prüfen.</string>

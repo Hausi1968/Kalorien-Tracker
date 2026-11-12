@@ -466,7 +466,7 @@ class KalorienRepository(
     private fun automatischesZiel(p: ProfileEntity, kg: Double): Int? = runCatching {
             Bedarfsrechner.berechne(
                 Koerperdaten(Geschlecht.valueOf(p.geschlecht), LocalDate.parse(p.geburtsdatum), p.groesseCm, kg, p.pal),
-                Zielvorgabe(Ziel.valueOf(p.ziel), p.zielgewichtKg, p.tempoKgProWoche),
+                Zielvorgabe(Ziel.valueOf(p.ziel), p.zielgewichtKg, p.tempoKgProWoche, p.aerztlichBegleitet),
                 LocalDate.now(zone),
             ).tagesziel
         }.getOrNull()

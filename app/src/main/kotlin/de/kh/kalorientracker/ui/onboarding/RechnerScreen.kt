@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material3.Checkbox
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -99,6 +102,7 @@ fun RechnerScreen(
     var ziel by rememberSaveable { mutableStateOf(Ziel.ABNEHMEN) }
     var zielgewicht by rememberSaveable { mutableStateOf("") }
     var tempo by rememberSaveable { mutableDoubleStateOf(0.5) }
+    var begleitet by rememberSaveable { mutableStateOf(false) }
     var geladen by rememberSaveable { mutableStateOf(erstesMal) }
     val scope = rememberCoroutineScope()
 
@@ -114,6 +118,7 @@ fun RechnerScreen(
             ziel = Ziel.valueOf(p.ziel)
             zielgewicht = p.zielgewichtKg?.let { Format.dezimal(it) } ?: ""
             tempo = p.tempoKgProWoche
+            begleitet = p.aerztlichBegleitet
         }
         geladen = true
     }
@@ -130,7 +135,7 @@ fun RechnerScreen(
         Koerperdaten(geschlecht!!, geburt!!, cm, kg, pal)
     } else null
     val ergebnis: Bedarfsergebnis? = koerper?.let {
-        runCatching { Bedarfsrechner.berechne(it, Zielvorgabe(ziel, zielKg, tempo), heute) }.getOrNull()
+        runCatching { Bedarfsrechner.berechne(it, Zielvorgabe(ziel, zielKg, tempo, begleitet && ziel == Ziel.ABNEHMEN), heute) }.getOrNull()
     }
 
     Seite(
@@ -227,6 +232,20 @@ fun RechnerScreen(
                             FilterChip(tempo == t, { tempo = t }, { Text(stringResource(R.string.tempo_stufe, Format.dezimal(t, 2))) })
                         }
                     }
+                    if (ziel == Ziel.ABNEHMEN) {
+                        Row(
+                            Modifier.fillMaxWidth().toggleable(value = begleitet, role = Role.Checkbox, onValueChange = { begleitet = it }),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Checkbox(checked = begleitet, onCheckedChange = null)
+                            Spacer(Modifier.width(Spacing.s))
+                            Text(stringResource(R.string.aerztlich_begleitet), style = MaterialTheme.typography.bodyLarge)
+                        }
+                        Text(
+                            stringResource(R.string.aerztlich_begleitet_hinweis),
+                            style = MaterialTheme.typography.bodySmall, color = AppTheme.colors.textMuted,
+                        )
+                    }
                 }
             }
 
@@ -253,6 +272,7 @@ fun RechnerScreen(
                                 ziel = ziel.name,
                                 zielgewichtKg = zielKg,
                                 tempoKgProWoche = tempo,
+                                aerztlichBegleitet = begleitet && ziel == Ziel.ABNEHMEN,
                                 startGewichtKg = k.gewichtKg,
                                 startDatum = heute.toString(),
                                 tageszielKcal = e.tagesziel,
@@ -302,6 +322,7 @@ private fun ErgebnisKarte(e: Bedarfsergebnis, geschlecht: Geschlecht) {
         }
         if (e.warnungen.isNotEmpty()) Spacer(Modifier.height(Spacing.s))
         if (Warnung.UNTER_GRUNDUMSATZ in e.warnungen) HinweisBox(stringResource(R.string.warnung_grundumsatz), warnung = true)
+        if (Warnung.BEGLEITET_UNTER_GRUNDUMSATZ in e.warnungen) HinweisBox(stringResource(R.string.warnung_begleitet), warnung = true)
         if (Warnung.UNTER_MINIMUM in e.warnungen) {
             val min = if (geschlecht == Geschlecht.MANN) Bedarfsrechner.MINIMUM_MANN else Bedarfsrechner.MINIMUM_FRAU
             HinweisBox(stringResource(R.string.warnung_minimum, Format.kcal(min)), warnung = true)
