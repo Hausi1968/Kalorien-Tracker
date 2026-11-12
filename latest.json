@@ -1,8 +1,8 @@
 {
-  "version": "0.24.0",
-  "versionCode": 27,
-  "apk": "Kalorien-Tracker-0.24.0.apk",
-  "notizen": "Verbessert: Alles, was du scannst oder online suchst, gehört jetzt zu deiner eigenen Sammlung und kommt mit in die Sicherung, auch wenn du es noch nicht gegessen hast.",
-  "sha256": "5450f813f2ad958c1eeea14bcb7b90f247833a3fe778907b49fe42b501e902e2",
-  "groesse": 10528664
+  "version": "0.25.0",
+  "versionCode": 28,
+  "apk": "Kalorien-Tracker-0.25.0.apk",
+  "notizen": "Behoben: Kennt Open Food Facts einen Barcode nicht, meldete die App fälschlich „kein Internet“. Jetzt geht es direkt zu „Produkt anlegen“.",
+  "sha256": "672bc97594f66dbd4d543c23367450dc80267cc7ac13ea14895b4e7812110f86",
+  "groesse": 10545208
 }
