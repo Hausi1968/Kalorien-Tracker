@@ -386,11 +386,15 @@ private fun MahlzeitKarte(
                     onLange = { onAuswahl(e.id) },
                 )
             }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                TextButton(onClick = onPlus, modifier = Modifier.padding(start = Spacing.s)) {
+            // Bricht bei großer Schrift in zwei Zeilen um, statt die Knöpfe zusammenzuquetschen
+            @OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+            androidx.compose.foundation.layout.FlowRow(
+                Modifier.fillMaxWidth().padding(start = Spacing.s),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                TextButton(onClick = onPlus) {
                     Text(stringResource(R.string.lebensmittel_hinzufuegen))
                 }
-                Spacer(Modifier.weight(1f))
                 // Verschieben, kopieren, mehrere löschen
                 TextButton(onClick = { onAuswahl(eintraege.first().id) }) {
                     Text(stringResource(R.string.auswahl_oeffnen))

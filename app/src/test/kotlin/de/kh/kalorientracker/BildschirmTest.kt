@@ -107,6 +107,33 @@ class BildschirmTest {
         tag
     }
 
+/** Knöpfe ohne Text und ohne Beschreibung: Vorleseprogramme könnten sie nicht ansagen. */
+    private fun stummeKnoepfe(): List<String> = rule.onAllNodes(
+        androidx.compose.ui.test.hasClickAction() and
+            androidx.compose.ui.test.SemanticsMatcher.keyNotDefined(androidx.compose.ui.semantics.SemanticsProperties.Text) and
+            androidx.compose.ui.test.SemanticsMatcher.keyNotDefined(androidx.compose.ui.semantics.SemanticsProperties.ContentDescription) and
+            androidx.compose.ui.test.SemanticsMatcher.keyNotDefined(androidx.compose.ui.semantics.SemanticsProperties.EditableText),
+    ).fetchSemanticsNodes().map { it.boundsInRoot.toString() }
+
+    @Test fun grosseSchrift_tagebuchUndSuche() {
+        org.robolectric.RuntimeEnvironment.setFontScale(1.6f)
+        beispielTag()
+        val seite = androidx.compose.runtime.mutableStateOf(0)
+        rule.setContent {
+            KalorienTheme {
+                if (seite.value == 0) de.kh.kalorientracker.ui.tagebuch.TagebuchScreen(repo, { _, _ -> }, {})
+                else de.kh.kalorientracker.ui.suche.SucheScreen(repo, java.time.LocalDate.now(), 0, {}, {}, { _, _ -> }, onFoto = {})
+            }
+        }
+        warteAufText("Frühstück")
+        foto("20-gross-tagebuch")
+        assertEquals("Tagebuch: Knöpfe ohne Ansage", emptyList<String>(), stummeKnoepfe())
+        rule.runOnUiThread { seite.value = 1 }
+        warteAufText("Barcode")
+        foto("21-gross-suche")
+        assertEquals("Suche: Knöpfe ohne Ansage", emptyList<String>(), stummeKnoepfe())
+    }
+
     @Test fun tagesuebersichtKalorienUndNaehrwerte() {
         val tag = beispielTag()
         rule.setContent { KalorienTheme { de.kh.kalorientracker.ui.uebersicht.UebersichtScreen(repo, tag, {}, {}) } }
