@@ -221,4 +221,28 @@ class DatenTest {
         val vitC = de.kh.kalorientracker.core.Mikros.lese(e.mikros)["vitamin-c"]!!
         assertEquals(0.0069 * 1.5, vitC, 1e-9)
     }
+
+    @Test
+    fun uhrenKalorienNurTeilweiseAnrechnen() = runBlocking {
+        val db = neueDb()
+        db.profile().speichere(profil)
+        val quellen = de.kh.kalorientracker.data.Quellen()
+        val repo = KalorienRepository(db, quellen = quellen)
+        val tag = java.time.LocalDate.of(2026, 11, 12)
+        db.activity().speichere(de.kh.kalorientracker.data.ActivityEntryEntity("hc1", tag.toString(), 0, "Uhr", null, 400.0, "health_connect"))
+        db.activity().speichere(de.kh.kalorientracker.data.ActivityEntryEntity("m1", tag.toString(), 0, "Radfahren", 30.0, 100.0))
+        quellen.setze(de.kh.kalorientracker.data.QuellenWahl(verbrannt = de.kh.kalorientracker.data.Quelle.BEIDE))
+        assertEquals(500.0, repo.tag(tag).first().verbrannt, 0.01)
+        quellen.setze(quellen.wahl.value.copy(hcAnteil = 50))
+        assertEquals(300.0, repo.tag(tag).first().verbrannt, 0.01) // 400 × 50 % + 100 selbst eingetragen
+    }
+
+    @Test
+    fun geburtsdatumAuchOhnePunkte() {
+        assertEquals(java.time.LocalDate.of(1981, 5, 1), de.kh.kalorientracker.ui.onboarding.leseDatum("01.05.1981"))
+        assertEquals(java.time.LocalDate.of(1981, 5, 1), de.kh.kalorientracker.ui.onboarding.leseDatum("1.5.1981"))
+        assertEquals(java.time.LocalDate.of(1981, 5, 1), de.kh.kalorientracker.ui.onboarding.leseDatum("01051981"))
+        assertEquals(null, de.kh.kalorientracker.ui.onboarding.leseDatum("31021981"))
+    }
+
 }

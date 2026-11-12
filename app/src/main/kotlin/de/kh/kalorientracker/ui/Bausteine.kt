@@ -72,33 +72,44 @@ fun BilanzGleichung(b: Tagesbilanz, modifier: Modifier = Modifier) {
         stringResource(if (b.zuViel) R.string.bilanz_zu_viel else R.string.bilanz_uebrig),
         Format.kcal(b.ziel), Format.kcal(b.gegessen), Format.kcal(b.verbrannt),
     )
+    val farbe = if (b.zuViel) AppTheme.colors.warning else MaterialTheme.colorScheme.primary
     Karte(modifier) {
-        Row(
-            Modifier.fillMaxWidth().clearAndSetSemantics { contentDescription = ansage },
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            BilanzSpalte(Format.kcal(b.ziel), stringResource(R.string.bilanz_ziel))
-            Zeichen("−")
-            BilanzSpalte(Format.kcal(b.gegessen), stringResource(R.string.bilanz_gegessen))
-            Zeichen("+")
-            BilanzSpalte(Format.kcal(b.verbrannt), stringResource(R.string.bilanz_verbrannt), AppTheme.colors.burned)
-            Zeichen("=")
-            BilanzSpalte(
-                Format.kcal(abs(b.uebrig)),
-                stringResource(if (b.zuViel) R.string.bilanz_zu_viel else R.string.bilanz_uebrig),
-                if (b.zuViel) AppTheme.colors.warning else MaterialTheme.colorScheme.primary,
-                fett = true,
+        Column(Modifier.fillMaxWidth().clearAndSetSemantics { contentDescription = ansage }) {
+            // Die eine Zahl, die zählt: was heute noch geht
+            Row(verticalAlignment = Alignment.Bottom) {
+                Text(
+                    Format.kcal(abs(b.uebrig)),
+                    style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.ExtraBold, color = farbe,
+                )
+                Spacer(Modifier.width(Spacing.s))
+                Text(
+                    stringResource(R.string.kcal) + " " +
+                        stringResource(if (b.zuViel) R.string.bilanz_zu_viel else R.string.bilanz_uebrig),
+                    style = MaterialTheme.typography.titleMedium, color = farbe,
+                    modifier = Modifier.padding(bottom = Spacing.xs),
+                )
+            }
+            Spacer(Modifier.height(Spacing.s))
+            LinearProgressIndicator(
+                progress = { b.anteil.coerceIn(0f, 1f) },
+                modifier = Modifier.fillMaxWidth().height(8.dp),
+                color = farbe,
+                trackColor = AppTheme.colors.surface2,
+                drawStopIndicator = {},
             )
+            Spacer(Modifier.height(Spacing.s))
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                BilanzSpalte(Format.kcal(b.ziel), stringResource(R.string.bilanz_ziel))
+                Zeichen("−")
+                BilanzSpalte(Format.kcal(b.gegessen), stringResource(R.string.bilanz_gegessen))
+                Zeichen("+")
+                BilanzSpalte(Format.kcal(b.verbrannt), stringResource(R.string.bilanz_verbrannt), AppTheme.colors.burned)
+            }
         }
-        Spacer(Modifier.height(Spacing.m))
-        LinearProgressIndicator(
-            progress = { b.anteil.coerceIn(0f, 1f) },
-            modifier = Modifier.fillMaxWidth().height(8.dp),
-            color = if (b.zuViel) AppTheme.colors.warning else MaterialTheme.colorScheme.primary,
-            trackColor = AppTheme.colors.surface2,
-            drawStopIndicator = {},
-        )
     }
 }
 
@@ -107,7 +118,7 @@ private fun BilanzSpalte(zahl: String, label: String, farbe: Color = MaterialThe
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             zahl,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleSmall,
             fontWeight = if (fett) FontWeight.ExtraBold else FontWeight.Bold,
             color = farbe,
         )

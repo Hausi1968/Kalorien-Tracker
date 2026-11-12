@@ -68,6 +68,9 @@ fun HealthConnectKarte(hc: HealthConnect, onMeldung: (String) -> Unit) {
                 HealthConnect.Status.BEREIT -> {
                     QuellenWahl(stringResource(R.string.hc_gewicht), wahl.gewicht) { hc.repoQuellen().setze(wahl.copy(gewicht = it)); abgleichen() }
                     QuellenWahl(stringResource(R.string.hc_verbrannt), wahl.verbrannt) { hc.repoQuellen().setze(wahl.copy(verbrannt = it)); abgleichen() }
+                    if (wahl.verbrannt != de.kh.kalorientracker.data.Quelle.APP) {
+                        AnteilRegler(wahl.hcAnteil) { hc.repoQuellen().setze(hc.repoQuellen().wahl.value.copy(hcAnteil = it)) }
+                    }
                     if (wahl.brauchtHealthConnect) {
                         if (verbunden == false) {
                             HinweisBox(stringResource(R.string.hc_erlaubnis_hinweis))
@@ -98,4 +101,17 @@ private fun QuellenWahl(titel: String, aktuell: Quelle, onWahl: (Quelle) -> Unit
             ) { Text(stringResource(label), maxLines = 1) }
         }
     }
+}
+
+/** Schieberegler: wie viel Prozent der von der Uhr gemeldeten kcal zählen (in 10er-Schritten). */
+@androidx.compose.runtime.Composable
+private fun AnteilRegler(anteil: Int, onAnteil: (Int) -> Unit) {
+    var wert by androidx.compose.runtime.remember(anteil) { androidx.compose.runtime.mutableFloatStateOf(anteil.toFloat()) }
+    Text(stringResource(R.string.hc_anteil, wert.toInt()), style = MaterialTheme.typography.titleSmall)
+    androidx.compose.material3.Slider(
+        value = wert, onValueChange = { wert = (it / 10).toInt() * 10f },
+        onValueChangeFinished = { onAnteil(wert.toInt()) },
+        valueRange = 0f..100f, steps = 9,
+    )
+    Text(stringResource(R.string.hc_anteil_hinweis), style = MaterialTheme.typography.bodySmall, color = AppTheme.colors.textMuted)
 }

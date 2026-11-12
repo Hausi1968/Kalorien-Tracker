@@ -24,6 +24,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material.icons.rounded.CalendarMonth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -67,6 +71,14 @@ import java.time.format.ResolverStyle
 
 private val DATUM = DateTimeFormatter.ofPattern("d.M.uuuu").withResolverStyle(ResolverStyle.STRICT)
 private val DATUM_AUSGABE = DateTimeFormatter.ofPattern("dd.MM.uuuu")
+private val DATUM_OHNE_PUNKT = DateTimeFormatter.ofPattern("ddMMuuuu").withResolverStyle(ResolverStyle.STRICT)
+
+/** "01.05.1981", "1.5.1981" oder ohne Punkte "01051981" (Samsung-Zifferntastaturen haben oft keinen Punkt). */
+internal fun leseDatum(text: String): LocalDate? {
+    val t = text.trim()
+    return runCatching { LocalDate.parse(t, DATUM) }.getOrNull()
+        ?: t.takeIf { it.length == 8 && it.all(Char::isDigit) }?.let { runCatching { LocalDate.parse(it, DATUM_OHNE_PUNKT) }.getOrNull() }
+}
 
 /**
  * Bedarfsrechner und Zielsetzung. Beim ersten Start Pflicht (eigene Daten, nichts vorbelegt),
@@ -107,7 +119,7 @@ fun RechnerScreen(
     }
 
     val heute = LocalDate.now()
-    val geburt = runCatching { LocalDate.parse(geburtsdatum.trim(), DATUM) }.getOrNull()
+    val geburt = leseDatum(geburtsdatum)
     val alter = geburt?.let { Bedarfsrechner.alter(it, heute) }
     val datumOk = alter != null && alter in 14..110
     val cm = Format.parseDezimal(groesse)?.takeIf { it in 100.0..250.0 }
@@ -148,13 +160,31 @@ fun RechnerScreen(
                     FilterChip(geschlecht == Geschlecht.MANN, { geschlecht = Geschlecht.MANN }, { Text(stringResource(R.string.mann)) })
                 }
                 Spacer(Modifier.height(Spacing.s))
+                var kalenderOffen by remember { mutableStateOf(false) }
                 Zahlenfeld(
                     geburtsdatum, { geburtsdatum = it }, stringResource(R.string.geburtsdatum),
                     stringResource(R.string.geburtsdatum_hinweis), fehler = geburtsdatum.isNotBlank() && !datumOk,
+                    fehlerText = stringResource(if (geburt == null) R.string.fehler_datum else R.string.fehler_alter),
                     tastatur = KeyboardType.Number, erlaubt = { c -> c.isDigit() || c == '.' },
+                    rechts = {
+                        IconButton(onClick = { kalenderOffen = true }) {
+                            Icon(Icons.Rounded.CalendarMonth, contentDescription = stringResource(R.string.geburtsdatum_kalender))
+                        }
+                    },
                 )
-                Zahlenfeld(groesse, { groesse = it }, stringResource(R.string.groesse_cm), null, fehler = groesse.isNotBlank() && cm == null)
-                Zahlenfeld(gewicht, { gewicht = it }, stringResource(R.string.gewicht_kg), null, fehler = gewicht.isNotBlank() && kg == null)
+                if (kalenderOffen) {
+                    GeburtsdatumKalender(geburt, onAbbrechen = { kalenderOffen = false }) {
+                        geburtsdatum = it.format(DATUM_AUSGABE); kalenderOffen = false
+                    }
+                }
+                Zahlenfeld(
+                    groesse, { groesse = it }, stringResource(R.string.groesse_cm), null, fehler = groesse.isNotBlank() && cm == null,
+                    fehlerText = stringResource(R.string.fehler_groesse),
+                )
+                Zahlenfeld(
+                    gewicht, { gewicht = it }, stringResource(R.string.gewicht_kg), null, fehler = gewicht.isNotBlank() && kg == null,
+                    fehlerText = stringResource(R.string.fehler_gewicht),
+                )
             }
 
             Karte(titel = stringResource(R.string.aktivitaet)) {
@@ -189,6 +219,7 @@ fun RechnerScreen(
                     Zahlenfeld(
                         zielgewicht, { zielgewicht = it }, stringResource(R.string.zielgewicht_kg),
                         stringResource(R.string.zielgewicht_hinweis), fehler = zielgewicht.isNotBlank() && zielKg == null,
+                        fehlerText = stringResource(R.string.fehler_gewicht),
                     )
                     Text(stringResource(R.string.tempo), style = MaterialTheme.typography.labelLarge)
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.s)) {
@@ -294,21 +325,44 @@ private fun Zahlenfeld(
     label: String,
     hinweis: String?,
     fehler: Boolean,
+    fehlerText: String? = null,
     tastatur: KeyboardType = KeyboardType.Decimal,
     erlaubt: (Char) -> Boolean = { it.isDigit() || it == ',' || it == '.' },
+    rechts: (@Composable () -> Unit)? = null,
 ) {
     OutlinedTextField(
         value = wert,
         onValueChange = { neu -> onWert(neu.filter(erlaubt).take(10)) },
         label = { Text(label) },
         supportingText = if (fehler) {
-            { Text(stringResource(R.string.eingabe_pruefen)) }
+            { Text(fehlerText ?: stringResource(R.string.eingabe_pruefen)) }
         } else if (hinweis != null) {
             { Text(hinweis) }
         } else null,
         isError = fehler,
+        trailingIcon = rechts,
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = tastatur, imeAction = ImeAction.Next),
         modifier = Modifier.fillMaxWidth(),
     )
+}
+
+/** Geburtsdatum aus dem Kalender: startet bei der Eingabe oder beim Jahr 1980, Jahr oben antippen zum schnellen Wechsel. */
+@Composable
+private fun GeburtsdatumKalender(vorher: LocalDate?, onAbbrechen: () -> Unit, onWahl: (LocalDate) -> Unit) {
+    val start = (vorher ?: LocalDate.of(1980, 1, 1)).atStartOfDay(java.time.ZoneOffset.UTC).toInstant().toEpochMilli()
+    val heute = LocalDate.now()
+    val state = androidx.compose.material3.rememberDatePickerState(
+        initialSelectedDateMillis = start,
+        yearRange = (heute.year - 110)..(heute.year - 14),
+    )
+    androidx.compose.material3.DatePickerDialog(
+        onDismissRequest = onAbbrechen,
+        confirmButton = {
+            androidx.compose.material3.TextButton(enabled = state.selectedDateMillis != null, onClick = {
+                state.selectedDateMillis?.let { onWahl(java.time.Instant.ofEpochMilli(it).atZone(java.time.ZoneOffset.UTC).toLocalDate()) }
+            }) { Text(stringResource(R.string.ok)) }
+        },
+        dismissButton = { androidx.compose.material3.TextButton(onClick = onAbbrechen) { Text(stringResource(R.string.abbrechen)) } },
+    ) { androidx.compose.material3.DatePicker(state = state) }
 }

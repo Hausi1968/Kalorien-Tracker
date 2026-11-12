@@ -134,8 +134,12 @@ interface BodyDao {
 
 @Dao
 interface ActivityDao {
-    @Query("SELECT COALESCE(SUM(kcal), 0) FROM activity_entry WHERE day = :day AND (:modus = 'BEIDE' OR (source = 'health_connect') = (:modus = 'HC'))")
-    fun verbranntAm(day: String, modus: String): Flow<Double>
+    /** Verbrannte kcal des Tages; Werte aus Health Connect zählen nur zu [hcFaktor] (0..1). */
+    @Query(
+        "SELECT COALESCE(SUM(CASE WHEN source = 'health_connect' THEN kcal * :hcFaktor ELSE kcal END), 0) FROM activity_entry " +
+            "WHERE day = :day AND (:modus = 'BEIDE' OR (source = 'health_connect') = (:modus = 'HC'))",
+    )
+    fun verbranntAm(day: String, modus: String, hcFaktor: Double = 1.0): Flow<Double>
 
     @Query("DELETE FROM activity_entry WHERE source = 'health_connect' AND day >= :von")
     suspend fun loescheHealthConnectAb(von: String)

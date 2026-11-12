@@ -10,6 +10,8 @@ import androidx.compose.ui.graphics.Color
 val LightScheme = lightColorScheme(
     primary = Color(0xFF0F766E),
     onPrimary = Color(0xFFFFFFFF),
+    // Knopf "Rückgängig" in der dunklen Meldung unten: Mint statt Standard-Lila
+    inversePrimary = Color(0xFF6EE7B7),
     primaryContainer = Color(0xFFCFF5EA),
     onPrimaryContainer = Color(0xFF064E47),
     secondary = Color(0xFF0EA5A4),
@@ -41,6 +43,7 @@ val LightScheme = lightColorScheme(
 val DarkScheme = darkColorScheme(
     primary = Color(0xFF34D399),
     onPrimary = Color(0xFF04261F),
+    inversePrimary = Color(0xFF0F766E),
     primaryContainer = Color(0xFF123D34),
     onPrimaryContainer = Color(0xFFA7F3D0),
     secondary = Color(0xFF0EA5A4),

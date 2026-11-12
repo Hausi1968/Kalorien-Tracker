@@ -96,6 +96,8 @@ class AppAblaufTest {
         warteAufText("52 kcal")
         foto("04-suche-apfel")
 
+        // Die Trefferliste kann sich kurz neu aufbauen (Katalog wird im Hintergrund eingelesen): erst warten, dann tippen
+        rule.waitUntil(10_000) { rule.onAllNodesWithText("Apfel").fetchSemanticsNodes().isNotEmpty() }
         rule.onAllNodesWithText("Apfel").onFirst().performClick()
         warteAufText("Schnell eintragen")
         foto("05-apfel-detail")

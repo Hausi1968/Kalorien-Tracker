@@ -88,7 +88,7 @@ class KalorienRepository(
     fun tag(t: LocalDate): Flow<TagesDaten> = combine(
         db.profile().beobachte(),
         db.diary().eintraegeAm(t.toString()),
-        quellen.wahl.flatMapLatest { db.activity().verbranntAm(t.toString(), it.verbrannt.name) },
+        quellen.wahl.flatMapLatest { db.activity().verbranntAm(t.toString(), it.verbrannt.name, it.hcAnteil / 100.0) },
     ) { p, e, v -> TagesDaten(t, p, e, v) }
 
     /** Gegessene kcal je Tag im Zeitraum (für die Wochenleiste). */

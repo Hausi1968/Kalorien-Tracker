@@ -103,7 +103,12 @@
     <string name="frau">Frau</string>
     <string name="mann">Mann</string>
     <string name="geburtsdatum">Geburtsdatum</string>
-    <string name="geburtsdatum_hinweis">TT.MM.JJJJ, z. B. 01.05.1981</string>
+    <string name="geburtsdatum_hinweis">TT.MM.JJJJ, z. B. 01.05.1981, oder rechts im Kalender wählen</string>
+    <string name="geburtsdatum_kalender">Geburtsdatum im Kalender wählen</string>
+    <string name="fehler_datum">Datum als TT.MM.JJJJ eingeben, z. B. 01.05.1981, oder den Kalender nutzen</string>
+    <string name="fehler_alter">Das Alter muss zwischen 14 und 110 Jahren liegen</string>
+    <string name="fehler_groesse">Größe zwischen 100 und 250 cm</string>
+    <string name="fehler_gewicht">Gewicht zwischen 30 und 350 kg</string>
     <string name="groesse_cm">Größe in cm</string>
     <string name="gewicht_kg">Gewicht in kg</string>
     <string name="aktivitaet">Wie aktiv bist du im Alltag?</string>
@@ -418,4 +423,6 @@
     <string name="schluessel_entfernen">Entfernen</string>
     <string name="schluessel_gespeichert">Schlüssel gespeichert</string>
     <string name="schluessel_entfernt">Schlüssel entfernt</string>
+    <string name="hc_anteil">Verbrannte kcal der Uhr anrechnen: %1$d %%</string>
+    <string name="hc_anteil_hinweis">Uhren und Fitness-Apps schätzen verbrannte Kalorien oft zu hoch. Viele rechnen deshalb nur etwa die Hälfte an (50 %). Selbst eingetragene Aktivitäten zählen immer voll.</string>
 </resources>
