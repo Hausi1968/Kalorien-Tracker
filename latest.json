@@ -1,8 +1,8 @@
 {
-  "version": "0.25.0",
-  "versionCode": 28,
-  "apk": "Kalorien-Tracker-0.25.0.apk",
-  "notizen": "Behoben: Kennt Open Food Facts einen Barcode nicht, meldete die App fälschlich „kein Internet“. Jetzt geht es direkt zu „Produkt anlegen“.",
-  "sha256": "672bc97594f66dbd4d543c23367450dc80267cc7ac13ea14895b4e7812110f86",
-  "groesse": 10545208
+  "version": "0.26.0",
+  "versionCode": 29,
+  "apk": "Kalorien-Tracker-0.26.0.apk",
+  "notizen": "Verbessert: Verbrannte Kalorien und Gewicht aus Samsung Health (über Health Connect) werden jetzt bei jedem Öffnen der App und alle 15 Minuten aktualisiert.",
+  "sha256": "45463d003f308af2aef2f53db2d7b0aabfe5ebbc16445801fc9d1c0ab6d51f0a",
+  "groesse": 10545212
 }
