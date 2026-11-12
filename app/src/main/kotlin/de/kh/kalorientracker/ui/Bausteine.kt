@@ -159,10 +159,12 @@ fun MakroBalken(name: String, gramm: Double?, zielGramm: Int?, farbe: Color, mod
     }
 }
 
+const val ZUCKER_MAX_GRAMM = 50
+
 @Composable
 fun MakroDreier(
     fett: Double?, kh: Double?, eiweiss: Double?, ziel: de.kh.kalorientracker.core.MakroGramm?,
-    /** Wenn gesetzt, kommt Zucker als vierte Spalte dazu (nur Gramm, ohne Ziel). */
+    /** Wenn gesetzt, kommt Zucker als vierte Spalte dazu (mit 50 g als Höchstwert). */
     zucker: Double? = null, mitZucker: Boolean = false,
 ) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(if (mitZucker) Spacing.s else Spacing.m)) {
@@ -170,7 +172,8 @@ fun MakroDreier(
         // Bei vier Spalten wird „Kohlenhydrate“ zu „KH“, sonst passt es auf schmalen Handys nicht
         MakroBalken(stringResource(if (mitZucker) R.string.makro_kh_kurz else R.string.makro_kh), kh, ziel?.kh, AppTheme.colors.macroCarbs, Modifier.weight(1f))
         MakroBalken(stringResource(R.string.makro_eiweiss), eiweiss, ziel?.eiweiss, AppTheme.colors.macroProtein, Modifier.weight(1f))
-        if (mitZucker) MakroBalken(stringResource(R.string.zucker), zucker ?: 0.0, null, AppTheme.colors.macroCarbs, Modifier.weight(1f))
+        // Höchstwert 50 g: übliche Empfehlung (WHO/DGE) für zugesetzten Zucker pro Tag
+        if (mitZucker) MakroBalken(stringResource(R.string.zucker), zucker ?: 0.0, ZUCKER_MAX_GRAMM, AppTheme.colors.warning, Modifier.weight(1f))
     }
 }
 
