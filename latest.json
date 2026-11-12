@@ -1,8 +1,8 @@
 {
-  "version": "0.21.0",
-  "versionCode": 24,
-  "apk": "Kalorien-Tracker-0.21.0.apk",
-  "notizen": "Neu: Die Suche ist deutlich schneller. Beim ersten Start nach dem Update baut die App einmal ihr Suchverzeichnis auf, das kann ein paar Sekunden dauern.",
-  "sha256": "6b504e50bf660c7e092fef75750606ac55b2c1bfcf99375e234ebe2ef98d19f7",
-  "groesse": 10525300
+  "version": "0.22.0",
+  "versionCode": 25,
+  "apk": "Kalorien-Tracker-0.22.0.apk",
+  "notizen": "Neu: Widget für den Startbildschirm, das zeigt, wie viele kcal heute noch übrig sind (lange auf den Startbildschirm drücken → Widgets → Kalorien-Tracker). Außerdem zeigt das Tagebuch, wie viele Tage du schon in Folge eingetragen hast.",
+  "sha256": "31c80dacc2bdbf3b909e3e7183c65a030ae2df0dfc3e78ca7e3906fc876ae90f",
+  "groesse": 10528660
 }
