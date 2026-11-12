@@ -67,12 +67,22 @@ class AppContainer(context: Context) {
             }
             runCatching { sicherung.wiederherstellenFallsNoetig() }
             runCatching { startdaten.fallsLeer() }
-            launch { runCatching { healthConnect.abgleichen() } }
+            launch { gesundheitAbgleichenWennFaellig() }
             runCatching { katalog.fallsNoetig() }
             _katalogBereit.value = true
             runCatching { sicherung.schreibe() }
             runCatching { fotos.aufraeumen(repo.benutzteFotos()) }
         }
+    }
+
+    private var letzterAbgleich = 0L
+
+    /** Health Connect abgleichen, höchstens alle 2 Minuten (z. B. bei schnellem Hin- und Herwechseln). */
+    suspend fun gesundheitAbgleichenWennFaellig() {
+        val jetzt = System.currentTimeMillis()
+        if (jetzt - letzterAbgleich < 2 * 60 * 1000L) return
+        letzterAbgleich = jetzt
+        runCatching { healthConnect.abgleichen() }
     }
 
     /** Sicherungsdatei auffrischen, z. B. wenn die App in den Hintergrund geht. */
