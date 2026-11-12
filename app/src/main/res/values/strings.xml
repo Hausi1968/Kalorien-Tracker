@@ -336,6 +336,9 @@
     <string name="hc_erlaubnis_hinweis">Damit das klappt, braucht die App einmal deine Erlaubnis. In Samsung Health muss außerdem unter Einstellungen → Health Connect das Teilen eingeschaltet sein.</string>
     <string name="hc_verbinden">Mit Samsung Health verbinden</string>
     <string name="hc_verbunden">Verbunden. Die Werte werden beim Start der App übernommen.</string>
+    <string name="hc_stand">Zuletzt geholt um %1$s Uhr: heute %2$s aktive kcal von der Uhr, davon %3$d %% angerechnet = %4$s kcal.</string>
+    <string name="hc_stand_zeit">Zuletzt geholt um %1$s Uhr.</string>
+    <string name="hc_stand_hinweis">Zeigt Samsung Health mehr? Samsung Health gibt neue Werte nur in Abständen weiter. Öffne kurz Samsung Health, dann diese App, und tippe auf „Jetzt übernehmen“.</string>
     <string name="hc_jetzt_abgleichen">Jetzt übernehmen</string>
     <string name="hc_abgeglichen">%1$d Werte aus Samsung Health übernommen</string>
     <string name="hc_keine_erlaubnis">Noch keine Werte übernommen: Erlaubnis fehlt oder nichts ausgewählt</string>

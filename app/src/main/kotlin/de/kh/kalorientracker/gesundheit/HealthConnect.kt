@@ -33,6 +33,11 @@ class HealthConnect(private val context: Context, private val repo: KalorienRepo
 
     fun repoQuellen() = repo.quellen
 
+    /** Was beim letzten Abgleich für heute ankam: zur Anzeige, damit man es mit der Uhr vergleichen kann. */
+    data class Stand(val zeit: java.time.LocalTime, val heuteAktivKcal: Double?)
+    private val _stand = kotlinx.coroutines.flow.MutableStateFlow<Stand?>(null)
+    val stand: kotlinx.coroutines.flow.StateFlow<Stand?> = _stand
+
     fun status(): Status = when (HealthConnectClient.getSdkStatus(context, ANBIETER)) {
         HealthConnectClient.SDK_AVAILABLE -> Status.BEREIT
         HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED -> Status.INSTALLIEREN
@@ -98,6 +103,7 @@ class HealthConnect(private val context: Context, private val repo: KalorienRepo
         // Was nicht gewählt ist, wird nicht angefasst; ab dem ältesten abgefragten Tag ersetzen
         val ab = heute.minusDays(if (wahl.gewicht != Quelle.APP) 60 else 14)
         repo.uebernehmeHealthConnect(ab, gewichte, aktiv)
+        _stand.value = Stand(java.time.LocalTime.now(zone), if (wahl.verbrannt != Quelle.APP) aktiv[heute] ?: 0.0 else null)
         if (wahl.gewicht != Quelle.APP && gewichte.isNotEmpty()) repo.zielNachGewicht()
         return gewichte.size + aktiv.count { it.value >= 1 }
     }

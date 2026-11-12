@@ -77,6 +77,22 @@ fun HealthConnectKarte(hc: HealthConnect, onMeldung: (String) -> Unit) {
                             PrimaerButton(stringResource(R.string.hc_verbinden), { anfrage.launch(hc.berechtigungen) })
                         } else if (verbunden == true) {
                             Text(stringResource(R.string.hc_verbunden), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+                            val stand by hc.stand.collectAsStateWithLifecycle()
+                            stand?.let { s ->
+                                val zeit = s.zeit.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))
+                                val kcal = s.heuteAktivKcal
+                                Text(
+                                    if (kcal == null) stringResource(R.string.hc_stand_zeit, zeit)
+                                    else stringResource(
+                                        R.string.hc_stand, zeit, de.kh.kalorientracker.core.Format.kcal(kcal),
+                                        wahl.hcAnteil, de.kh.kalorientracker.core.Format.kcal(kcal * wahl.hcAnteil / 100.0),
+                                    ),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                )
+                                if (kcal != null) {
+                                    Text(stringResource(R.string.hc_stand_hinweis), style = MaterialTheme.typography.bodySmall, color = AppTheme.colors.textMuted)
+                                }
+                            }
                             OutlinedButton(onClick = { abgleichen() }, modifier = Modifier.fillMaxWidth()) {
                                 Text(stringResource(R.string.hc_jetzt_abgleichen))
                             }
