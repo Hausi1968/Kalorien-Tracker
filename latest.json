@@ -1,8 +1,8 @@
 {
-  "version": "0.13.0",
-  "versionCode": 16,
-  "apk": "Kalorien-Tracker-0.13.0.apk",
-  "notizen": "Neu: Mahlzeit fotografieren. Die App erkennt die Lebensmittel auf dem Foto und schlägt Mengen vor; du prüfst, änderst und trägst alles auf einmal ein. Dafür im Profil unter Foto-Erkennung deinen Zugangsschlüssel eintragen.",
-  "sha256": "1086d67ad2cd594d01f4349353bfb7803ec5279ff4a02f0ee0941db85e9f23cb",
-  "groesse": 10130364
+  "version": "0.14.0",
+  "versionCode": 17,
+  "apk": "Kalorien-Tracker-0.14.0.apk",
+  "notizen": "Geburtsdatum im Kalender wählen (oder ohne Punkte tippen), klarere Fehlermeldungen, große Zahl 'kcal übrig' im Tagebuch, verbrannte Kalorien der Uhr nur teilweise anrechnen (Profil → Health Connect).",
+  "sha256": "e09d58375a4d4bcea6a3a506734cfc898a8cdd8874c9f3cbd8954fd883694a48",
+  "groesse": 10163992
 }
