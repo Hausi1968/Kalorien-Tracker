@@ -60,6 +60,21 @@ class DatenTest {
     }
 
     @Test
+    fun suchverzeichnis_bleibtAktuell() = runBlocking {
+        val db = neueDb()
+        val repo = KalorienRepository(db)
+        db.food().fuegeEin(listOf(food("off:1", "Bio-Apfelmus").copy(brand = "Exquisa")))
+        assertEquals(listOf("off:1"), repo.suche("apfel").map { it.id }) // Wortanfang nach Bindestrich
+        assertEquals(listOf("off:1"), repo.suche("exq").map { it.id })  // Marke
+        db.food().fuegeEin(listOf(food("off:1", "Birnenmus")))           // Name geändert
+        assertTrue(repo.suche("apfelmus").isEmpty())
+        assertEquals(listOf("off:1"), repo.suche("birn").map { it.id })
+        db.query(androidx.sqlite.db.SimpleSQLiteQuery("SELECT COUNT(*) FROM food_fts WHERE food_fts MATCH 'birn*'")).use {
+            it.moveToFirst(); assertEquals(1, it.getInt(0))
+        }
+    }
+
+    @Test
     fun onlineSuche_behaeltEigenePortionUndBeliebtheit() = runBlocking {
         val db = neueDb()
         val off = object : OpenFoodFacts() {

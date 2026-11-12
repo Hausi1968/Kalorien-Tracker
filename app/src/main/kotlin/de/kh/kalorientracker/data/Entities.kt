@@ -3,6 +3,7 @@ package de.kh.kalorientracker.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Fts4
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import de.kh.kalorientracker.core.Naehrwerte
@@ -61,6 +62,17 @@ data class FoodEntity(
     val beliebtheit: Int = 0,
     /** Vitamine, Mineralstoffe, Cholesterin je 100 g/ml (seit DB-Version 5), siehe core.Mikros. */
     val mikros: String? = null,
+)
+
+/**
+ * Suchverzeichnis über Name und Marke (seit DB-Version 8). Es liest seine Daten aus "food" und wird von
+ * der Datenbank selbst aktuell gehalten; die Suche findet damit Wortanfänge ohne die ganze Tabelle zu lesen.
+ */
+@Fts4(contentEntity = FoodEntity::class)
+@Entity(tableName = "food_fts")
+data class FoodFtsEntity(
+    val nameNorm: String,
+    val brand: String?,
 )
 
 /** Nährwerte pro 100 g/ml (Erweiterung statt Property, damit Room sie nicht als Spalte sieht). */

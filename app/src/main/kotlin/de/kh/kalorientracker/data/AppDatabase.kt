@@ -11,6 +11,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     entities = [
         ProfileEntity::class,
         FoodEntity::class,
+        FoodFtsEntity::class,
         ServingEntity::class,
         DiaryEntryEntity::class,
         BodyEntryEntity::class,
@@ -19,7 +20,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         WaterEntryEntity::class,
         RezeptZutatEntity::class,
     ],
-    version = 7,
+    version = 8,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -36,7 +37,7 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         fun baue(context: Context): AppDatabase =
             Room.databaseBuilder(context, AppDatabase::class.java, "kalorien.db")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
                 .apply { testAnpassung?.invoke(this) }
                 .build()
 
@@ -44,6 +45,18 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile var testAnpassung: ((RoomDatabase.Builder<AppDatabase>) -> Unit)? = null
 
         /** 0.12 → 0.13: Foto zur Mahlzeit. */
+        /** Suchverzeichnis anlegen und einmal aus den vorhandenen Lebensmitteln füllen. */
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE VIRTUAL TABLE IF NOT EXISTS `food_fts` USING FTS4(`nameNorm` TEXT NOT NULL, `brand` TEXT, content=`food`)")
+                db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_food_fts_BEFORE_UPDATE BEFORE UPDATE ON `food` BEGIN DELETE FROM `food_fts` WHERE `docid`=OLD.`rowid`; END")
+                db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_food_fts_BEFORE_DELETE BEFORE DELETE ON `food` BEGIN DELETE FROM `food_fts` WHERE `docid`=OLD.`rowid`; END")
+                db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_food_fts_AFTER_UPDATE AFTER UPDATE ON `food` BEGIN INSERT INTO `food_fts`(`docid`, `nameNorm`, `brand`) VALUES (NEW.`rowid`, NEW.`nameNorm`, NEW.`brand`); END")
+                db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_food_fts_AFTER_INSERT AFTER INSERT ON `food` BEGIN INSERT INTO `food_fts`(`docid`, `nameNorm`, `brand`) VALUES (NEW.`rowid`, NEW.`nameNorm`, NEW.`brand`); END")
+                db.execSQL("INSERT INTO `food_fts`(`food_fts`) VALUES ('rebuild')")
+            }
+        }
+
         val MIGRATION_6_7 = object : Migration(6, 7) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `profile` ADD COLUMN `aerztlichBegleitet` INTEGER NOT NULL DEFAULT 0")

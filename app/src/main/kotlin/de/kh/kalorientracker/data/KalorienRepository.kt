@@ -175,22 +175,32 @@ class KalorienRepository(
         return ids.mapNotNull { nachId[it] }
     }
 
-    /** Lokale Suche: erstes Wort per LIKE, weitere Wörter als Filter, dann eigenes Ranking. */
+    /** Lokale Suche: erstes Wort über das Suchverzeichnis, weitere Wörter als Filter, dann eigenes Ranking. */
     suspend fun suche(eingabe: String): List<FoodEntity> {
         val woerter = SuchText.normalisiere(eingabe).split(' ').filter { it.isNotBlank() }
         val erstes = woerter.firstOrNull()?.takeIf { it.length >= 2 } ?: return emptyList()
         // Erstes Wort am Wortanfang, alle weiteren irgendwo im Namen: direkt in der Datenbank filtern,
         // damit das Limit erst nach dem Filter greift ("milch hafer" findet Hafermilch).
         val weitere = woerter.drop(1).distinct()
-        val sql = buildString {
-            // Auch die Marke zählt: "exquisa" findet die Produkte dieser Marke
-            append("SELECT * FROM food WHERE (nameNorm LIKE ? OR nameNorm LIKE ? OR LOWER(brand) LIKE ?)")
-            weitere.forEach { _ -> append(" AND (nameNorm LIKE ? OR LOWER(brand) LIKE ?)") }
-            append(" ORDER BY (source IN ('start', 'user', 'rezept')) DESC, beliebtheit DESC, LENGTH(name) LIMIT 120")
-        }
-        val argumente: Array<Any?> =
-            (listOf("$erstes%", "% $erstes%", "$erstes%") + weitere.flatMap { listOf("%$it%", "%$it%") }).toTypedArray()
-        val roh = db.food().sucheRoh(SimpleSQLiteQuery(sql, argumente))
+        val ordnung = " ORDER BY (source IN ('start', 'user', 'rezept')) DESC, beliebtheit DESC, LENGTH(name) LIMIT 120"
+        val weitereSql = weitere.joinToString("") { " AND (nameNorm LIKE ? OR LOWER(brand) LIKE ?)" }
+        val weitereArgs = weitere.flatMap { listOf("%$it%", "%$it%") }
+        // Schnell: Suchverzeichnis findet alle Namen und Marken, in denen ein Wort mit dem ersten Suchwort beginnt
+        val schnell = runCatching {
+            db.food().sucheRoh(
+                SimpleSQLiteQuery(
+                    "SELECT * FROM food WHERE rowid IN (SELECT docid FROM food_fts WHERE food_fts MATCH ?)$weitereSql$ordnung",
+                    (listOf<Any?>("$erstes*") + weitereArgs).toTypedArray(),
+                ),
+            )
+        }.getOrNull()
+        // Rückweg, falls das Verzeichnis einmal fehlt: wie früher die ganze Tabelle durchsuchen
+        val roh = schnell ?: db.food().sucheRoh(
+            SimpleSQLiteQuery(
+                "SELECT * FROM food WHERE (nameNorm LIKE ? OR nameNorm LIKE ? OR LOWER(brand) LIKE ?)$weitereSql$ordnung",
+                (listOf<Any?>("$erstes%", "% $erstes%", "$erstes%") + weitereArgs).toTypedArray(),
+            ),
+        )
         val zuletzt = db.diary().zuletztGegessen(200).associate { it.foodRef to it.zuletzt }
         val favoriten = db.favorite().ladeIds().toSet()
         val jetzt = Instant.now()
