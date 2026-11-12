@@ -186,3 +186,23 @@ fun ZielAnpassenDialog(
         dismissButton = { TextButton(onClick = onAbbrechen) { Text(stringResource(R.string.abbrechen)) } },
     )
 }
+
+/**
+ * Schutz vor versehentlichem Verlassen: Sind Eingaben geändert, fragt Zurück (Pfeil oben und Zurück-Geste)
+ * erst "Änderungen verwerfen?". Liefert die Aktion für den Zurück-Pfeil.
+ */
+@Composable
+fun verwerfenSchutz(geaendert: Boolean, onZurueck: () -> Unit): () -> Unit {
+    var fragen by remember { mutableStateOf(false) }
+    androidx.activity.compose.BackHandler(enabled = geaendert) { fragen = true }
+    if (fragen) {
+        AlertDialog(
+            onDismissRequest = { fragen = false },
+            title = { Text(stringResource(R.string.verwerfen_frage)) },
+            text = { Text(stringResource(R.string.verwerfen_text)) },
+            confirmButton = { TextButton(onClick = { fragen = false; onZurueck() }) { Text(stringResource(R.string.verwerfen)) } },
+            dismissButton = { TextButton(onClick = { fragen = false }) { Text(stringResource(R.string.weiter_bearbeiten)) } },
+        )
+    }
+    return { if (geaendert) fragen = true else onZurueck() }
+}

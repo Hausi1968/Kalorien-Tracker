@@ -270,4 +270,25 @@ class BildschirmTest {
         assertEquals(150.0, eintraege.first { it.label.startsWith("Reis") }.gramm!!, 0.01)
     }
 
+
+    @Test fun produktAnlegen_fragtVorDemVerwerfen() {
+        var zurueck = 0
+        rule.setContent {
+            KalorienTheme { de.kh.kalorientracker.ui.produkt.ProduktScreen(repo, null, null, onZurueck = { zurueck++ }, onGespeichert = {}) }
+        }
+        // Ohne Eingaben geht Zurück sofort
+        rule.onNode(androidx.compose.ui.test.hasContentDescription("Zurück")).performClick()
+        assertEquals(1, zurueck)
+        // Mit Eingabe erst die Rückfrage
+        rule.onNode(hasSetTextAction() and hasText("Name")).performTextInput("Mein Müsli")
+        rule.onNode(androidx.compose.ui.test.hasContentDescription("Zurück")).performClick()
+        warteAufText("Änderungen verwerfen?")
+        rule.onNodeWithText("Weiter bearbeiten").performClick()
+        assertEquals(1, zurueck)
+        rule.onNode(androidx.compose.ui.test.hasContentDescription("Zurück")).performClick()
+        warteAufText("Änderungen verwerfen?")
+        rule.onNodeWithText("Verwerfen").performClick()
+        assertEquals(2, zurueck)
+    }
+
 }

@@ -449,4 +449,8 @@
     <string name="erinnerung_wiegen_titel">Heute schon gewogen?</string>
     <string name="erinnerung_wiegen_text">Am besten morgens nach dem Aufstehen. Tippe hier zum Eintragen.</string>
     <string name="erinnerung_erlaubnis_fehlt">Ohne Erlaubnis für Mitteilungen kann die App nicht erinnern.</string>
+    <string name="verwerfen_frage">Änderungen verwerfen?</string>
+    <string name="verwerfen_text">Deine Eingaben sind noch nicht gespeichert und gehen verloren.</string>
+    <string name="verwerfen">Verwerfen</string>
+    <string name="weiter_bearbeiten">Weiter bearbeiten</string>
 </resources>

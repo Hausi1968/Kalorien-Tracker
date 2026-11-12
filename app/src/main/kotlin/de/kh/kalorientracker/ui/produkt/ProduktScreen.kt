@@ -94,7 +94,11 @@ fun ProduktScreen(
     val speicherbar = name.isNotBlank() && werte != null && eanOk && portionOk && felderOk
     val textBarcodeVergeben = stringResource(R.string.barcode_vergeben)
 
-    Seite(titel = stringResource(R.string.produkt_anlegen), onZurueck = onZurueck, snackbar = snackbar) { pad ->
+    val geaendert = name != nameVorschlag.orEmpty() || ean != barcode.orEmpty() || marke.isNotBlank() ||
+        listOf(energie, fett, gesFett, kh, zucker, ballast, eiweiss, salz, portionName, portionMenge).any { it.isNotBlank() }
+    var fertig by remember { mutableStateOf(false) }
+    val zurueck = de.kh.kalorientracker.ui.verwerfenSchutz(geaendert && !fertig, onZurueck)
+    Seite(titel = stringResource(R.string.produkt_anlegen), onZurueck = zurueck, snackbar = snackbar) { pad ->
         Column(
             Modifier
                 .padding(pad)
@@ -168,7 +172,7 @@ fun ProduktScreen(
                     scope.launch {
                         val r = repo.legeProduktAn(f, portion)
                         val neu = r.getOrNull()
-                        if (neu != null) aufHauptThread { onGespeichert(neu.id) }
+                        if (neu != null) { fertig = true; aufHauptThread { onGespeichert(neu.id) } }
                         else snackbar.showSnackbar(textBarcodeVergeben.format(r.exceptionOrNull()?.message ?: ""))
                     }
                 },

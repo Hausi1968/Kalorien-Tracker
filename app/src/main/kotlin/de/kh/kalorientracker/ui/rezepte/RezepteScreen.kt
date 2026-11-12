@@ -134,8 +134,11 @@ fun RezeptEditorScreen(repo: KalorienRepository, rezeptId: String?, onZurueck: (
     val scope = rememberCoroutineScope()
     val snackbar = remember { SnackbarHostState() }
 
+    // Stand beim Öffnen; weicht der aktuelle davon ab, fragt Zurück erst nach
+    var anfang by remember { mutableStateOf<String?>(null) }
+    fun stand() = name + "|" + portionenText + "|" + gewichtText + "|" + zutaten.joinToString(";") { "${it.food.id}:${it.zutat.gramm}" }
     LaunchedEffect(rezeptId) {
-        val id = rezeptId ?: return@LaunchedEffect
+        val id = rezeptId ?: run { anfang = stand(); return@LaunchedEffect }
         val f = repo.lebensmittel(id) ?: return@LaunchedEffect
         val (portionen, gesamt) = repo.rezeptKopf(id)
         val z = repo.rezeptZutaten(id)
@@ -144,6 +147,7 @@ fun RezeptEditorScreen(repo: KalorienRepository, rezeptId: String?, onZurueck: (
         val summe = z.sumOf { it.first.gramm }
         if (gesamt != null && kotlin.math.abs(gesamt - summe) > 0.5) gewichtText = Format.dezimal(gesamt, 0)
         zutaten.clear(); zutaten.addAll(z.map { EditorZutat(it.first, it.second) })
+        anfang = stand()
     }
 
     val portionen = portionenText.toIntOrNull()?.takeIf { it in 1..50 }
@@ -172,9 +176,11 @@ fun RezeptEditorScreen(repo: KalorienRepository, rezeptId: String?, onZurueck: (
         )
     }
 
+    var fertig by remember { mutableStateOf(false) }
+    val zurueck = de.kh.kalorientracker.ui.verwerfenSchutz(anfang != null && stand() != anfang && !fertig, onZurueck)
     Seite(
         titel = stringResource(if (rezeptId == null) R.string.rezept_neu else R.string.rezept_bearbeiten),
-        onZurueck = onZurueck,
+        onZurueck = zurueck,
         snackbar = snackbar,
         aktionen = {
             if (rezeptId != null) {
@@ -264,7 +270,7 @@ fun RezeptEditorScreen(repo: KalorienRepository, rezeptId: String?, onZurueck: (
                         val gespeichert = repo.speichereRezept(
                             rezeptId, name, portionen ?: 1, gewicht, zutaten.map { it.zutat to it.food },
                         )
-                        if (gespeichert != null) aufHauptThread { onGespeichert(gespeichert.id) }
+                        if (gespeichert != null) { fertig = true; aufHauptThread { onGespeichert(gespeichert.id) } }
                     }
                 })
             }
