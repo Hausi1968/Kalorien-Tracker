@@ -91,6 +91,12 @@ class KalorienRepository(
         quellen.wahl.flatMapLatest { db.activity().verbranntAm(t.toString(), it.verbrannt.name, it.hcAnteil / 100.0) },
     ) { p, e, v -> TagesDaten(t, p, e, v) }
 
+    /** Die 7 Tage der Woche (Montag bis Sonntag), in der [t] liegt. */
+    fun woche(t: LocalDate): Flow<List<TagesDaten>> {
+        val montag = t.minusDays((t.dayOfWeek.value - 1).toLong())
+        return combine((0L..6L).map { tag(montag.plusDays(it)) }) { it.toList() }
+    }
+
     /** Gegessene kcal je Tag im Zeitraum (für die Wochenleiste). */
     fun kcalProTag(von: LocalDate, bis: LocalDate): Flow<Map<LocalDate, Double>> =
         db.diary().kcalProTag(von.toString(), bis.toString())

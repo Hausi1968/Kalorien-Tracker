@@ -115,6 +115,9 @@ class BildschirmTest {
         rule.onNodeWithText("Nährwerte").performClick()
         warteAufText("Weitere Nährwerte")
         foto("13-uebersicht-naehrwerte")
+        rule.onNodeWithText("Woche").performClick()
+        warteAufText("Tage im Ziel")
+        foto("17-uebersicht-woche")
     }
 
     @Test fun eintraegeAuswaehlenUndVerschieben() {

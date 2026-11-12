@@ -425,4 +425,14 @@
     <string name="schluessel_entfernt">Schlüssel entfernt</string>
     <string name="hc_anteil">Verbrannte kcal der Uhr anrechnen: %1$d %%</string>
     <string name="hc_anteil_hinweis">Uhren und Fitness-Apps schätzen verbrannte Kalorien oft zu hoch. Viele rechnen deshalb nur etwa die Hälfte an (50 %). Selbst eingetragene Aktivitäten zählen immer voll.</string>
+    <string name="uebersicht_woche">Woche</string>
+    <string name="woche_zeitraum">Woche vom %1$s bis %2$s</string>
+    <string name="woche_schnitt_kurz">Ø kcal pro Tag</string>
+    <string name="woche_getroffen">Tage im Ziel</string>
+    <string name="woche_ziel">Tagesziel</string>
+    <string name="woche_je_tag">Gegessen je Tag (kcal)</string>
+    <string name="woche_im_ziel">im Ziel</string>
+    <string name="woche_drueber">über dem Ziel</string>
+    <string name="woche_ohne">nichts eingetragen</string>
+    <string name="woche_hinweis">Der Durchschnitt zählt nur Tage mit Einträgen. „Im Ziel“ heißt: nicht mehr gegessen als Ziel plus verbrannte Kalorien. Tag antippen öffnet ihn.</string>
 </resources>

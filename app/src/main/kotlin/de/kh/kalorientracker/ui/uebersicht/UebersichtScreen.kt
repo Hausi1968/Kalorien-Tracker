@@ -27,7 +27,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -103,16 +103,21 @@ fun UebersichtScreen(repo: KalorienRepository, start: LocalDate, onZurueck: () -
                     Icon(Icons.Rounded.ChevronRight, contentDescription = stringResource(R.string.tag_nachher))
                 }
             }
-            PrimaryTabRow(selectedTabIndex = reiter, containerColor = MaterialTheme.colorScheme.background) {
+            PrimaryScrollableTabRow(selectedTabIndex = reiter, containerColor = MaterialTheme.colorScheme.background, edgePadding = Spacing.s) {
                 Tab(reiter == 0, onClick = { reiter = 0 }, text = { Text(stringResource(R.string.uebersicht_kalorien)) })
                 Tab(reiter == 1, onClick = { reiter = 1 }, text = { Text(stringResource(R.string.uebersicht_naehrwerte)) })
                 Tab(reiter == 2, onClick = { reiter = 2 }, text = { Text(stringResource(R.string.uebersicht_mikros)) })
+                Tab(reiter == 3, onClick = { reiter = 3 }, text = { Text(stringResource(R.string.uebersicht_woche)) })
             }
             val d = daten ?: return@Column
             Column(
                 Modifier.verticalScroll(rememberScrollState()).padding(Spacing.l),
                 verticalArrangement = Arrangement.spacedBy(Spacing.m),
             ) {
+                if (reiter == 3) {
+                    WochenReiter(repo, tag) { tag = it; reiter = 0 }
+                    return@Column
+                }
                 if (d.eintraege.isEmpty()) {
                     Karte { Text(stringResource(R.string.uebersicht_leer), color = AppTheme.colors.textMuted) }
                     return@Column
@@ -440,4 +445,67 @@ private fun SaeulenDiagramm(
             }
         }
     }
+}
+
+/** Woche: kcal je Tag als Säulen, Durchschnitt, an wie vielen Tagen das Ziel getroffen wurde. */
+@Composable
+private fun WochenReiter(repo: KalorienRepository, tag: LocalDate, onTag: (LocalDate) -> Unit) {
+    val woche by remember(tag.minusDays((tag.dayOfWeek.value - 1).toLong())) { repo.woche(tag) }
+        .collectAsStateWithLifecycle(initialValue = null)
+    val tage = woche ?: return
+    val kurz = java.time.format.DateTimeFormatter.ofPattern("EE", java.util.Locale.GERMANY)
+    val heute = LocalDate.now()
+    val mitEintraegen = tage.filter { it.eintraege.isNotEmpty() }
+    val schnitt = if (mitEintraegen.isEmpty()) 0.0 else mitEintraegen.sumOf { it.summe.kcal } / mitEintraegen.size
+    val getroffen = mitEintraegen.count { !it.bilanz.zuViel }
+    val ziel = tage.firstNotNullOfOrNull { it.profil?.tageszielKcal } ?: 0
+    val von = tage.first().tag; val bis = tage.last().tag
+    val datum = java.time.format.DateTimeFormatter.ofPattern("d. MMM", java.util.Locale.GERMANY)
+
+    Text(stringResource(R.string.woche_zeitraum, von.format(datum), bis.format(datum)), style = MaterialTheme.typography.titleMedium)
+    Karte {
+        Row(Modifier.fillMaxWidth()) {
+            Kennzahl(Format.kcal(schnitt), stringResource(R.string.woche_schnitt_kurz), Modifier.weight(1f))
+            Kennzahl("$getroffen / ${mitEintraegen.size}", stringResource(R.string.woche_getroffen), Modifier.weight(1f))
+            Kennzahl(Format.kcal(ziel.toDouble()), stringResource(R.string.woche_ziel), Modifier.weight(1f))
+        }
+    }
+    Karte(titel = stringResource(R.string.woche_je_tag)) {
+        SaeulenDiagramm(
+            tage.map { it.tag.format(kurz).removeSuffix(".") to listOf(it.summe.kcal) },
+            listOf(MaterialTheme.colorScheme.primary),
+        )
+    }
+    Karte {
+        tage.forEachIndexed { i, d ->
+            if (i > 0) androidx.compose.material3.HorizontalDivider(color = AppTheme.colors.border)
+            val leer = d.eintraege.isEmpty()
+            Row(
+                Modifier.fillMaxWidth().clickable { onTag(d.tag) }.padding(vertical = Spacing.s),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    d.tag.format(java.time.format.DateTimeFormatter.ofPattern("EEEE, d.M.", java.util.Locale.GERMANY)),
+                    style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f),
+                    fontWeight = if (d.tag == heute) FontWeight.Bold else FontWeight.Normal,
+                )
+                Text(
+                    if (leer) "–" else stringResource(R.string.einheit_kcal, Format.kcal(d.summe.kcal)),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(Modifier.width(Spacing.m))
+                val (zeichen, farbe, ansage) = when {
+                    leer -> Triple("·", AppTheme.colors.textMuted, R.string.woche_ohne)
+                    d.bilanz.zuViel -> Triple("✗", AppTheme.colors.warning, R.string.woche_drueber)
+                    else -> Triple("✓", MaterialTheme.colorScheme.primary, R.string.woche_im_ziel)
+                }
+                val ansageText = stringResource(ansage)
+                Text(
+                    zeichen, color = farbe, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold,
+                    modifier = Modifier.width(20.dp).semantics { contentDescription = ansageText },
+                )
+            }
+        }
+    }
+    Text(stringResource(R.string.woche_hinweis), style = MaterialTheme.typography.bodySmall, color = AppTheme.colors.textMuted)
 }
