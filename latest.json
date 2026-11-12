@@ -1,8 +1,8 @@
 {
-  "version": "0.15.0",
-  "versionCode": 18,
-  "apk": "Kalorien-Tracker-0.15.0.apk",
-  "notizen": "Neu: Wochenübersicht (Tagebuch → Diagramm-Symbol → Woche) mit Durchschnitt pro Tag und Tagen im Ziel.",
-  "sha256": "749c6b8843ef35e3b7996dc1e26ec6cc4472a39277642f9d1950fd2b587137ea",
-  "groesse": 10164820
+  "version": "0.16.0",
+  "versionCode": 19,
+  "apk": "Kalorien-Tracker-0.16.0.apk",
+  "notizen": "Neu: Erinnerungen im Profil. Frühstück, Mittag, Abendessen und Wiegen einzeln einschalten, Uhrzeit frei wählbar. Erinnert nur, wenn noch nichts eingetragen ist.",
+  "sha256": "2b1d98bfd2d9b05410c55c8fb2c1093ebf6db35633e73fd9380cf07b5e81d1c5",
+  "groesse": 10183392
 }
