@@ -1,8 +1,8 @@
 {
-  "version": "0.12.0",
-  "versionCode": 15,
-  "apk": "Kalorien-Tracker-0.12.0.apk",
-  "notizen": "Neu in 0.12: Vitamine, Mineralstoffe und % vom Tagesbedarf in der Detailansicht, neuer Reiter „Mikros“ in der Tagesübersicht. Äpfel, Bananen, Eier & Co. bekommen automatisch ein Stück-Gewicht als Richtwert.",
-  "sha256": "51c2b8da3855b418265d953ac37dee13f21dd34e674bd8debf56b8375faebc81",
-  "groesse": 7511381
+  "version": "0.13.0",
+  "versionCode": 16,
+  "apk": "Kalorien-Tracker-0.13.0.apk",
+  "notizen": "Neu: Mahlzeit fotografieren. Die App erkennt die Lebensmittel auf dem Foto und schlägt Mengen vor; du prüfst, änderst und trägst alles auf einmal ein. Dafür im Profil unter Foto-Erkennung deinen Zugangsschlüssel eintragen.",
+  "sha256": "1086d67ad2cd594d01f4349353bfb7803ec5279ff4a02f0ee0941db85e9f23cb",
+  "groesse": 10130364
 }
