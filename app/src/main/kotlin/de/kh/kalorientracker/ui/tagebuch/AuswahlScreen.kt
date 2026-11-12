@@ -120,6 +120,7 @@ fun AuswahlScreen(repo: KalorienRepository, tag: LocalDate, vorauswahl: String?,
         )
     }
 
+    val mahlzeitenReihe = de.kh.kalorientracker.ui.mahlzeitenSortiert()
     Seite(titel = tag.format(DATUM_KURZ), onZurueck = onFertig) { pad ->
         Column(Modifier.padding(pad).fillMaxSize()) {
             LazyColumn(
@@ -130,7 +131,7 @@ fun AuswahlScreen(repo: KalorienRepository, tag: LocalDate, vorauswahl: String?,
                 if (daten != null && alle.isEmpty()) {
                     item { Text(stringResource(R.string.uebersicht_leer), color = AppTheme.colors.textMuted) }
                 }
-                items(Mahlzeiten.STANDARD.filter { s -> alle.any { it.slotId == s.id } }, key = { it.id }) { slot ->
+                items(mahlzeitenReihe.filter { s -> alle.any { it.slotId == s.id } }, key = { it.id }) { slot ->
                     val inSlot = alle.filter { it.slotId == slot.id }
                     val zahl = inSlot.count { it.id in gewaehlt }
                     Karte {

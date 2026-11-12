@@ -476,4 +476,8 @@
     <string name="weiter_bearbeiten">Weiter bearbeiten</string>
     <string name="barcode_kurz">Barcode</string>
     <string name="foto_kurz">Foto</string>
+    <string name="reihenfolge_titel">Reihenfolge der Mahlzeiten</string>
+    <string name="reihenfolge_text">Lege fest, welche Mahlzeit im Tagebuch oben steht. Mit „Abendessen oben“ wandert das Frühstück nach unten.</string>
+    <string name="reihenfolge_fruehstueck_oben">Frühstück oben</string>
+    <string name="reihenfolge_abend_oben">Abendessen oben</string>
 </resources>

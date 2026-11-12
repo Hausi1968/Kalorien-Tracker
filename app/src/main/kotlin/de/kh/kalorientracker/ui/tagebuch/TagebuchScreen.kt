@@ -119,6 +119,7 @@ fun TagebuchScreen(
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val aktuellerSlot = Mahlzeiten.slotFuer(LocalTime.now()).id
+    val mahlzeitenReihe = de.kh.kalorientracker.ui.mahlzeitenSortiert()
     val aktivitaeten by remember(tag) { repo.aktivitaeten(tag) }.collectAsStateWithLifecycle(initialValue = emptyList())
     var aktivitaetOffen by remember { mutableStateOf(false) }
     val wasser by remember(tag) { repo.wasser(tag) }.collectAsStateWithLifecycle(initialValue = 0)
@@ -211,7 +212,7 @@ fun TagebuchScreen(
                 item { BilanzGleichung(d.bilanz, Modifier.clickable { onUebersicht(tag) }) }
                 if (tag == heute && serie >= 2) item { SerienZeile(serie) }
                 item { Karte { MakroDreier(d.summe.fett, d.summe.kh, d.summe.eiweiss, d.makroZiel) } }
-                items(Mahlzeiten.STANDARD, key = { it.id }) { slot ->
+                items(mahlzeitenReihe, key = { it.id }) { slot ->
                     MahlzeitKarte(
                         slot = slot,
                         eintraege = d.imSlot(slot.id),

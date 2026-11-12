@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 class AppContainer(context: Context) {
     private val appContext = context.applicationContext
     private val db = AppDatabase.baue(context)
+    init { de.kh.kalorientracker.ui.Reihenfolge.lade(context) }
     val quellen = de.kh.kalorientracker.data.Quellen(context)
     val repo = KalorienRepository(db, quellen = quellen)
     val healthConnect = de.kh.kalorientracker.gesundheit.HealthConnect(context, repo)

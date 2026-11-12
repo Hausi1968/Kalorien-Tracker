@@ -257,6 +257,7 @@ fun ProfilScreen(
             HinweisBox(stringResource(R.string.rechner_datenschutz))
             healthConnect?.let { hc -> de.kh.kalorientracker.gesundheit.HealthConnectKarte(hc) { text -> scope.launch { snackbar.showSnackbar(text) } } }
             sicherung?.let { SicherungKarte(it) { text -> scope.launch { snackbar.showSnackbar(text) } } }
+            de.kh.kalorientracker.ui.ReihenfolgeKarte()
             erinnerungen?.let { de.kh.kalorientracker.erinnerung.ErinnerungKarte(it) { text -> scope.launch { snackbar.showSnackbar(text) } } }
             kiSchluessel?.let { de.kh.kalorientracker.ui.foto.SchluesselKarte(it) { text -> scope.launch { snackbar.showSnackbar(text) } } }
             Karte(titel = stringResource(R.string.app_version, aktualisierung.aktuelleVersion)) {
