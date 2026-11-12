@@ -1,8 +1,8 @@
 {
-  "version": "0.29.0",
-  "versionCode": 32,
-  "apk": "Kalorien-Tracker-0.29.0.apk",
-  "notizen": "Neu: Zucker im Tagebuch neben Fett, KH und Eiweiß. Reihenfolge der Mahlzeiten im Profil wählbar.",
-  "sha256": "a2c404bbe7685d6353cb1a88d772b893e391c9f6b40d38d300d30616dcf60d93",
-  "groesse": 10546092
+  "version": "0.30.0",
+  "versionCode": 33,
+  "apk": "Kalorien-Tracker-0.30.0.apk",
+  "notizen": "Zucker zeigt jetzt 50 g als Höchstwert mit Balken.",
+  "sha256": "c0312c05065f8570703d2237c71295880e744d4ef9c866328e3b54b157b19d65",
+  "groesse": 10546088
 }
