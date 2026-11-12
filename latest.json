@@ -1,8 +1,8 @@
 {
-  "version": "0.14.0",
-  "versionCode": 17,
-  "apk": "Kalorien-Tracker-0.14.0.apk",
-  "notizen": "Geburtsdatum im Kalender wählen (oder ohne Punkte tippen), klarere Fehlermeldungen, große Zahl 'kcal übrig' im Tagebuch, verbrannte Kalorien der Uhr nur teilweise anrechnen (Profil → Health Connect).",
-  "sha256": "e09d58375a4d4bcea6a3a506734cfc898a8cdd8874c9f3cbd8954fd883694a48",
-  "groesse": 10163992
+  "version": "0.15.0",
+  "versionCode": 18,
+  "apk": "Kalorien-Tracker-0.15.0.apk",
+  "notizen": "Neu: Wochenübersicht (Tagebuch → Diagramm-Symbol → Woche) mit Durchschnitt pro Tag und Tagen im Ziel.",
+  "sha256": "749c6b8843ef35e3b7996dc1e26ec6cc4472a39277642f9d1950fd2b587137ea",
+  "groesse": 10164820
 }
