@@ -57,6 +57,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -175,9 +177,19 @@ fun TagebuchScreen(
                 },
             )
         }
+        // Waagerecht wischen wechselt den Tag (nach links = nächster Tag), bequem mit dem Daumen
+        val schwelle = with(androidx.compose.ui.platform.LocalDensity.current) { 80.dp.toPx() }
         LazyColumn(
             state = liste,
-            modifier = Modifier.padding(pad),
+            modifier = Modifier.padding(pad).pointerInput(Unit) {
+                var weg = 0f
+                detectHorizontalDragGestures(
+                    onDragStart = { weg = 0f },
+                    onDragEnd = {
+                        if (weg <= -schwelle) tag = tag.plusDays(1) else if (weg >= schwelle) tag = tag.minusDays(1)
+                    },
+                ) { _, dx -> weg += dx }
+            },
             contentPadding = PaddingValues(start = Spacing.l, end = Spacing.l, top = Spacing.s, bottom = 96.dp), // Platz für den Plus-Knopf
             verticalArrangement = Arrangement.spacedBy(Spacing.m),
         ) {

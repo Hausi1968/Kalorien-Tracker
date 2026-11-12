@@ -453,4 +453,6 @@
     <string name="verwerfen_text">Deine Eingaben sind noch nicht gespeichert und gehen verloren.</string>
     <string name="verwerfen">Verwerfen</string>
     <string name="weiter_bearbeiten">Weiter bearbeiten</string>
+    <string name="barcode_kurz">Barcode</string>
+    <string name="foto_kurz">Foto</string>
 </resources>

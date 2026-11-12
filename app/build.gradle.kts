@@ -21,8 +21,8 @@ android {
         applicationId = "de.kh.kalorientracker"
         minSdk = 28
         targetSdk = 35
-        versionCode = 20
-        versionName = "0.17.0"
+        versionCode = 21
+        versionName = "0.18.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations += listOf("de")
     }

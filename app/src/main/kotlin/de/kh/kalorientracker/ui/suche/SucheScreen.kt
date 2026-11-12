@@ -5,6 +5,9 @@ package de.kh.kalorientracker.ui.suche
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -245,34 +248,56 @@ fun SucheScreen(
             )
             Spacer(Modifier.height(Spacing.s))
             if (laedt) LinearProgressIndicator(Modifier.fillMaxWidth())
-            val liste = treffer
-            val onl = online
-            val anlegen = { onProduktAnlegen(null, eingabe.trim().ifEmpty { null }) }
-            when {
-                onl != null && onl.isEmpty() -> NichtsGefunden(eingabe, online = true, onOnline = null, onAnlegen = anlegen)
-                // Lerneffekt: Was lokal nicht gefunden wurde und online gewählt wird, merkt sich den Suchbegriff
-                onl != null -> TrefferListe(
-                    stringResource(R.string.online_treffer), onl,
-                    { id ->
-                        val begriff = eingabe.trim()
-                        scope.launch {
-                            if (begriff.length >= 2) repo.lerneSuchbegriff(id, begriff)
-                            aufHauptThread { onLebensmittel(id) }
-                        }
-                    },
-                    { f ->
-                        val begriff = eingabe.trim()
-                        if (begriff.length >= 2) scope.launch { repo.lerneSuchbegriff(f.id, begriff) }
-                        schnell(f)
-                    },
-                ) {
-                    WeiterZeile(stringResource(R.string.nicht_dabei_anlegen), anlegen)
+            Box(Modifier.weight(1f)) {
+                val liste = treffer
+                val onl = online
+                val anlegen = { onProduktAnlegen(null, eingabe.trim().ifEmpty { null }) }
+                when {
+                    onl != null && onl.isEmpty() -> NichtsGefunden(eingabe, online = true, onOnline = null, onAnlegen = anlegen)
+                    // Lerneffekt: Was lokal nicht gefunden wurde und online gewählt wird, merkt sich den Suchbegriff
+                    onl != null -> TrefferListe(
+                        stringResource(R.string.online_treffer), onl,
+                        { id ->
+                            val begriff = eingabe.trim()
+                            scope.launch {
+                                if (begriff.length >= 2) repo.lerneSuchbegriff(id, begriff)
+                                aufHauptThread { onLebensmittel(id) }
+                            }
+                        },
+                        { f ->
+                            val begriff = eingabe.trim()
+                            if (begriff.length >= 2) scope.launch { repo.lerneSuchbegriff(f.id, begriff) }
+                            schnell(f)
+                        },
+                    ) {
+                        WeiterZeile(stringResource(R.string.nicht_dabei_anlegen), anlegen)
+                    }
+                    liste == null && zuletzt.isEmpty() && favoriten.isEmpty() -> LeerHinweis(stringResource(R.string.suche_hinweis_start))
+                    liste == null -> StartListen(favoriten, zuletzt, onLebensmittel) { schnell(it) }
+                    liste.isEmpty() -> NichtsGefunden(eingabe, online = false, onOnline = { sucheOnline() }, onAnlegen = anlegen)
+                    else -> TrefferListe(null, liste, onLebensmittel, { schnell(it) }) {
+                        WeiterZeile(stringResource(R.string.nicht_dabei_online), { sucheOnline() })
+                    }
                 }
-                liste == null && zuletzt.isEmpty() && favoriten.isEmpty() -> LeerHinweis(stringResource(R.string.suche_hinweis_start))
-                liste == null -> StartListen(favoriten, zuletzt, onLebensmittel) { schnell(it) }
-                liste.isEmpty() -> NichtsGefunden(eingabe, online = false, onOnline = { sucheOnline() }, onAnlegen = anlegen)
-                else -> TrefferListe(null, liste, onLebensmittel, { schnell(it) }) {
-                    WeiterZeile(stringResource(R.string.nicht_dabei_online), { sucheOnline() })
+            }
+            // Daumen-Reichweite: Scannen und Foto unten, solange die Tastatur zu ist
+            if (!WindowInsets.isImeVisible) {
+                Row(
+                    Modifier.fillMaxWidth().padding(horizontal = Spacing.l, vertical = Spacing.s),
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.s),
+                ) {
+                    FilledTonalButton(onClick = { scanne() }, modifier = Modifier.weight(1f)) {
+                        Icon(Icons.Rounded.QrCodeScanner, contentDescription = null)
+                        Spacer(Modifier.width(Spacing.s))
+                        Text(stringResource(R.string.barcode_kurz), maxLines = 1)
+                    }
+                    if (onFoto != null) {
+                        FilledTonalButton(onClick = onFoto, modifier = Modifier.weight(1f)) {
+                            Icon(Icons.Rounded.PhotoCamera, contentDescription = null)
+                            Spacer(Modifier.width(Spacing.s))
+                            Text(stringResource(R.string.foto_kurz), maxLines = 1)
+                        }
+                    }
                 }
             }
         }
