@@ -483,4 +483,15 @@
     <string name="werte_korrigieren">Nährwerte korrigieren</string>
     <string name="werte_korrigieren_hinweis">Schreib die Werte pro 100 %1$s von der Packung ab. Die Korrektur gilt nur in deiner App und bleibt beim nächsten Scannen erhalten. Schon eingetragene Mahlzeiten mit diesem Produkt werden mit angepasst.</string>
     <string name="werte_korrigiert">Nährwerte gespeichert. %1$d Einträge im Tagebuch angepasst.</string>
+    <string name="design_titel">Design</string>
+    <string name="design_modus">Hell oder dunkel</string>
+    <string name="design_wie_handy">Wie Handy</string>
+    <string name="design_hell">Hell</string>
+    <string name="design_dunkel">Dunkel</string>
+    <string name="design_farbe">Farbe</string>
+    <string name="farbe_tuerkis">Türkis</string>
+    <string name="farbe_blau">Blau</string>
+    <string name="farbe_lila">Lila</string>
+    <string name="farbe_orange">Orange</string>
+    <string name="farbe_rosa">Rosa</string>
 </resources>

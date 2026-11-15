@@ -115,6 +115,26 @@ class BildschirmTest {
             androidx.compose.ui.test.SemanticsMatcher.keyNotDefined(androidx.compose.ui.semantics.SemanticsProperties.EditableText),
     ).fetchSemanticsNodes().map { it.boundsInRoot.toString() }
 
+    @Test fun design_dunkelUndBlau() {
+        beispielTag()
+        de.kh.kalorientracker.ui.theme.Design.setze(de.kh.kalorientracker.ui.theme.Modus.DUNKEL, de.kh.kalorientracker.ui.theme.Akzent.BLAU)
+        try {
+            rule.setContent {
+                KalorienTheme {
+                    androidx.compose.foundation.layout.Column {
+                        de.kh.kalorientracker.ui.DesignKarte()
+                        de.kh.kalorientracker.ui.tagebuch.TagebuchScreen(repo, { _, _ -> }, {})
+                    }
+                }
+            }
+            warteAufText("Frühstück")
+            rule.onNodeWithText("Blau").assertExists()
+            foto("22-design-dunkel-blau")
+        } finally {
+            de.kh.kalorientracker.ui.theme.Design.setze(de.kh.kalorientracker.ui.theme.Modus.HANDY, de.kh.kalorientracker.ui.theme.Akzent.TUERKIS)
+        }
+    }
+
     @Test fun grosseSchrift_tagebuchUndSuche() {
         org.robolectric.RuntimeEnvironment.setFontScale(1.6f)
         beispielTag()
