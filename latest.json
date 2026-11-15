@@ -1,8 +1,8 @@
 {
-  "version": "0.30.0",
-  "versionCode": 33,
-  "apk": "Kalorien-Tracker-0.30.0.apk",
-  "notizen": "Zucker zeigt jetzt 50 g als Höchstwert mit Balken.",
-  "sha256": "c0312c05065f8570703d2237c71295880e744d4ef9c866328e3b54b157b19d65",
-  "groesse": 10546088
+  "version": "0.31.0",
+  "versionCode": 34,
+  "apk": "Kalorien-Tracker-0.31.0.apk",
+  "notizen": "Neu: Nährwerte eines Produkts korrigieren (Regler-Symbol oben in der Produktansicht), wenn die Daten aus dem Netz nicht zur Packung passen.",
+  "sha256": "6c49b53dd9138a11598905be9a6aa518c5e07a95eadb24c940deb342e237998d",
+  "groesse": 10562944
 }
