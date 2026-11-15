@@ -19,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.InputChip
 import de.kh.kalorientracker.ui.Meldungen
 import de.kh.kalorientracker.ui.Meldung
@@ -137,6 +138,7 @@ fun DetailScreen(
     var slotId by remember { mutableIntStateOf(if (slotVorgabe > 0) slotVorgabe else Mahlzeiten.slotFuer(LocalTime.now()).id) }
     var neuePortionOffen by remember { mutableStateOf(false) }
     var umbenennenOffen by remember { mutableStateOf(false) }
+    var korrigierenOffen by remember { mutableStateOf(false) }
     var suchbegriffOffen by remember { mutableStateOf(false) }
     var neuLaden by remember { mutableIntStateOf(0) }
     // Sperre gegen Doppeltipp: solange gespeichert wird, nimmt kein Knopf einen zweiten Tipp an
@@ -203,6 +205,11 @@ fun DetailScreen(
             if (f != null && f.source == "rezept" && onRezeptBearbeiten != null && !bearbeiten) {
                 IconButton(onClick = { onRezeptBearbeiten(f.id) }) {
                     Icon(Icons.Rounded.Edit, contentDescription = stringResource(R.string.rezept_bearbeiten))
+                }
+            }
+            if (f != null && (f.source == "off" || f.source == "user")) {
+                IconButton(onClick = { korrigierenOffen = true }) {
+                    Icon(androidx.compose.material.icons.Icons.Rounded.Tune, contentDescription = stringResource(R.string.werte_korrigieren))
                 }
             }
             if (f != null && !bearbeiten && (f.source == "off" || f.source == "user")) {
@@ -391,6 +398,24 @@ fun DetailScreen(
                 },
             )
         }
+        if (korrigierenOffen) {
+            val kontext = androidx.compose.ui.platform.LocalContext.current
+            val textKorrigiert = stringResource(R.string.werte_korrigiert)
+            KorrigierenDialog(
+                food = f,
+                onAbbrechen = { korrigierenOffen = false },
+                onSpeichern = { w ->
+                    korrigierenOffen = false
+                    scope.launch {
+                        val n = repo.korrigiereWerte(f.id, w)
+                        neuLaden++
+                        aufHauptThread {
+                            android.widget.Toast.makeText(kontext, textKorrigiert.format(n), android.widget.Toast.LENGTH_LONG).show()
+                        }
+                    }
+                },
+            )
+        }
         if (umbenennenOffen) {
             UmbenennenDialog(
                 alt = f.name,
@@ -529,6 +554,57 @@ private fun SuchbegriffDialog(onAbbrechen: () -> Unit, onSpeichern: (String) -> 
         },
         confirmButton = {
             TextButton(onClick = { onSpeichern(text.trim()) }, enabled = text.trim().length >= 2) { Text(stringResource(R.string.speichern)) }
+        },
+        dismissButton = { TextButton(onClick = onAbbrechen) { Text(stringResource(R.string.abbrechen)) } },
+    )
+}
+
+/** Nährwerte pro 100 g/ml von der Packung abschreiben, wenn die Daten aus dem Netz nicht stimmen. */
+@Composable
+private fun KorrigierenDialog(food: FoodEntity, onAbbrechen: () -> Unit, onSpeichern: (de.kh.kalorientracker.core.Naehrwerte) -> Unit) {
+    // Werte pro 100 g liegen unter 1000, also ohne Tausenderpunkt; Format lässt Nullen am Ende weg ("4,3", "140")
+    fun text(x: Double?) = x?.let { Format.dezimal(it, 2) } ?: ""
+    val felder = remember {
+        androidx.compose.runtime.mutableStateListOf(
+            text(food.kcal), text(food.fett), text(food.gesFett), text(food.kh),
+            text(food.zucker), text(food.ballaststoffe), text(food.eiweiss), text(food.salz),
+        )
+    }
+    val namen = listOf(
+        R.string.brennwert_kcal, R.string.nw_fett_g, R.string.nw_ges_fett_g, R.string.nw_kh_g,
+        R.string.nw_zucker_g, R.string.nw_ballaststoffe_g, R.string.nw_eiweiss_g, R.string.nw_salz_g,
+    )
+    fun zahl(s: String) = Format.parseDezimal(s)?.takeIf { it >= 0 && it < 10_000 }
+    val ungueltig = felder.map { it.isNotBlank() && zahl(it) == null }
+    val kcal = zahl(felder[0])
+    val ok = kcal != null && ungueltig.none { it }
+    fun opt(i: Int) = if (felder[i].isBlank()) null else zahl(felder[i])
+    AlertDialog(
+        onDismissRequest = onAbbrechen,
+        title = { Text(stringResource(R.string.werte_korrigieren)) },
+        text = {
+            Column(
+                Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(Spacing.s),
+            ) {
+                Text(stringResource(R.string.werte_korrigieren_hinweis, food.unitBase), style = MaterialTheme.typography.bodySmall, color = AppTheme.colors.textMuted)
+                felder.indices.forEach { i ->
+                    OutlinedTextField(
+                        value = felder[i], onValueChange = { felder[i] = it.take(8) }, singleLine = true,
+                        isError = ungueltig[i],
+                        label = { Text(stringResource(namen[i])) },
+                        keyboardOptions = KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal),
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onSpeichern(de.kh.kalorientracker.core.Naehrwerte(kcal ?: return@TextButton, opt(1), opt(2), opt(3), opt(4), opt(5), opt(6), opt(7)))
+                },
+                enabled = ok,
+            ) { Text(stringResource(R.string.speichern)) }
         },
         dismissButton = { TextButton(onClick = onAbbrechen) { Text(stringResource(R.string.abbrechen)) } },
     )

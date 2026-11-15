@@ -104,6 +104,9 @@ interface DiaryDao {
     @Query("SELECT * FROM diary_entry WHERE id = :id")
     suspend fun lade(id: String): DiaryEntryEntity?
 
+    @Query("SELECT * FROM diary_entry WHERE foodRef = :foodRef")
+    suspend fun mitLebensmittel(foodRef: String): List<DiaryEntryEntity>
+
     @Upsert
     suspend fun speichere(e: DiaryEntryEntity)
 

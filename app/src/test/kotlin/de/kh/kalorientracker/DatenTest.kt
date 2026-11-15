@@ -317,4 +317,23 @@ class DatenTest {
         assertEquals(null, de.kh.kalorientracker.ui.onboarding.leseDatum("31021981"))
     }
 
+
+    @Test
+    fun falscheWerteAusDemNetz_lassenSichKorrigieren() = runBlocking {
+        val db = neueDb()
+        val repo = KalorienRepository(db)
+        // So lieferte Open Food Facts Bami Goreng (8716584550252): 199 kcal statt 140 laut Packung
+        val bami = food("off:8716584550252", "Bami goreng").copy(kcal = 199.0, fett = 8.3, kh = 24.0, eiweiss = 6.4)
+        db.food().fuegeEin(listOf(bami))
+        repo.eintragen(bami, "Portion", 400.0, 1.0, LocalDateTime.of(2026, 11, 15, 18, 0), 5)
+        val n = repo.korrigiereWerte(bami.id, de.kh.kalorientracker.core.Naehrwerte(140.0, 4.3, 0.6, 20.0, 1.6, 1.1, 4.8, 0.87))
+        assertEquals(1, n)
+        val neu = db.food().lade(bami.id)!!
+        assertEquals(140.0, neu.kcal, 0.001)
+        assertEquals("user", neu.source) // wird nicht mehr aus dem Netz überschrieben
+        assertEquals(560.0, db.diary().mitLebensmittel(bami.id).single().kcal, 0.001)
+        // Erneutes Scannen nimmt die korrigierten Werte
+        val treffer = repo.barcode("8716584550252") as de.kh.kalorientracker.data.BarcodeErgebnis.Gefunden
+        assertEquals(140.0, treffer.food.kcal, 0.001)
+    }
 }

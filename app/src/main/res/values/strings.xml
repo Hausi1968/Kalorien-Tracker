@@ -480,4 +480,7 @@
     <string name="reihenfolge_text">Lege fest, welche Mahlzeit im Tagebuch oben steht. Mit „Abendessen oben“ wandert das Frühstück nach unten.</string>
     <string name="reihenfolge_fruehstueck_oben">Frühstück oben</string>
     <string name="reihenfolge_abend_oben">Abendessen oben</string>
+    <string name="werte_korrigieren">Nährwerte korrigieren</string>
+    <string name="werte_korrigieren_hinweis">Schreib die Werte pro 100 %1$s von der Packung ab. Die Korrektur gilt nur in deiner App und bleibt beim nächsten Scannen erhalten. Schon eingetragene Mahlzeiten mit diesem Produkt werden mit angepasst.</string>
+    <string name="werte_korrigiert">Nährwerte gespeichert. %1$d Einträge im Tagebuch angepasst.</string>
 </resources>

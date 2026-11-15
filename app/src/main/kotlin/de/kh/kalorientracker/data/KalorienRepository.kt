@@ -374,6 +374,38 @@ class KalorienRepository(
         db.food().fuegeEin(listOf(f.copy(name = name.trim(), nameNorm = norm, source = if (f.source == "off") "user" else f.source)))
     }
 
+    /**
+     * Nährwerte pro 100 g/ml korrigieren, z. B. wenn Open Food Facts falsche oder veraltete Angaben hat.
+     * Das Produkt gilt danach als eigenes (wird nicht mehr aus dem Netz überschrieben und kommt in die Sicherung).
+     * Schon eingetragene Mahlzeiten mit diesem Produkt werden mit den neuen Werten neu berechnet.
+     * Gibt zurück, wie viele Einträge angepasst wurden.
+     */
+    suspend fun korrigiereWerte(foodId: String, w: Naehrwerte): Int {
+        val f = db.food().lade(foodId) ?: return 0
+        val neu = f.copy(
+            kcal = w.kcal, fett = w.fett, gesFett = w.gesFett, kh = w.kh, zucker = w.zucker,
+            ballaststoffe = w.ballaststoffe, eiweiss = w.eiweiss, salz = w.salz,
+            source = if (f.source == "off") "user" else f.source,
+        )
+        val jetzt = System.currentTimeMillis()
+        var n = 0
+        db.withTransaction {
+            db.food().fuegeEin(listOf(neu))
+            db.diary().mitLebensmittel(foodId).forEach { e ->
+                val g = e.gramm ?: return@forEach
+                val x = w.fuerGramm(g)
+                db.diary().speichere(
+                    e.copy(
+                        kcal = x.kcal, fett = x.fett, gesFett = x.gesFett, kh = x.kh, zucker = x.zucker,
+                        ballaststoffe = x.ballaststoffe, eiweiss = x.eiweiss, salz = x.salz, updatedAt = jetzt,
+                    ),
+                )
+                n++
+            }
+        }
+        return n
+    }
+
     /** Eigenes Produkt anlegen. Fehlertext statt Exception, wenn der Barcode schon vergeben ist. */
     suspend fun legeProduktAn(food: FoodEntity, portion: Pair<String, Double>?): Result<FoodEntity> {
         food.barcode?.let { ean ->
