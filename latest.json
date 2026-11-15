@@ -1,8 +1,8 @@
 {
-  "version": "0.31.0",
-  "versionCode": 34,
-  "apk": "Kalorien-Tracker-0.31.0.apk",
-  "notizen": "Neu: Nährwerte eines Produkts korrigieren (Regler-Symbol oben in der Produktansicht), wenn die Daten aus dem Netz nicht zur Packung passen.",
-  "sha256": "6c49b53dd9138a11598905be9a6aa518c5e07a95eadb24c940deb342e237998d",
-  "groesse": 10562944
+  "version": "0.32.0",
+  "versionCode": 35,
+  "apk": "Kalorien-Tracker-0.32.0.apk",
+  "notizen": "Neu: Design im Profil – hell, dunkel oder wie das Handy, dazu fünf Farben zur Auswahl.",
+  "sha256": "89eee06eeb7004723e26eadb3893af9035cae8c95446c6dc917b99276c37be99",
+  "groesse": 10563608
 }
