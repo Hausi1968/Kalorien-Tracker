@@ -1,8 +1,8 @@
 {
-  "version": "0.32.0",
-  "versionCode": 35,
-  "apk": "Kalorien-Tracker-0.32.0.apk",
-  "notizen": "Neu: Design im Profil – hell, dunkel oder wie das Handy, dazu fünf Farben zur Auswahl.",
-  "sha256": "89eee06eeb7004723e26eadb3893af9035cae8c95446c6dc917b99276c37be99",
+  "version": "0.33.0",
+  "versionCode": 36,
+  "apk": "Kalorien-Tracker-0.33.0.apk",
+  "notizen": "Kleine kcal-Werte (unter 10) zeigt die App jetzt mit Kommastelle, z. B. 1,5 kcal.",
+  "sha256": "9eb9718a826604313c0a256159870d88493b823b2aee36dfb4a27280474571c9",
   "groesse": 10563608
 }
