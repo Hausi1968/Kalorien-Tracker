@@ -9,7 +9,14 @@ import kotlin.math.roundToInt
 object Format {
     private val de = Locale.GERMANY
 
-    fun kcal(x: Double): String = NumberFormat.getIntegerInstance(de).format(x.roundToInt())
+    /** kcal ganzzahlig; kleine Werte unter 10 mit einer Nachkommastelle (z. B. Light-Getränke mit 1,5 kcal). */
+    fun kcal(x: Double): String {
+        if (abs(x) >= 10) return NumberFormat.getIntegerInstance(de).format(x.roundToInt())
+        val nf = NumberFormat.getNumberInstance(de)
+        nf.maximumFractionDigits = 1
+        nf.minimumFractionDigits = 0
+        return nf.format(x)
+    }
     fun kcal(x: Int): String = NumberFormat.getIntegerInstance(de).format(x)
 
     /** Gramm: unter 10 mit einer Nachkommastelle, sonst ganzzahlig; null = "k. A." */

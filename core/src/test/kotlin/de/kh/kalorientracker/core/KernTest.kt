@@ -160,6 +160,9 @@ class SucheTest {
 class FormatTest {
     @Test fun deutsch() {
         assertEquals("1.350", Format.kcal(1350))
+        assertEquals("1,5", Format.kcal(1.5))   // Light-Getränk pro 100 ml
+        assertEquals("2", Format.kcal(2.0))
+        assertEquals("296", Format.kcal(295.6))
         assertEquals("0,8", Format.gramm(0.8))
         assertEquals("30", Format.gramm(29.6))
         assertEquals("k. A.", Format.gramm(null))
